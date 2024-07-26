@@ -1,0 +1,49 @@
+version: "3.8"
+networks:
+  net1:
+
+services:
+  db:
+    container_name: hotel-db
+    image: postgres:latest
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: hotel
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - net1
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      retries: 5
+      timeout: 5s
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: hotel-pgadmin
+    restart: always
+    ports:
+      - "5050:80"
+    environment:
+        PGADMIN_DEFAULT_EMAIL: admin_not_used@user.com
+        PGADMIN_DEFAULT_PASSWORD: admin_not_used
+        PGADMIN_CONFIG_SERVER_MODE: "False"
+        PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    healthcheck:
+      test: ["CMD", "wget", "-O", "-", "http://localhost:80/misc/ping"]
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - net1
+volumes:
+  db_data:
+    driver: local
+  pgadmin_data:
