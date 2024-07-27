@@ -7,7 +7,7 @@ import com.tinqinacademy.hotel.core.converters.enums.ApiBathroomTypeToPersistenc
 import com.tinqinacademy.hotel.core.converters.room.AddRoomInputToRoom;
 import com.tinqinacademy.hotel.core.converters.room.PartialUpdateRoomInputToRoom;
 import com.tinqinacademy.hotel.core.converters.room.RoomInputToRoom;
-import com.tinqinacademy.hotel.core.converters.room.RoomToGetRoomOutput;
+import com.tinqinacademy.hotel.core.converters.room.RoomToRoomOutput;
 import com.tinqinacademy.hotel.core.converters.room.UpdateRoomInputToRoom;
 import com.tinqinacademy.hotel.core.converters.visitors.VisitorDetailsInputToGuest;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +26,9 @@ public class WebConfig implements WebMvcConfigurer {
   private final PartialUpdateRoomInputToRoom partialUpdateRoomInputToRoom;
   private final PersBathroomTypeToApiBathroomType persBathroomTypeToApiBathroomType;
   private final BedToBedType bedToBedType;
-  private final RoomToGetRoomOutput roomToGetRoomOutput;
   private final BookRoomInputToBooking bookRoomInputToBooking;
   private final VisitorDetailsInputToGuest visitorDetailsInputToGuest;
+  private final RoomToRoomOutput roomToRoomOutput;
 
   @Override
   public void addFormatters(FormatterRegistry registry) {
@@ -39,8 +39,8 @@ public class WebConfig implements WebMvcConfigurer {
     registry.addConverter(addRoomInputToRoom);
     registry.addConverter(updateRoomInputToRoom);
     registry.addConverter(partialUpdateRoomInputToRoom);
-    registry.addConverter(roomToGetRoomOutput);
     registry.addConverter(bookRoomInputToBooking);
     registry.addConverter(visitorDetailsInputToGuest);
+    registry.addConverter(roomToRoomOutput);
   }
 }

@@ -2,9 +2,6 @@ package com.tinqinacademy.hotel.persistence.repositories;
 
 import com.tinqinacademy.hotel.persistence.entities.bed.Bed;
 import com.tinqinacademy.hotel.persistence.entities.room.Room;
-import com.tinqinacademy.hotel.persistence.enums.BathroomType;
-import com.tinqinacademy.hotel.persistence.enums.BedSize;
-import jakarta.persistence.Column;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,10 +14,6 @@ import java.util.UUID;
 
 @Repository
 public interface RoomRepository extends JpaRepository<Room,UUID> {
-
-  public static final String ADD_BED_QUERY = "INSERT INTO bed_rooms (room_id, bed_id) VALUES(?, ?);";
-  public static final String REMOVE_BED_QUERY = "DELETE FROM bed_rooms WHERE room_id = ?, bed_id = ?";
-  public static final String REMOVE_ALL_BEDS = "DELETE FROM bed_rooms WHERE room_id = ?";
 
   Optional<Room> findRoomByNumber(String number);
 

@@ -1,6 +1,5 @@
 package com.tinqinacademy.hotel.api.models.output;
 
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
