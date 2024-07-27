@@ -1,13 +1,10 @@
 package com.tinqinacademy.hotel.core.services;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tinqinacademy.hotel.api.exceptions.BedDoesNotExistException;
 import com.tinqinacademy.hotel.api.exceptions.VisitorDateMismatchException;
 import com.tinqinacademy.hotel.api.exceptions.EntityAlreadyExistsException;
 import com.tinqinacademy.hotel.api.exceptions.EntityNotFoundException;
-import com.tinqinacademy.hotel.api.exceptions.InvalidUUIDException;
 import com.tinqinacademy.hotel.api.models.input.RoomInput;
 import com.tinqinacademy.hotel.api.models.input.VisitorDetailsInput;
 import com.tinqinacademy.hotel.api.models.output.VisitorDetailsOutput;
@@ -24,7 +21,6 @@ import com.tinqinacademy.hotel.api.operations.searchvisitors.output.SearchVisito
 import com.tinqinacademy.hotel.api.operations.updateroom.input.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.updateroom.output.UpdateRoomOutput;
 import com.tinqinacademy.hotel.api.services.contracts.SystemService;
-import com.tinqinacademy.hotel.core.mappers.RoomMapper;
 import com.tinqinacademy.hotel.core.mappers.VisitorMapper;
 import com.tinqinacademy.hotel.persistence.entities.bed.Bed;
 import com.tinqinacademy.hotel.persistence.entities.booking.Booking;
@@ -38,13 +34,10 @@ import com.tinqinacademy.hotel.persistence.repositories.CustomGuestRepository;
 import com.tinqinacademy.hotel.persistence.repositories.GuestRepository;
 import com.tinqinacademy.hotel.persistence.repositories.RoomRepository;
 import jakarta.json.Json;
-import jakarta.json.JsonMergePatch;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.devtools.autoconfigure.LocalDevToolsAutoConfiguration;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +46,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -61,7 +56,6 @@ public class SystemServiceImpl implements SystemService {
 
   private final RoomRepository roomRepository;
   private final BedRepository bedRepository;
-  private final VisitorMapper visitorMapper;
   private final BookingRepository bookingRepository;
   private final GuestRepository guestRepository;
   private final CustomGuestRepository customGuestRepository;
@@ -82,11 +76,25 @@ public class SystemServiceImpl implements SystemService {
       throw new VisitorDateMismatchException("Visitor start and end dates must match the booking dates");
     }
 
-    List<Guest> guests = visitorMapper.fromRegisterVisitorsInputToGuestList(input);
-    log.info("Guests: {}", guests);
+    List<String> inputIdCardNumbers = input.getVisitors().stream()
+        .map(VisitorDetailsInput::getIdCardNumber).toList();
+    List<Guest> guestsInBooking = guestRepository.getAllGuestsByBookingIdAndIdCardNumberList(booking.getId(), inputIdCardNumbers);
+    if (!guestsInBooking.isEmpty()) {
+      throw new EntityAlreadyExistsException(String.format("Guest already registered in booking with id %s", booking.getId()));
+    }
 
-    guests = guestRepository.saveAll(guests);
-    booking.setGuests(guests);
+    List<Guest> existingGuests = guestRepository.getAllGuestsByIdCardNumberList(inputIdCardNumbers);
+    Set<String> existingGuestsIdCardNumbers = existingGuests.stream().map(Guest::getIdCardNumber).collect(Collectors.toSet());
+    List<VisitorDetailsInput> filteredInput = input.getVisitors().stream()
+        .filter(g -> !existingGuestsIdCardNumbers.contains(g.getIdCardNumber()))
+        .toList();
+    List<Guest> guestsToSave = filteredInput.stream().map(fi -> conversionService.convert(fi, Guest.class)).toList();
+
+    log.info("Guests to be saved: {}", guestsToSave);
+
+    guestsToSave = guestRepository.saveAll(guestsToSave);
+    booking.getGuests().addAll(guestsToSave);
+    booking.getGuests().addAll(existingGuests);
     bookingRepository.save(booking);
 
     RegisterVisitorsOutput output = RegisterVisitorsOutput.builder()
