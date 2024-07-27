@@ -1,14 +1,15 @@
 package com.tinqinacademy.hotel.core.converters;
 
 import com.tinqinacademy.hotel.core.converters.booking.BookRoomInputToBooking;
-import com.tinqinacademy.hotel.core.converters.enums.ApiBathroomTypeConverter;
-import com.tinqinacademy.hotel.core.converters.enums.BedToApiBedSizeConverter;
-import com.tinqinacademy.hotel.core.converters.enums.PersistenceBathroomTypeConverter;
-import com.tinqinacademy.hotel.core.converters.room.AddRoomInputToRoomConverter;
-import com.tinqinacademy.hotel.core.converters.room.PartialUpdateRoomInputToRoomConverter;
-import com.tinqinacademy.hotel.core.converters.room.RoomInputToRoomConverter;
-import com.tinqinacademy.hotel.core.converters.room.RoomToGetRoomOutputConverter;
-import com.tinqinacademy.hotel.core.converters.room.UpdateRoomInputToRoomConverter;
+import com.tinqinacademy.hotel.core.converters.enums.PersBathroomTypeToApiBathroomType;
+import com.tinqinacademy.hotel.core.converters.enums.BedToBedType;
+import com.tinqinacademy.hotel.core.converters.enums.ApiBathroomTypeToPersistenceBathroomType;
+import com.tinqinacademy.hotel.core.converters.room.AddRoomInputToRoom;
+import com.tinqinacademy.hotel.core.converters.room.PartialUpdateRoomInputToRoom;
+import com.tinqinacademy.hotel.core.converters.room.RoomInputToRoom;
+import com.tinqinacademy.hotel.core.converters.room.RoomToGetRoomOutput;
+import com.tinqinacademy.hotel.core.converters.room.UpdateRoomInputToRoom;
+import com.tinqinacademy.hotel.core.converters.visitors.VisitorDetailsInputToGuest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -27,6 +28,7 @@ public class WebConfig implements WebMvcConfigurer {
   private final BedToApiBedSizeConverter bedToApiBedSizeConverter;
   private final RoomToGetRoomOutputConverter roomToGetRoomOutputConverter;
   private final BookRoomInputToBooking bookRoomInputToBooking;
+  private final VisitorDetailsInputToGuest visitorDetailsInputToGuest;
 
   @Override
   public void addFormatters(FormatterRegistry registry) {
@@ -39,5 +41,6 @@ public class WebConfig implements WebMvcConfigurer {
     registry.addConverter(partialUpdateRoomInputToRoomConverter);
     registry.addConverter(roomToGetRoomOutputConverter);
     registry.addConverter(bookRoomInputToBooking);
+    registry.addConverter(visitorDetailsInputToGuest);
   }
 }
