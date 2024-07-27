@@ -19,27 +19,27 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
-  private final RoomInputToRoomConverter roomInputToRoomConverter;
-  private final PersistenceBathroomTypeConverter persistenceBathroomTypeConverter;
-  private final AddRoomInputToRoomConverter addRoomInputToRoomConverter;
-  private final UpdateRoomInputToRoomConverter updateRoomInputToRoomConverter;
-  private final PartialUpdateRoomInputToRoomConverter partialUpdateRoomInputToRoomConverter;
-  private final ApiBathroomTypeConverter apiBathroomTypeConverter;
-  private final BedToApiBedSizeConverter bedToApiBedSizeConverter;
-  private final RoomToGetRoomOutputConverter roomToGetRoomOutputConverter;
+  private final RoomInputToRoom roomInputToRoom;
+  private final ApiBathroomTypeToPersistenceBathroomType apiBathroomTypeToPersistenceBathroomType;
+  private final AddRoomInputToRoom addRoomInputToRoom;
+  private final UpdateRoomInputToRoom updateRoomInputToRoom;
+  private final PartialUpdateRoomInputToRoom partialUpdateRoomInputToRoom;
+  private final PersBathroomTypeToApiBathroomType persBathroomTypeToApiBathroomType;
+  private final BedToBedType bedToBedType;
+  private final RoomToGetRoomOutput roomToGetRoomOutput;
   private final BookRoomInputToBooking bookRoomInputToBooking;
   private final VisitorDetailsInputToGuest visitorDetailsInputToGuest;
 
   @Override
   public void addFormatters(FormatterRegistry registry) {
-    registry.addConverter(roomInputToRoomConverter);
-    registry.addConverter(bedToApiBedSizeConverter);
-    registry.addConverter(persistenceBathroomTypeConverter);
-    registry.addConverter(apiBathroomTypeConverter);
-    registry.addConverter(addRoomInputToRoomConverter);
-    registry.addConverter(updateRoomInputToRoomConverter);
-    registry.addConverter(partialUpdateRoomInputToRoomConverter);
-    registry.addConverter(roomToGetRoomOutputConverter);
+    registry.addConverter(roomInputToRoom);
+    registry.addConverter(bedToBedType);
+    registry.addConverter(apiBathroomTypeToPersistenceBathroomType);
+    registry.addConverter(persBathroomTypeToApiBathroomType);
+    registry.addConverter(addRoomInputToRoom);
+    registry.addConverter(updateRoomInputToRoom);
+    registry.addConverter(partialUpdateRoomInputToRoom);
+    registry.addConverter(roomToGetRoomOutput);
     registry.addConverter(bookRoomInputToBooking);
     registry.addConverter(visitorDetailsInputToGuest);
   }

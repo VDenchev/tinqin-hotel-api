@@ -6,7 +6,7 @@ import com.tinqinacademy.hotel.persistence.entities.bed.Bed;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BedToApiBedSizeConverter extends BaseConverter<Bed, BedType> {
+public class BedToBedType extends BaseConverter<Bed, BedType> {
   @Override
   protected BedType doConvert(Bed source) {
     return BedType.getByCode(source.getBedSize().getCode());

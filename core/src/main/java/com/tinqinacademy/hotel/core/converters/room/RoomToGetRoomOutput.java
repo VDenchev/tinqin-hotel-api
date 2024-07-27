@@ -3,18 +3,18 @@ package com.tinqinacademy.hotel.core.converters.room;
 import com.tinqinacademy.hotel.api.models.output.RoomOutput;
 import com.tinqinacademy.hotel.api.operations.getroom.output.RoomDetailsOutput;
 import com.tinqinacademy.hotel.core.converters.base.BaseConverter;
-import com.tinqinacademy.hotel.core.converters.enums.ApiBathroomTypeConverter;
-import com.tinqinacademy.hotel.core.converters.enums.BedToApiBedSizeConverter;
+import com.tinqinacademy.hotel.core.converters.enums.PersBathroomTypeToApiBathroomType;
+import com.tinqinacademy.hotel.core.converters.enums.BedToBedType;
 import com.tinqinacademy.hotel.persistence.entities.room.Room;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class RoomToGetRoomOutputConverter extends BaseConverter<Room, RoomDetailsOutput> {
+public class RoomToGetRoomOutput extends BaseConverter<Room, RoomDetailsOutput> {
 
-  private final ApiBathroomTypeConverter apiBathroomTypeConverter;
-  private final BedToApiBedSizeConverter bedToApiBedSizeConverter;
+  private final PersBathroomTypeToApiBathroomType persBathroomTypeToApiBathroomType;
+  private final BedToBedType bedToBedType;
 
   @Override
   public RoomDetailsOutput doConvert(Room source) {
@@ -24,8 +24,8 @@ public class RoomToGetRoomOutputConverter extends BaseConverter<Room, RoomDetail
         .price(source.getPrice())
         .bedCount(source.getBeds().size())
         .number(source.getNumber())
-        .bathroomType(apiBathroomTypeConverter.convert(source.getBathroomType()))
-        .bedSizes(source.getBeds().stream().map(bedToApiBedSizeConverter::convert).toList())
+        .bathroomType(persBathroomTypeToApiBathroomType.convert(source.getBathroomType()))
+        .bedSizes(source.getBeds().stream().map(bedToBedType::convert).toList())
         .build();
   return RoomDetailsOutput.builder()
       .roomOutput(output)
