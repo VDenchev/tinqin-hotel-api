@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UpdateRoomInputToRoomConverter extends BaseConverter<UpdateRoomInput, Room> {
+public class UpdateRoomInputToRoom extends BaseConverter<UpdateRoomInput, Room> {
 
-  private final RoomInputToRoomConverter roomInputToRoomConverter;
+  private final RoomInputToRoom roomInputToRoom;
   @Override
   public Room doConvert(UpdateRoomInput source) {
-    Room result = roomInputToRoomConverter.convert(source.getRoomInput());
+    Room result = roomInputToRoom.convert(source.getRoomInput());
     result.setId(source.getId());
 
     return result;
