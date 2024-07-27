@@ -41,7 +41,6 @@ public class WebConfig implements WebMvcConfigurer {
     registry.addConverter(partialUpdateRoomInputToRoomConverter);
     registry.addConverter(roomToGetRoomOutputConverter);
     registry.addConverter(bookRoomInputToBooking);
-    registry.addConverter(bookRoomInputToBooking);
     registry.addConverter(visitorDetailsInputToGuest);
   }
 }
