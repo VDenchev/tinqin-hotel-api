@@ -100,11 +100,9 @@ public class HotelServiceImpl implements HotelService {
     Room room = roomRepository.findById(input.getId())
         .orElseThrow(() -> new EntityNotFoundException("Room", input.getId()));
 
-    List<LocalDate> dates = new ArrayList<>();
-    dates.add(LocalDate.ofYearDay(2024, 100));
-    dates.add(LocalDate.ofYearDay(2024, 101));
-    dates.add(LocalDate.ofYearDay(2024, 102));
-    dates.add(LocalDate.ofYearDay(2024, 103));
+    List<LocalDate> dates = room.getBookings().stream()
+        .flatMap(b -> b.getStartDate().datesUntil(b.getEndDate().plusDays(1)))
+        .toList();
     DatesOccupied datesOccupied = DatesOccupied.builder()
         .dates(dates)
         .build();
@@ -112,7 +110,9 @@ public class HotelServiceImpl implements HotelService {
     List<Bed> beds = roomRepository.getAllBedsByRoomId(room.getId());
     RoomOutput output = conversionService.convert(room, RoomOutput.class);
     output.setBedSizes(beds.stream().map(b -> conversionService.convert(b, BedType.class)).toList());
+    output.setBathroomType(conversionService.convert(room.getBathroomType(), com.tinqinacademy.hotel.api.enums.BathroomType.class));
     output.setBedCount(beds.size());
+    output.setDatesOccupied(datesOccupied);
 
     log.info("End getRoom output: {}", output);
     return RoomDetailsOutput.builder()

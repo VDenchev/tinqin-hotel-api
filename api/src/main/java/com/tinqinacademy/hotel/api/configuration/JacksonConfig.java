@@ -34,7 +34,7 @@ public class JacksonConfig {
 
     mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
     mapper.enable(SerializationFeature.INDENT_OUTPUT);
-    mapper.disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS);
+    mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
