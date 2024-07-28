@@ -4,13 +4,13 @@ import com.tinqinacademy.hotel.api.exceptions.EntityAlreadyExistsException;
 import com.tinqinacademy.hotel.api.operations.signup.input.SignUpInput;
 import com.tinqinacademy.hotel.api.operations.signup.output.SignUpOutput;
 import com.tinqinacademy.hotel.api.services.contracts.UserService;
-import com.tinqinacademy.hotel.core.mappers.UserMapper;
 import com.tinqinacademy.hotel.persistence.entities.user.User;
 import com.tinqinacademy.hotel.persistence.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -27,10 +27,10 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
-  private final UserMapper userMapper;
   private final ConversionService conversionService;
 
   @Override
+  @Transactional
   public SignUpOutput signUp(SignUpInput input) {
 
     log.info("Start signUp input: {}", input);

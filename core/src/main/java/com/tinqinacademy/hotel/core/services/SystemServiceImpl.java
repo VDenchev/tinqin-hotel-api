@@ -63,6 +63,7 @@ public class SystemServiceImpl implements SystemService {
   private final ConversionService conversionService;
 
   @Override
+  @Transactional
   public RegisterVisitorsOutput registerVisitors(RegisterVisitorsInput input) {
     log.info("Start registerVisitors input: {}", input);
 
@@ -111,6 +112,7 @@ public class SystemServiceImpl implements SystemService {
   }
 
   @Override
+  @Transactional
   public SearchVisitorsOutput searchVisitors(SearchVisitorsInput input) {
     log.info("Start searchVisitors input: {}", input);
 
@@ -191,6 +193,7 @@ public class SystemServiceImpl implements SystemService {
   }
 
   @Override
+  @Transactional
   public UpdateRoomOutput updateRoom(UpdateRoomInput input) {
     log.info("Start updateRoom input: {}", input);
 
@@ -216,6 +219,7 @@ public class SystemServiceImpl implements SystemService {
   }
 
   @Override
+  @Transactional
   public PartialUpdateOutput partialUpdateRoom(PartialUpdateRoomInput input) {
     log.info("Start partialUpdateRoom input: {}", input);
 
