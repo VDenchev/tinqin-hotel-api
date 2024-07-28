@@ -36,5 +36,5 @@ public class SignUpInput {
 
   @Size(min = 10, max=15, message="Invalid phone number format")
   @Schema(example = "+359 972947321")
-  private String phoneNumber;
+  private String phoneNo;
 }

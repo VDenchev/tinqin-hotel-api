@@ -31,7 +31,7 @@ public class RoomInput {
   @NotNull(message = "Bed size cannot be empty")
   @Valid
   @Schema(example = "[\"single\", \"double\"]")
-  private List<BedType> beds;
+  private List<BedType> bedSizes;
 
   @NotBlank(message = "Room number must not be blank")
   // TODO: add regex validation
@@ -41,7 +41,7 @@ public class RoomInput {
       min = 1, max = 10
   )
   @Schema(example = "101A")
-  private String number;
+  private String roomNo;
 
   @NotNull(message = "Floor cannot be blank")
   @Schema(example = "1")

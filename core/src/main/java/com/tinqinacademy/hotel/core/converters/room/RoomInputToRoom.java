@@ -17,7 +17,7 @@ public class RoomInputToRoom implements Converter<RoomInput, Room> {
   @Override
   public Room convert(RoomInput source) {
     return Room.builder()
-        .number(source.getNumber())
+        .number(source.getRoomNo())
         .floor(source.getFloor())
         .price(source.getPrice())
         .bathroomType(

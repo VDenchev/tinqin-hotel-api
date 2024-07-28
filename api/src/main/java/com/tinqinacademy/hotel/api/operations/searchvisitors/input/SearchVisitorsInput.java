@@ -20,5 +20,5 @@ public class SearchVisitorsInput {
   @JsonUnwrapped
   private VisitorDetailsInput visitorDetailsInput;
 
-  private String roomNumber;
+  private String roomNo;
 }

@@ -25,5 +25,5 @@ public class UpdateRoomInput {
   @Valid
   private RoomInput roomInput;
   @JsonIgnore
-  private UUID id;
+  private UUID roomId;
 }

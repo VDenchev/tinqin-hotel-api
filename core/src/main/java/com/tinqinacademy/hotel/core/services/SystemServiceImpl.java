@@ -21,7 +21,6 @@ import com.tinqinacademy.hotel.api.operations.searchvisitors.output.SearchVisito
 import com.tinqinacademy.hotel.api.operations.updateroom.input.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.updateroom.output.UpdateRoomOutput;
 import com.tinqinacademy.hotel.api.services.contracts.SystemService;
-import com.tinqinacademy.hotel.core.mappers.VisitorMapper;
 import com.tinqinacademy.hotel.persistence.entities.bed.Bed;
 import com.tinqinacademy.hotel.persistence.entities.booking.Booking;
 import com.tinqinacademy.hotel.persistence.entities.guest.Guest;
@@ -77,7 +76,7 @@ public class SystemServiceImpl implements SystemService {
     }
 
     List<String> inputIdCardNumbers = input.getVisitors().stream()
-        .map(VisitorDetailsInput::getIdCardNumber).toList();
+        .map(VisitorDetailsInput::getIdCardNo).toList();
     List<Guest> guestsInBooking = guestRepository.getAllGuestsByBookingIdAndIdCardNumberList(booking.getId(), inputIdCardNumbers);
     if (!guestsInBooking.isEmpty()) {
       throw new EntityAlreadyExistsException(String.format("Guest already registered in booking with id %s", booking.getId()));
@@ -86,7 +85,7 @@ public class SystemServiceImpl implements SystemService {
     List<Guest> existingGuests = guestRepository.getAllGuestsByIdCardNumberList(inputIdCardNumbers);
     Set<String> existingGuestsIdCardNumbers = existingGuests.stream().map(Guest::getIdCardNumber).collect(Collectors.toSet());
     List<VisitorDetailsInput> filteredInput = input.getVisitors().stream()
-        .filter(g -> !existingGuestsIdCardNumbers.contains(g.getIdCardNumber()))
+        .filter(g -> !existingGuestsIdCardNumbers.contains(g.getIdCardNo()))
         .toList();
     List<Guest> guestsToSave = filteredInput.stream().map(fi -> conversionService.convert(fi, Guest.class)).toList();
 
@@ -122,10 +121,10 @@ public class SystemServiceImpl implements SystemService {
         visitorDetailsInput.getFirstName(),
         visitorDetailsInput.getLastName(),
         visitorDetailsInput.getBirthDate(),
-        visitorDetailsInput.getPhoneNumber(),
-        visitorDetailsInput.getIdCardNumber(),
+        visitorDetailsInput.getPhoneNo(),
+        visitorDetailsInput.getIdCardNo(),
         visitorDetailsInput.getIdCardIssueAuthority(),
-        input.getRoomNumber()
+        input.getRoomNo()
     );
 
     List<VisitorDetailsOutput> visitors = results.stream().map(r ->
@@ -135,7 +134,7 @@ public class SystemServiceImpl implements SystemService {
             .firstName(r.getFirstName())
             .birthDate(r.getBirthDate())
             .lastName(r.getLastName())
-            .idCardNumber(r.getIdCardNumber())
+            .idCardNo(r.getIdCardNumber())
             .idCardValidity(r.getIdCardValidity())
             .idCardIssueAuthority(r.getIdCardIssueAuthority())
             .idCardIssueDate(r.getIdCardIssueDate())
@@ -154,10 +153,10 @@ public class SystemServiceImpl implements SystemService {
   public AddRoomOutput addRoom(AddRoomInput input) {
     log.info("Start addRoom input: {}", input);
 
-    Optional<Room> roomWithTheSameNumber = roomRepository.findRoomByNumber(input.getRoomInput().getNumber());
+    Optional<Room> roomWithTheSameNumber = roomRepository.findRoomByNumber(input.getRoomInput().getRoomNo());
     if (roomWithTheSameNumber.isPresent()) {
       throw new EntityAlreadyExistsException("Room with room number " +
-          input.getRoomInput().getNumber() + " already exists!"
+          input.getRoomInput().getRoomNo() + " already exists!"
       );
     }
     List<Bed> beds = getBedEntitiesFromRoomInput(input.getRoomInput());
@@ -178,7 +177,7 @@ public class SystemServiceImpl implements SystemService {
 
   private List<Bed> getBedEntitiesFromRoomInput(RoomInput input) {
     List<Bed> beds = new ArrayList<>();
-    input.getBeds().forEach(b ->
+    input.getBedSizes().forEach(b ->
         beds.add(bedRepository
             .findByBedSize(BedSize.getByCode(b.getCode()))
             //TODO: throw custom exception (this will (almost) never fail but w/e)
@@ -192,8 +191,8 @@ public class SystemServiceImpl implements SystemService {
   public UpdateRoomOutput updateRoom(UpdateRoomInput input) {
     log.info("Start updateRoom input: {}", input);
 
-    roomRepository.findById(input.getId())
-        .orElseThrow(() -> new EntityNotFoundException("Room", input.getId()));
+    roomRepository.findById(input.getRoomId())
+        .orElseThrow(() -> new EntityNotFoundException("Room", input.getRoomId()));
 
     List<Bed> beds = getBedEntitiesFromRoomInput(input.getRoomInput());
 
@@ -219,7 +218,7 @@ public class SystemServiceImpl implements SystemService {
         .orElseThrow(() -> new EntityNotFoundException("Room", input.getRoomId()));
     Room partialRoom = conversionService.convert(input.getRoomInput(), Room.class);
     List<Bed> beds = null;
-    if (input.getRoomInput().getBeds() != null) {
+    if (input.getRoomInput().getBedSizes() != null) {
       beds = getBedEntitiesFromRoomInput(input.getRoomInput());
     }
     partialRoom.setBeds(beds);

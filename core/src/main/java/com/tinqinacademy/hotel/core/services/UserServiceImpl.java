@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
       throw new EntityAlreadyExistsException("User with the provided email already exists");
     }
 
-    userOptional = userRepository.findByPhoneNumber(input.getPhoneNumber());
+    userOptional = userRepository.findByPhoneNumber(input.getPhoneNo());
 
     if(userOptional.isPresent()) {
       throw new EntityAlreadyExistsException("User with the provided phone number already exists");

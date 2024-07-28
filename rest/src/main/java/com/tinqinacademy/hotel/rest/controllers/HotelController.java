@@ -1,6 +1,5 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tinqinacademy.hotel.api.enums.BathroomType;
 import com.tinqinacademy.hotel.api.enums.BedType;
 import com.tinqinacademy.hotel.api.operations.bookroom.input.BookRoomInput;
@@ -43,7 +42,6 @@ import static com.tinqinacademy.hotel.api.RestApiRoutes.REMOVE_BOOKING;
 public class HotelController {
 
   private final HotelService hotelService;
-  private final ObjectMapper objectMapper;
 
   @Operation(
       summary = "Checks if a room is available",
@@ -60,7 +58,7 @@ public class HotelController {
       @RequestParam(required = false) List<String> bedSizes,
       @RequestParam(required = false) String bathroomType
   ) {
-    if(Objects.isNull(bedSizes)) {
+    if (Objects.isNull(bedSizes)) {
       bedSizes = new ArrayList<>();
     }
 
@@ -68,7 +66,7 @@ public class HotelController {
         .startDate(startDate)
         .endDate(endDate)
         .bedCount(bedCount)
-        .bedTypes(bedSizes.stream().map(BedType::getByCode).toList())
+        .bedSizes(bedSizes.stream().map(BedType::getByCode).toList())
         .bathroomType(BathroomType.getByCode(bathroomType))
         .build();
 
@@ -90,7 +88,7 @@ public class HotelController {
       @PathVariable UUID roomId
   ) {
     RoomDetailsOutput output = hotelService.getRoom(RoomDetailsInput.builder()
-        .id(roomId)
+        .roomId(roomId)
         .build());
     return new ResponseEntity<>(output, HttpStatus.OK);
   }
@@ -123,7 +121,10 @@ public class HotelController {
       @ApiResponse(description = "No book with the provided id", responseCode = "404"),
   })
   @DeleteMapping(REMOVE_BOOKING)
-  public ResponseEntity<RemoveBookingOutput> removeBooking(@PathVariable("bookingId") RemoveBookingInput input) {
+  public ResponseEntity<RemoveBookingOutput> removeBooking(@PathVariable UUID bookingId) {
+    RemoveBookingInput input = RemoveBookingInput.builder()
+        .bookingId(bookingId)
+        .build();
     RemoveBookingOutput output = hotelService.removeBooking(input);
 
     return new ResponseEntity<>(output, HttpStatus.OK);

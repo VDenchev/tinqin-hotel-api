@@ -22,7 +22,7 @@ public class AvailableRoomsInput {
 
   private Integer bedCount;
   private BathroomType bathroomType;
-  private List<BedType> bedTypes;
+  private List<BedType> bedSizes;
   private LocalDate startDate;
   private LocalDate endDate;
 }

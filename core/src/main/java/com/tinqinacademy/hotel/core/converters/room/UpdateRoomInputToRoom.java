@@ -14,7 +14,7 @@ public class UpdateRoomInputToRoom extends BaseConverter<UpdateRoomInput, Room> 
   @Override
   public Room doConvert(UpdateRoomInput source) {
     Room result = roomInputToRoom.convert(source.getRoomInput());
-    result.setId(source.getId());
+    result.setId(source.getRoomId());
 
     return result;
   }
