@@ -9,6 +9,7 @@ import com.tinqinacademy.hotel.persistence.entities.user.User;
 import com.tinqinacademy.hotel.persistence.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKeyFactory;
@@ -27,6 +28,7 @@ public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
   private final UserMapper userMapper;
+  private final ConversionService conversionService;
 
   @Override
   public SignUpOutput signUp(SignUpInput input) {
@@ -52,12 +54,15 @@ public class UserServiceImpl implements UserService {
       throw new RuntimeException("Error while hashing password");
     }
 
-    User user = userMapper.fromSignUpInputToUser(input, hashedPassword);
+    User user = conversionService.convert(input, User.class);
+    user.setPassword(hashedPassword);
     userRepository.save(user);
 
     log.info("user: {}", user);
 
-    SignUpOutput output = userMapper.fromUserToSignUpOutput(user);
+    SignUpOutput output = SignUpOutput.builder()
+        .id(user.getId())
+        .build();
     log.info("End signUp output: {}", output);
     return output;
   }
