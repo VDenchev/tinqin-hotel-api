@@ -25,6 +25,7 @@ import com.tinqinacademy.hotel.persistence.entities.bed.Bed;
 import com.tinqinacademy.hotel.persistence.entities.booking.Booking;
 import com.tinqinacademy.hotel.persistence.entities.guest.Guest;
 import com.tinqinacademy.hotel.persistence.entities.room.Room;
+import com.tinqinacademy.hotel.persistence.enums.BathroomType;
 import com.tinqinacademy.hotel.persistence.enums.BedSize;
 import com.tinqinacademy.hotel.persistence.models.output.VisitorSearchResult;
 import com.tinqinacademy.hotel.persistence.repositories.BedRepository;
@@ -153,17 +154,19 @@ public class SystemServiceImpl implements SystemService {
   public AddRoomOutput addRoom(AddRoomInput input) {
     log.info("Start addRoom input: {}", input);
 
-    Optional<Room> roomWithTheSameNumber = roomRepository.findRoomByNumber(input.getRoomInput().getRoomNo());
+    RoomInput roomInput = input.getRoomInput();
+    Optional<Room> roomWithTheSameNumber = roomRepository.findRoomByNumber(roomInput.getRoomNo());
     if (roomWithTheSameNumber.isPresent()) {
       throw new EntityAlreadyExistsException("Room with room number " +
-          input.getRoomInput().getRoomNo() + " already exists!"
+          roomInput.getRoomNo() + " already exists!"
       );
     }
-    List<Bed> beds = getBedEntitiesFromRoomInput(input.getRoomInput());
+
+    List<Bed> beds = getBedEntitiesFromRoomInput(roomInput);
 
     Room roomToAdd = conversionService.convert(input, Room.class);
     roomToAdd.setBeds(beds);
-    log.info("Mapping addRoom room: {}", roomToAdd);
+    roomToAdd.setBathroomType(conversionService.convert(roomInput.getBathroomType(), BathroomType.class));
 
     roomRepository.save(roomToAdd);
 
@@ -194,10 +197,12 @@ public class SystemServiceImpl implements SystemService {
     roomRepository.findById(input.getRoomId())
         .orElseThrow(() -> new EntityNotFoundException("Room", input.getRoomId()));
 
-    List<Bed> beds = getBedEntitiesFromRoomInput(input.getRoomInput());
+    RoomInput roomInput = input.getRoomInput();
+    List<Bed> beds = getBedEntitiesFromRoomInput(roomInput);
 
-    Room roomToUpdate = conversionService.convert(input.getRoomInput(), Room.class);
+    Room roomToUpdate = conversionService.convert(roomInput, Room.class);
     roomToUpdate.setBeds(beds);
+    roomToUpdate.setBathroomType(conversionService.convert(roomInput.getBathroomType(), BathroomType.class));
     log.info("Mapping updateRoom room: {}", roomToUpdate);
 
     roomRepository.save(roomToUpdate);
@@ -216,10 +221,16 @@ public class SystemServiceImpl implements SystemService {
 
     Room savedRoom = roomRepository.findById(input.getRoomId())
         .orElseThrow(() -> new EntityNotFoundException("Room", input.getRoomId()));
-    Room partialRoom = conversionService.convert(input.getRoomInput(), Room.class);
+
+    RoomInput roomInput = input.getRoomInput();
+    Room partialRoom = conversionService.convert(roomInput, Room.class);
+
+    partialRoom.setId(input.getRoomId());
+    partialRoom.setBathroomType(conversionService.convert(roomInput.getBathroomType(), BathroomType.class));
+
     List<Bed> beds = null;
-    if (input.getRoomInput().getBedSizes() != null) {
-      beds = getBedEntitiesFromRoomInput(input.getRoomInput());
+    if (roomInput.getBedSizes() != null) {
+      beds = getBedEntitiesFromRoomInput(roomInput);
     }
     partialRoom.setBeds(beds);
 

@@ -12,16 +12,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RoomInputToRoom implements Converter<RoomInput, Room> {
 
-  private final ApiBathroomTypeToPersistenceBathroomType apiBathroomTypeToPersistenceBathroomType;
-
   @Override
   public Room convert(RoomInput source) {
     return Room.builder()
         .number(source.getRoomNo())
         .floor(source.getFloor())
         .price(source.getPrice())
-        .bathroomType(
-            apiBathroomTypeToPersistenceBathroomType.convert(source.getBathroomType())
-        ).build();
+        .build();
   }
 }
