@@ -14,7 +14,7 @@ public class VisitorDetailsInputToGuest extends BaseConverter<VisitorDetailsInpu
         .firstName(source.getFirstName())
         .lastName(source.getLastName())
         .birthDate(source.getBirthDate())
-        .idCardNumber(source.getIdCardNumber())
+        .idCardNumber(source.getIdCardNo())
         .idCardValidity(source.getIdCardValidity())
         .idCardIssueAuthority(source.getIdCardIssueAuthority())
         .idCardIssueDate(source.getIdCardIssueDate())

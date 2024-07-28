@@ -125,15 +125,15 @@ public class SystemController {
         .firstName(firstName)
         .lastName(lastName)
         .birthDate(birthDate)
-        .phoneNumber(phoneNumber)
+        .phoneNo(phoneNumber)
         .idCardValidity(cardValidity)
         .idCardIssueAuthority(cardIssueAuthority)
         .idCardIssueDate(cardIssueDate)
-        .idCardNumber(idCardNumber)
+        .idCardNo(idCardNumber)
         .build();
     SearchVisitorsInput input = SearchVisitorsInput.builder()
         .visitorDetailsInput(details)
-        .roomNumber(roomNumber)
+        .roomNo(roomNumber)
         .build();
 
     SearchVisitorsOutput output = systemService.searchVisitors(input);
@@ -195,7 +195,7 @@ public class SystemController {
       @Validated @RequestBody UpdateRoomInput input
   ) {
 
-    input.setId(roomId);
+    input.setRoomId(roomId);
     UpdateRoomOutput output = systemService.updateRoom(input);
 
     return new ResponseEntity<>(output, HttpStatus.OK);

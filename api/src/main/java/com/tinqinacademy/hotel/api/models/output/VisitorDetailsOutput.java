@@ -21,9 +21,9 @@ public class VisitorDetailsOutput {
   private LocalDate endDate;
   private String firstName;
   private String lastName;
-  private String phoneNumber;
+  private String phoneNo;
+  private String idCardNo;
   private LocalDate birthDate;
-  private String idCardNumber;
   private LocalDate idCardValidity;
   private String idCardIssueAuthority;
   private LocalDate idCardIssueDate;

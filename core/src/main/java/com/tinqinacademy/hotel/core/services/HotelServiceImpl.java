@@ -14,15 +14,12 @@ import com.tinqinacademy.hotel.api.operations.getroom.output.RoomDetailsOutput;
 import com.tinqinacademy.hotel.api.operations.removebooking.input.RemoveBookingInput;
 import com.tinqinacademy.hotel.api.operations.removebooking.output.RemoveBookingOutput;
 import com.tinqinacademy.hotel.api.services.contracts.HotelService;
-import com.tinqinacademy.hotel.core.mappers.BookingMapper;
-import com.tinqinacademy.hotel.core.mappers.RoomMapper;
 import com.tinqinacademy.hotel.persistence.enums.BathroomType;
 import com.tinqinacademy.hotel.persistence.entities.bed.Bed;
 import com.tinqinacademy.hotel.persistence.entities.booking.Booking;
 import com.tinqinacademy.hotel.persistence.entities.room.Room;
 import com.tinqinacademy.hotel.persistence.entities.user.User;
 import com.tinqinacademy.hotel.persistence.enums.BedSize;
-import com.tinqinacademy.hotel.persistence.repositories.BedRepository;
 import com.tinqinacademy.hotel.persistence.repositories.BookingRepository;
 import com.tinqinacademy.hotel.persistence.repositories.RoomRepository;
 import com.tinqinacademy.hotel.persistence.repositories.UserRepository;
@@ -33,7 +30,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -97,8 +93,8 @@ public class HotelServiceImpl implements HotelService {
   public RoomDetailsOutput getRoom(RoomDetailsInput input) {
     log.info("Start getRoom input: {}", input);
 
-    Room room = roomRepository.findById(input.getId())
-        .orElseThrow(() -> new EntityNotFoundException("Room", input.getId()));
+    Room room = roomRepository.findById(input.getRoomId())
+        .orElseThrow(() -> new EntityNotFoundException("Room", input.getRoomId()));
 
     List<LocalDate> dates = room.getBookings().stream()
         .flatMap(b -> b.getStartDate().datesUntil(b.getEndDate().plusDays(1)))
@@ -138,7 +134,7 @@ public class HotelServiceImpl implements HotelService {
       input.setBedCount(0);
     }
 
-    List<String> bedSizes = input.getBedTypes().stream().map(b -> BedSize.getByCode(b.getCode()).name()).toList();
+    List<String> bedSizes = input.getBedSizes().stream().map(b -> BedSize.getByCode(b.getCode()).name()).toList();
     BathroomType bathroomType = conversionService.convert(input.getBathroomType(), BathroomType.class);
     List<UUID> result = roomRepository.findAllAvailableRoomIds(startDate, endDate, bathroomType.name(), bedSizes, input.getBedCount());
 

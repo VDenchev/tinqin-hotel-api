@@ -44,12 +44,12 @@ public class VisitorDetailsInput {
   @NotBlank(message = "Phone number cannot be blank")
   @Size(min = 10, max = 15, message = "Invalid number format")
   @Schema(example = "+359984371483")
-  private String phoneNumber;
+  private String phoneNo;
 
   @NotBlank(message = "Id card number must not be blank")
   @Size(min = 8, max = 15, message = "Id card number must be between 8 and 15 characters")
   @Schema(defaultValue = "12341222")
-  private String idCardNumber;
+  private String idCardNo;
 
   @Past(message = "Birth date cannot be a future date")
   @Schema(example = "2004-10-10")

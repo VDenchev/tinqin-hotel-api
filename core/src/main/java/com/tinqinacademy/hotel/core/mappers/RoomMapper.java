@@ -23,7 +23,7 @@ public interface RoomMapper {
 
 
   @Mapping(target = ".", source = "roomInput")
-  @Mapping(target = "id", source = "id")
+  @Mapping(target = "id", source = "roomId")
   Room fromUpdateRoomInputToRoom(UpdateRoomInput input);
 
   @Mapping(target = ".", source = "roomInput")
