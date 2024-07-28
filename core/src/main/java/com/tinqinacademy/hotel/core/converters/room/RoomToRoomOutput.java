@@ -13,7 +13,6 @@ public class RoomToRoomOutput extends BaseConverter<Room, RoomOutput> {
         .id(source.getId())
         .floor(source.getFloor())
         .price(source.getPrice())
-        .bedCount(source.getBeds().size())
         .number(source.getNumber())
         .build();
   }
