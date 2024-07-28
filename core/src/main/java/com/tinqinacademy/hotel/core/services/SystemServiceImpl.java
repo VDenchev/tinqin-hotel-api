@@ -260,6 +260,7 @@ public class SystemServiceImpl implements SystemService {
   }
 
   @Override
+  @Transactional
   public DeleteRoomOutput deleteRoom(DeleteRoomInput input) {
     log.info("Start deleteRoom input: {}", input);
 
@@ -273,6 +274,7 @@ public class SystemServiceImpl implements SystemService {
 //      }
 
 //      room.getBookings().forEach(b -> ); bookingRepository.delete();
+    bookingRepository.deleteBookingsByRoom(room);
     roomRepository.delete(room);
 
     DeleteRoomOutput output = DeleteRoomOutput.builder()
