@@ -90,6 +90,7 @@ public class HotelServiceImpl implements HotelService {
   }
 
   @Override
+  @Transactional
   public RoomDetailsOutput getRoom(RoomDetailsInput input) {
     log.info("Start getRoom input: {}", input);
 
@@ -117,6 +118,7 @@ public class HotelServiceImpl implements HotelService {
   }
 
   @Override
+  @Transactional
   public AvailableRoomsOutput checkAvailableRooms(AvailableRoomsInput input) {
     log.info("Start checkAvailableRooms input: {}", input);
 
@@ -145,6 +147,7 @@ public class HotelServiceImpl implements HotelService {
   }
 
   @Override
+  @Transactional
   public RemoveBookingOutput removeBooking(RemoveBookingInput input) {
     log.info("Start removeBooking input: {}", input);
 
