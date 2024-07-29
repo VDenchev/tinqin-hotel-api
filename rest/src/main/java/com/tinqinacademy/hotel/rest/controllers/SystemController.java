@@ -54,6 +54,7 @@ public class SystemController {
   private final BaseOperation<AddRoomInput, AddRoomOutput> addRoomOperation;
   private final BaseOperation<DeleteRoomInput, DeleteRoomOutput> deleteRoomOperation;
   private final BaseOperation<PartialUpdateRoomInput, PartialUpdateRoomOutput> partialUpdateRoomOperation;
+  private final BaseOperation<RegisterVisitorsInput, RegisterVisitorsOutput> registerVisitorsOperation;
 
   @InitBinder
   public void initBinder(WebDataBinder binder) {
@@ -90,7 +91,7 @@ public class SystemController {
       @PathVariable UUID bookingId
   ) {
     input.setBookingId(bookingId);
-    RegisterVisitorsOutput output = systemService.registerVisitors(input);
+    RegisterVisitorsOutput output = registerVisitorsOperation.process(input);
 
     return new ResponseEntity<>(output, HttpStatus.OK);
   }
