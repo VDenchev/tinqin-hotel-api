@@ -2,7 +2,6 @@ package com.tinqinacademy.hotel.rest.controllers;
 
 import com.tinqinacademy.hotel.api.models.input.VisitorDetailsInput;
 import com.tinqinacademy.hotel.api.operations.addroom.input.AddRoomInput;
-import com.tinqinacademy.hotel.api.operations.addroom.operation.AddRoomOperation;
 import com.tinqinacademy.hotel.api.operations.addroom.output.AddRoomOutput;
 import com.tinqinacademy.hotel.api.operations.base.BaseOperation;
 import com.tinqinacademy.hotel.api.operations.deleteroom.input.DeleteRoomInput;
@@ -53,6 +52,7 @@ public class SystemController {
 
   private final SystemService systemService;
   private final BaseOperation<AddRoomInput, AddRoomOutput> addRoomOperation;
+  private final BaseOperation<DeleteRoomInput, DeleteRoomOutput> deleteRoomOperation;
 
   @InitBinder
   public void initBinder(WebDataBinder binder) {
@@ -253,7 +253,7 @@ public class SystemController {
   @DeleteMapping(DELETE_ROOM)
   public ResponseEntity<DeleteRoomOutput> deleteRoom(@PathVariable("roomId") DeleteRoomInput input) {
 
-    DeleteRoomOutput output = systemService.deleteRoom(input);
+    DeleteRoomOutput output = deleteRoomOperation.process(input);
 
     return new ResponseEntity<>(output, HttpStatus.OK);
   }

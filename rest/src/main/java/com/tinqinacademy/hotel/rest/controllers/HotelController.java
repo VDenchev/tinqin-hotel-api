@@ -44,6 +44,7 @@ public class HotelController {
 
   private final HotelService hotelService;
   private final BaseOperation<BookRoomInput, BookRoomOutput> bookRoomOperation;
+  private final BaseOperation<AvailableRoomsInput, AvailableRoomsOutput> checkAvailableRoomsOperation;
 
   @Operation(
       summary = "Checks if a room is available",
@@ -72,7 +73,7 @@ public class HotelController {
         .bathroomType(BathroomType.getByCode(bathroomType))
         .build();
 
-    AvailableRoomsOutput output = hotelService.checkAvailableRooms(input);
+    AvailableRoomsOutput output = checkAvailableRoomsOperation.process(input);
     return ResponseEntity.ok(output);
   }
 
