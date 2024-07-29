@@ -15,6 +15,7 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - db_data:/var/lib/postgresql/data
+      - ./create_db.sh:/docker-entrypoint-initdb.d/create_db.sh
     networks:
       - net1
     healthcheck:
