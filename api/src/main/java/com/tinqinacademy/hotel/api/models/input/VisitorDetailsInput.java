@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.api.models.input;
 
+import com.tinqinacademy.hotel.api.validators.annotations.DatesMatch;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -21,6 +22,11 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @ToString
+@DatesMatch(
+    startField = "startDate",
+    endField = "endDate",
+    message = "Start date must be fore end date"
+)
 public class VisitorDetailsInput {
 
   @FutureOrPresent(message = "Start date must be in the future")
