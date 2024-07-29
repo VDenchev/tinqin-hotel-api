@@ -2,7 +2,9 @@ package com.tinqinacademy.hotel.rest.controllers;
 
 import com.tinqinacademy.hotel.api.models.input.VisitorDetailsInput;
 import com.tinqinacademy.hotel.api.operations.addroom.input.AddRoomInput;
+import com.tinqinacademy.hotel.api.operations.addroom.operation.AddRoomOperation;
 import com.tinqinacademy.hotel.api.operations.addroom.output.AddRoomOutput;
+import com.tinqinacademy.hotel.api.operations.base.BaseOperation;
 import com.tinqinacademy.hotel.api.operations.deleteroom.input.DeleteRoomInput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.output.DeleteRoomOutput;
 import com.tinqinacademy.hotel.api.operations.partialupdateroom.input.PartialUpdateRoomInput;
@@ -50,6 +52,7 @@ import static com.tinqinacademy.hotel.api.RestApiRoutes.UPDATE_ROOM;
 public class SystemController {
 
   private final SystemService systemService;
+  private final BaseOperation<AddRoomInput, AddRoomOutput> addRoomOperation;
 
   @InitBinder
   public void initBinder(WebDataBinder binder) {
@@ -161,8 +164,7 @@ public class SystemController {
   })
   @PostMapping(ADD_ROOM)
   public ResponseEntity<AddRoomOutput> addRoom(@RequestBody @Validated AddRoomInput input) {
-
-    AddRoomOutput output = systemService.addRoom(input);
+    AddRoomOutput output = addRoomOperation.process(input);
 
     return new ResponseEntity<>(output, HttpStatus.CREATED);
   }
