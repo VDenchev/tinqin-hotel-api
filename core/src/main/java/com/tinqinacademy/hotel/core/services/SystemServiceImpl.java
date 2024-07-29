@@ -78,18 +78,23 @@ public class SystemServiceImpl implements SystemService {
     }
 
     List<String> inputIdCardNumbers = input.getVisitors().stream()
-        .map(VisitorDetailsInput::getIdCardNo).toList();
+        .map(VisitorDetailsInput::getIdCardNo)
+        .toList();
     List<Guest> guestsInBooking = guestRepository.getAllGuestsByBookingIdAndIdCardNumberList(booking.getId(), inputIdCardNumbers);
     if (!guestsInBooking.isEmpty()) {
       throw new EntityAlreadyExistsException(String.format("Guest already registered in booking with id %s", booking.getId()));
     }
 
     List<Guest> existingGuests = guestRepository.getAllGuestsByIdCardNumberList(inputIdCardNumbers);
-    Set<String> existingGuestsIdCardNumbers = existingGuests.stream().map(Guest::getIdCardNumber).collect(Collectors.toSet());
+    Set<String> existingGuestsIdCardNumbers = existingGuests.stream()
+        .map(Guest::getIdCardNumber)
+        .collect(Collectors.toSet());
     List<VisitorDetailsInput> filteredInput = input.getVisitors().stream()
         .filter(g -> !existingGuestsIdCardNumbers.contains(g.getIdCardNo()))
         .toList();
-    List<Guest> guestsToSave = filteredInput.stream().map(fi -> conversionService.convert(fi, Guest.class)).toList();
+    List<Guest> guestsToSave = filteredInput.stream()
+        .map(fi -> conversionService.convert(fi, Guest.class))
+        .toList();
 
     log.info("Guests to be saved: {}", guestsToSave);
 
@@ -166,7 +171,7 @@ public class SystemServiceImpl implements SystemService {
 
     List<Bed> beds = getBedEntitiesFromRoomInput(roomInput);
 
-    Room roomToAdd = conversionService.convert(input, Room.class);
+    Room roomToAdd = conversionService.convert(roomInput, Room.class);
     roomToAdd.setBeds(beds);
     roomToAdd.setBathroomType(conversionService.convert(roomInput.getBathroomType(), BathroomType.class));
 
