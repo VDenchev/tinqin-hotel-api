@@ -59,7 +59,7 @@ public class CheckAvailableRoomsOperationImpl implements CheckAvailableRoomsOper
     return endDate;
   }
 
-  private static Integer getBedCountOrDefault(Integer bedCount) {
+  private Integer getBedCountOrDefault(Integer bedCount) {
     if (bedCount == null || bedCount < 0) {
       return DEFAULT_BED_COUNT;
     }

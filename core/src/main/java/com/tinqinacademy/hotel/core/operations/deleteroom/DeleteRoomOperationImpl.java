@@ -39,7 +39,7 @@ public class DeleteRoomOperationImpl implements DeleteRoomOperation {
     return output;
   }
 
-  private static DeleteRoomOutput createOutput() {
+  private DeleteRoomOutput createOutput() {
     return DeleteRoomOutput.builder()
         .build();
   }

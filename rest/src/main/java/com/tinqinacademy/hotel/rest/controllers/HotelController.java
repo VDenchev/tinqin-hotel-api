@@ -45,6 +45,7 @@ public class HotelController {
   private final HotelService hotelService;
   private final BaseOperation<BookRoomInput, BookRoomOutput> bookRoomOperation;
   private final BaseOperation<AvailableRoomsInput, AvailableRoomsOutput> checkAvailableRoomsOperation;
+  private final BaseOperation<RoomDetailsInput, RoomDetailsOutput> getRoomOperation;
 
   @Operation(
       summary = "Checks if a room is available",
@@ -90,7 +91,7 @@ public class HotelController {
   public ResponseEntity<RoomDetailsOutput> getRoom(
       @PathVariable UUID roomId
   ) {
-    RoomDetailsOutput output = hotelService.getRoom(RoomDetailsInput.builder()
+    RoomDetailsOutput output = getRoomOperation.process(RoomDetailsInput.builder()
         .roomId(roomId)
         .build());
     return new ResponseEntity<>(output, HttpStatus.OK);

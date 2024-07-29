@@ -79,7 +79,7 @@ public class AddRoomOperationImpl implements AddRoomOperation {
   }
 
   private AddRoomOutput convertRoomToRoomOutput(Room room) {
-     return AddRoomOutput.builder()
+    return AddRoomOutput.builder()
         .id(room.getId())
         .build();
   }
