@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.api.operations.bookroom.input;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tinqinacademy.hotel.api.validators.annotations.DatesMatch;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
@@ -22,6 +23,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@DatesMatch(startField = "startDate",
+    endField = "endDate",
+    message = "Start date must be before endDate")
 public class BookRoomInput {
 
   @JsonIgnore
@@ -37,7 +41,7 @@ public class BookRoomInput {
   @Schema(example = "2025-10-11")
   private LocalDate endDate;
 
-  @Size(min = 10, max=15, message="Invalid phone number format")
+  @Size(min = 10, max = 15, message = "Invalid phone number format")
   @Schema(example = "+359 972947321")
   private String phoneNumber;
 
