@@ -7,7 +7,7 @@ import com.tinqinacademy.hotel.api.operations.base.BaseOperation;
 import com.tinqinacademy.hotel.api.operations.deleteroom.input.DeleteRoomInput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.output.DeleteRoomOutput;
 import com.tinqinacademy.hotel.api.operations.partialupdateroom.input.PartialUpdateRoomInput;
-import com.tinqinacademy.hotel.api.operations.partialupdateroom.output.PartialUpdateOutput;
+import com.tinqinacademy.hotel.api.operations.partialupdateroom.output.PartialUpdateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.registervisitors.input.RegisterVisitorsInput;
 import com.tinqinacademy.hotel.api.operations.registervisitors.output.RegisterVisitorsOutput;
 import com.tinqinacademy.hotel.api.operations.searchvisitors.input.SearchVisitorsInput;
@@ -53,6 +53,7 @@ public class SystemController {
   private final SystemService systemService;
   private final BaseOperation<AddRoomInput, AddRoomOutput> addRoomOperation;
   private final BaseOperation<DeleteRoomInput, DeleteRoomOutput> deleteRoomOperation;
+  private final BaseOperation<PartialUpdateRoomInput, PartialUpdateRoomOutput> partialUpdateRoomOperation;
 
   @InitBinder
   public void initBinder(WebDataBinder binder) {
@@ -226,12 +227,12 @@ public class SystemController {
       )
   })
   @PatchMapping(PARTIAL_UPDATE_ROOM)
-  public ResponseEntity<PartialUpdateOutput> partialUpdateRoom(
+  public ResponseEntity<PartialUpdateRoomOutput> partialUpdateRoom(
       @PathVariable UUID roomId,
       @Validated(NonMandatoryFieldsGroup.class) @RequestBody PartialUpdateRoomInput input
   ) {
     input.setRoomId(roomId);
-    PartialUpdateOutput output = systemService.partialUpdateRoom(input);
+    PartialUpdateRoomOutput output = partialUpdateRoomOperation.process(input);
 
     return new ResponseEntity<>(output, HttpStatus.OK);
   }

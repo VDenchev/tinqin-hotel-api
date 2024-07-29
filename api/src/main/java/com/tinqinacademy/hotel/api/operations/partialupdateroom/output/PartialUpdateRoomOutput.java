@@ -16,7 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @ToString
-public class PartialUpdateOutput {
+public class PartialUpdateRoomOutput {
 
   private UUID id;
 }

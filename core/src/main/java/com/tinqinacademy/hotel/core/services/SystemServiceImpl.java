@@ -13,7 +13,7 @@ import com.tinqinacademy.hotel.api.operations.addroom.output.AddRoomOutput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.input.DeleteRoomInput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.output.DeleteRoomOutput;
 import com.tinqinacademy.hotel.api.operations.partialupdateroom.input.PartialUpdateRoomInput;
-import com.tinqinacademy.hotel.api.operations.partialupdateroom.output.PartialUpdateOutput;
+import com.tinqinacademy.hotel.api.operations.partialupdateroom.output.PartialUpdateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.registervisitors.input.RegisterVisitorsInput;
 import com.tinqinacademy.hotel.api.operations.registervisitors.output.RegisterVisitorsOutput;
 import com.tinqinacademy.hotel.api.operations.searchvisitors.input.SearchVisitorsInput;
@@ -225,7 +225,7 @@ public class SystemServiceImpl implements SystemService {
 
   @Override
   @Transactional
-  public PartialUpdateOutput partialUpdateRoom(PartialUpdateRoomInput input) {
+  public PartialUpdateRoomOutput partialUpdateRoom(PartialUpdateRoomInput input) {
     log.info("Start partialUpdateRoom input: {}", input);
 
     Room savedRoom = roomRepository.findById(input.getRoomId())
@@ -260,7 +260,7 @@ public class SystemServiceImpl implements SystemService {
       throw new RuntimeException(e);
     }
 
-    PartialUpdateOutput output = PartialUpdateOutput.builder()
+    PartialUpdateRoomOutput output = PartialUpdateRoomOutput.builder()
         .id(savedRoom.getId())
         .build();
 
