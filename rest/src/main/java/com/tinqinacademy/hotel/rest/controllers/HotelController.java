@@ -2,6 +2,7 @@ package com.tinqinacademy.hotel.rest.controllers;
 
 import com.tinqinacademy.hotel.api.enums.BathroomType;
 import com.tinqinacademy.hotel.api.enums.BedType;
+import com.tinqinacademy.hotel.api.operations.base.BaseOperation;
 import com.tinqinacademy.hotel.api.operations.bookroom.input.BookRoomInput;
 import com.tinqinacademy.hotel.api.operations.bookroom.output.BookRoomOutput;
 import com.tinqinacademy.hotel.api.operations.checkavailablerooms.input.AvailableRoomsInput;
@@ -42,6 +43,10 @@ import static com.tinqinacademy.hotel.api.RestApiRoutes.REMOVE_BOOKING;
 public class HotelController {
 
   private final HotelService hotelService;
+  private final BaseOperation<BookRoomInput, BookRoomOutput> bookRoomOperation;
+  private final BaseOperation<AvailableRoomsInput, AvailableRoomsOutput> checkAvailableRoomsOperation;
+  private final BaseOperation<RoomDetailsInput, RoomDetailsOutput> getRoomOperation;
+  private final BaseOperation<RemoveBookingInput, RemoveBookingOutput> removeBookingOperation;
 
   @Operation(
       summary = "Checks if a room is available",
@@ -70,7 +75,7 @@ public class HotelController {
         .bathroomType(BathroomType.getByCode(bathroomType))
         .build();
 
-    AvailableRoomsOutput output = hotelService.checkAvailableRooms(input);
+    AvailableRoomsOutput output = checkAvailableRoomsOperation.process(input);
     return ResponseEntity.ok(output);
   }
 
@@ -87,7 +92,7 @@ public class HotelController {
   public ResponseEntity<RoomDetailsOutput> getRoom(
       @PathVariable UUID roomId
   ) {
-    RoomDetailsOutput output = hotelService.getRoom(RoomDetailsInput.builder()
+    RoomDetailsOutput output = getRoomOperation.process(RoomDetailsInput.builder()
         .roomId(roomId)
         .build());
     return new ResponseEntity<>(output, HttpStatus.OK);
@@ -106,7 +111,7 @@ public class HotelController {
   @PostMapping(BOOK_ROOM)
   public ResponseEntity<BookRoomOutput> bookRoom(@PathVariable UUID roomId, @Validated @RequestBody BookRoomInput input) {
     input.setRoomId(roomId);
-    BookRoomOutput output = hotelService.bookRoom(input);
+    BookRoomOutput output = bookRoomOperation.process(input);
 
     return new ResponseEntity<>(output, HttpStatus.OK);
   }
@@ -125,7 +130,7 @@ public class HotelController {
     RemoveBookingInput input = RemoveBookingInput.builder()
         .bookingId(bookingId)
         .build();
-    RemoveBookingOutput output = hotelService.removeBooking(input);
+    RemoveBookingOutput output = removeBookingOperation.process(input);
 
     return new ResponseEntity<>(output, HttpStatus.OK);
   }

@@ -1,8 +1,8 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
+import com.tinqinacademy.hotel.api.operations.base.BaseOperation;
 import com.tinqinacademy.hotel.api.operations.signup.input.SignUpInput;
 import com.tinqinacademy.hotel.api.operations.signup.output.SignUpOutput;
-import com.tinqinacademy.hotel.api.services.contracts.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +16,12 @@ import static com.tinqinacademy.hotel.api.RestApiRoutes.SIGN_UP;
 @RequiredArgsConstructor
 public class UserController {
 
-  private final UserService userService;
+  private final BaseOperation<SignUpInput, SignUpOutput> signUpOperation;
 
   @PostMapping(SIGN_UP)
   public ResponseEntity<SignUpOutput> signUp(@RequestBody @Valid SignUpInput input) {
 
-    SignUpOutput output = userService.signUp(input);
+    SignUpOutput output = signUpOperation.process(input);
 
     return ResponseEntity.ok(output);
   }
