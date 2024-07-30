@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.operations.bookroom;
+package com.tinqinacademy.hotel.core.processors.bookroom;
 
 import com.tinqinacademy.hotel.api.exceptions.EntityNotFoundException;
 import com.tinqinacademy.hotel.api.exceptions.RoomUnavailableException;
@@ -24,7 +24,7 @@ import java.util.UUID;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class BookRoomOperationImpl implements BookRoomOperation {
+public class BookRoomOperationProcessor implements BookRoomOperation {
 
   private final UserRepository userRepository;
   private final BookingRepository bookingRepository;

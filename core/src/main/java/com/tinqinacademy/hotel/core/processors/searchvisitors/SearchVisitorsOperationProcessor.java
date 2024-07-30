@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.operations.searchvisitors;
+package com.tinqinacademy.hotel.core.processors.searchvisitors;
 
 import com.tinqinacademy.hotel.api.models.input.VisitorDetailsInput;
 import com.tinqinacademy.hotel.api.models.output.VisitorDetailsOutput;
@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SearchVisitorsOperationImpl implements SearchVisitorsOperation {
+public class SearchVisitorsOperationProcessor implements SearchVisitorsOperation {
 
   private final CustomGuestRepository customGuestRepository;
 

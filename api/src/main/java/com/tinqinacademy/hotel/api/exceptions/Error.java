@@ -1,6 +1,5 @@
-package com.tinqinacademy.hotel.api.operations.updateroom.output;
+package com.tinqinacademy.hotel.api.exceptions;
 
-import com.tinqinacademy.hotel.api.base.OperationOutput;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,15 +7,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @ToString
-public class UpdateRoomOutput implements OperationOutput {
-
-  private UUID id;
+public class Error {
+  private String message;
+  private String field;
 }

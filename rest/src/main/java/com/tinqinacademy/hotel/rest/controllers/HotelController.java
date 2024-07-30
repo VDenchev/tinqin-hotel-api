@@ -2,17 +2,20 @@ package com.tinqinacademy.hotel.rest.controllers;
 
 import com.tinqinacademy.hotel.api.enums.BathroomType;
 import com.tinqinacademy.hotel.api.enums.BedType;
-import com.tinqinacademy.hotel.api.operations.base.BaseOperation;
+import com.tinqinacademy.hotel.api.base.Operation;
 import com.tinqinacademy.hotel.api.operations.bookroom.input.BookRoomInput;
+import com.tinqinacademy.hotel.api.operations.bookroom.operation.BookRoomOperation;
 import com.tinqinacademy.hotel.api.operations.bookroom.output.BookRoomOutput;
 import com.tinqinacademy.hotel.api.operations.checkavailablerooms.input.AvailableRoomsInput;
+import com.tinqinacademy.hotel.api.operations.checkavailablerooms.operation.CheckAvailableRoomsOperation;
 import com.tinqinacademy.hotel.api.operations.checkavailablerooms.output.AvailableRoomsOutput;
 import com.tinqinacademy.hotel.api.operations.getroom.input.RoomDetailsInput;
+import com.tinqinacademy.hotel.api.operations.getroom.operation.GetRoomOperation;
 import com.tinqinacademy.hotel.api.operations.getroom.output.RoomDetailsOutput;
 import com.tinqinacademy.hotel.api.operations.removebooking.input.RemoveBookingInput;
+import com.tinqinacademy.hotel.api.operations.removebooking.operation.RemoveBookingOperation;
 import com.tinqinacademy.hotel.api.operations.removebooking.output.RemoveBookingOutput;
 import com.tinqinacademy.hotel.api.services.contracts.HotelService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -42,13 +45,12 @@ import static com.tinqinacademy.hotel.api.RestApiRoutes.REMOVE_BOOKING;
 @RequiredArgsConstructor
 public class HotelController {
 
-  private final HotelService hotelService;
-  private final BaseOperation<BookRoomInput, BookRoomOutput> bookRoomOperation;
-  private final BaseOperation<AvailableRoomsInput, AvailableRoomsOutput> checkAvailableRoomsOperation;
-  private final BaseOperation<RoomDetailsInput, RoomDetailsOutput> getRoomOperation;
-  private final BaseOperation<RemoveBookingInput, RemoveBookingOutput> removeBookingOperation;
+  private final BookRoomOperation bookRoomOperation;
+  private final CheckAvailableRoomsOperation checkAvailableRoomsOperation;
+  private final GetRoomOperation getRoomOperation;
+  private final RemoveBookingOperation removeBookingOperation;
 
-  @Operation(
+  @io.swagger.v3.oas.annotations.Operation(
       summary = "Checks if a room is available",
       description = "Checks whether a room is available fro a certain period. Room requirements should come as query parameters in URL."
   )
@@ -80,7 +82,7 @@ public class HotelController {
   }
 
 
-  @Operation(
+  @io.swagger.v3.oas.annotations.Operation(
       summary = "Returns room details",
       description = "Returns basic info for a room with the specified id"
   )
@@ -99,7 +101,7 @@ public class HotelController {
   }
 
 
-  @Operation(
+  @io.swagger.v3.oas.annotations.Operation(
       summary = "Books a hotel room",
       description = "Books the room with the corresponding id"
   )
@@ -117,7 +119,7 @@ public class HotelController {
   }
 
 
-  @Operation(
+  @io.swagger.v3.oas.annotations.Operation(
       summary = "Unbooks a hotel room",
       description = "Unbooks the room a user had already booked"
   )

@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.operations.partialupdateroom;
+package com.tinqinacademy.hotel.core.processors.partialupdateroom;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,13 +24,12 @@ import org.springframework.stereotype.Service;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class PartialUpdateRoomOperationImpl implements PartialUpdateRoomOperation {
+public class PartialUpdateRoomOperationProcessor implements PartialUpdateRoomOperation {
   
   private final RoomRepository roomRepository;
   private final BedRepository bedRepository;

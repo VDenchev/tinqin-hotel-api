@@ -2,6 +2,7 @@ package com.tinqinacademy.hotel.api.operations.partialupdateroom.input;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import com.tinqinacademy.hotel.api.models.input.RoomInput;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @ToString
-public class PartialUpdateRoomInput {
+public class PartialUpdateRoomInput implements OperationInput {
 
   @JsonUnwrapped
   @Valid

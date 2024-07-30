@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.api.operations.searchvisitors.output;
 
+import com.tinqinacademy.hotel.api.base.OperationOutput;
 import com.tinqinacademy.hotel.api.models.output.VisitorDetailsOutput;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @ToString
-public class SearchVisitorsOutput {
+public class SearchVisitorsOutput implements OperationOutput {
 
   private List<VisitorDetailsOutput> visitors;
 }

@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.operations.addroom;
+package com.tinqinacademy.hotel.core.processors.addroom;
 
 import com.tinqinacademy.hotel.api.exceptions.EntityAlreadyExistsException;
 import com.tinqinacademy.hotel.api.models.input.RoomInput;
@@ -24,7 +24,7 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class AddRoomOperationImpl implements AddRoomOperation {
+public class AddRoomOperationProcessor implements AddRoomOperation {
 
   private final RoomRepository roomRepository;
   private final BedRepository bedRepository;

@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.operations.registervisitors;
+package com.tinqinacademy.hotel.core.processors.registervisitors;
 
 import com.tinqinacademy.hotel.api.exceptions.EntityAlreadyExistsException;
 import com.tinqinacademy.hotel.api.exceptions.EntityNotFoundException;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class RegisterVisitorsOperationImpl implements RegisterVisitorsOperation {
+public class RegisterVisitorsOperationProcessor implements RegisterVisitorsOperation {
 
   private final BookingRepository bookingRepository;
   private final GuestRepository guestRepository;

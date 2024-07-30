@@ -2,17 +2,22 @@ package com.tinqinacademy.hotel.rest.controllers;
 
 import com.tinqinacademy.hotel.api.models.input.VisitorDetailsInput;
 import com.tinqinacademy.hotel.api.operations.addroom.input.AddRoomInput;
+import com.tinqinacademy.hotel.api.operations.addroom.operation.AddRoomOperation;
 import com.tinqinacademy.hotel.api.operations.addroom.output.AddRoomOutput;
-import com.tinqinacademy.hotel.api.operations.base.BaseOperation;
 import com.tinqinacademy.hotel.api.operations.deleteroom.input.DeleteRoomInput;
+import com.tinqinacademy.hotel.api.operations.deleteroom.operation.DeleteRoomOperation;
 import com.tinqinacademy.hotel.api.operations.deleteroom.output.DeleteRoomOutput;
 import com.tinqinacademy.hotel.api.operations.partialupdateroom.input.PartialUpdateRoomInput;
+import com.tinqinacademy.hotel.api.operations.partialupdateroom.operation.PartialUpdateRoomOperation;
 import com.tinqinacademy.hotel.api.operations.partialupdateroom.output.PartialUpdateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.registervisitors.input.RegisterVisitorsInput;
+import com.tinqinacademy.hotel.api.operations.registervisitors.operation.RegisterVisitorsOperation;
 import com.tinqinacademy.hotel.api.operations.registervisitors.output.RegisterVisitorsOutput;
 import com.tinqinacademy.hotel.api.operations.searchvisitors.input.SearchVisitorsInput;
+import com.tinqinacademy.hotel.api.operations.searchvisitors.operation.SearchVisitorsOperation;
 import com.tinqinacademy.hotel.api.operations.searchvisitors.output.SearchVisitorsOutput;
 import com.tinqinacademy.hotel.api.operations.updateroom.input.UpdateRoomInput;
+import com.tinqinacademy.hotel.api.operations.updateroom.operation.UpdateRoomOperation;
 import com.tinqinacademy.hotel.api.operations.updateroom.output.UpdateRoomOutput;
 import com.tinqinacademy.hotel.api.services.contracts.SystemService;
 import com.tinqinacademy.hotel.api.validation.groups.NonMandatoryFieldsGroup;
@@ -50,13 +55,12 @@ import static com.tinqinacademy.hotel.api.RestApiRoutes.UPDATE_ROOM;
 @RequiredArgsConstructor
 public class SystemController {
 
-  private final SystemService systemService;
-  private final BaseOperation<AddRoomInput, AddRoomOutput> addRoomOperation;
-  private final BaseOperation<DeleteRoomInput, DeleteRoomOutput> deleteRoomOperation;
-  private final BaseOperation<PartialUpdateRoomInput, PartialUpdateRoomOutput> partialUpdateRoomOperation;
-  private final BaseOperation<RegisterVisitorsInput, RegisterVisitorsOutput> registerVisitorsOperation;
-  private final BaseOperation<SearchVisitorsInput, SearchVisitorsOutput> searchVisitorsOperation;
-  private final BaseOperation<UpdateRoomInput, UpdateRoomOutput> updateRoomOperation;
+  private final AddRoomOperation addRoomOperation;
+  private final DeleteRoomOperation deleteRoomOperation;
+  private final PartialUpdateRoomOperation partialUpdateRoomOperation;
+  private final RegisterVisitorsOperation registerVisitorsOperation;
+  private final SearchVisitorsOperation searchVisitorsOperation;
+  private final UpdateRoomOperation updateRoomOperation;
 
 
   @InitBinder

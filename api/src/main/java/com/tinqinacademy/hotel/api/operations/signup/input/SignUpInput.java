@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.api.operations.signup.input;
 
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
@@ -16,7 +17,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Builder
-public class SignUpInput {
+public class SignUpInput implements OperationInput {
 
   @Size(min = 2, max = 40, message = "First name should be between 2 and 40 characters long")
   @Schema(example = "Pewis")

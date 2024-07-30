@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.api.operations.partialupdateroom.output;
 
+import com.tinqinacademy.hotel.api.base.OperationOutput;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @ToString
-public class PartialUpdateRoomOutput {
+public class PartialUpdateRoomOutput implements OperationOutput {
 
   private UUID id;
 }
