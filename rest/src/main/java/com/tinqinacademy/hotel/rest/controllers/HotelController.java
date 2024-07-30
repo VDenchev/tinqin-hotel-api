@@ -46,6 +46,7 @@ public class HotelController {
   private final BaseOperation<BookRoomInput, BookRoomOutput> bookRoomOperation;
   private final BaseOperation<AvailableRoomsInput, AvailableRoomsOutput> checkAvailableRoomsOperation;
   private final BaseOperation<RoomDetailsInput, RoomDetailsOutput> getRoomOperation;
+  private final BaseOperation<RemoveBookingInput, RemoveBookingOutput> removeBookingOperation;
 
   @Operation(
       summary = "Checks if a room is available",
@@ -129,7 +130,7 @@ public class HotelController {
     RemoveBookingInput input = RemoveBookingInput.builder()
         .bookingId(bookingId)
         .build();
-    RemoveBookingOutput output = hotelService.removeBooking(input);
+    RemoveBookingOutput output = removeBookingOperation.process(input);
 
     return new ResponseEntity<>(output, HttpStatus.OK);
   }
