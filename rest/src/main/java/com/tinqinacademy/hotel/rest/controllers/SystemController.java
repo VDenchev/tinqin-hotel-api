@@ -55,6 +55,7 @@ public class SystemController {
   private final BaseOperation<DeleteRoomInput, DeleteRoomOutput> deleteRoomOperation;
   private final BaseOperation<PartialUpdateRoomInput, PartialUpdateRoomOutput> partialUpdateRoomOperation;
   private final BaseOperation<RegisterVisitorsInput, RegisterVisitorsOutput> registerVisitorsOperation;
+  private final BaseOperation<SearchVisitorsInput, SearchVisitorsOutput> searchVisitorsOperation;
 
   @InitBinder
   public void initBinder(WebDataBinder binder) {
@@ -141,7 +142,7 @@ public class SystemController {
         .roomNo(roomNumber)
         .build();
 
-    SearchVisitorsOutput output = systemService.searchVisitors(input);
+    SearchVisitorsOutput output = searchVisitorsOperation.process(input);
 
     return ResponseEntity.ok(output);
   }
