@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.api.operations.bookroom.input;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import com.tinqinacademy.hotel.api.validators.annotations.DatesMatch;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -26,7 +27,7 @@ import java.util.UUID;
 @DatesMatch(startField = "startDate",
     endField = "endDate",
     message = "Start date must be before endDate")
-public class BookRoomInput {
+public class BookRoomInput implements OperationInput {
 
   @JsonIgnore
   private UUID roomId;

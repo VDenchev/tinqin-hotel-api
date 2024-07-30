@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.operations.signup;
+package com.tinqinacademy.hotel.core.processors.signup;
 
 import com.tinqinacademy.hotel.api.exceptions.EntityAlreadyExistsException;
 import com.tinqinacademy.hotel.api.operations.signup.input.SignUpInput;
@@ -23,7 +23,7 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SignUpOperationImpl implements SignUpOperation {
+public class SignUpOperationProcessor implements SignUpOperation {
 
   private final UserRepository userRepository;
   private final ConversionService conversionService;

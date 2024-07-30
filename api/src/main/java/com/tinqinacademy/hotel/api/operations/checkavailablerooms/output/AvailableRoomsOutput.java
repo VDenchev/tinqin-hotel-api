@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.api.operations.checkavailablerooms.output;
 
+import com.tinqinacademy.hotel.api.base.OperationOutput;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @ToString
-public class AvailableRoomsOutput {
+public class AvailableRoomsOutput implements OperationOutput {
 
   private List<UUID> roomIds;
 }

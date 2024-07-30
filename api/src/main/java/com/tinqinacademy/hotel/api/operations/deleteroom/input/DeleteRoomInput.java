@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.api.operations.deleteroom.input;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @ToString
-public class DeleteRoomInput {
+public class DeleteRoomInput implements OperationInput {
 
   @JsonValue
   private UUID id;

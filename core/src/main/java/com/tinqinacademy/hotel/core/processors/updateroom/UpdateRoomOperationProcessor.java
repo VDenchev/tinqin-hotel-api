@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.operations.updateroom;
+package com.tinqinacademy.hotel.core.processors.updateroom;
 
 import com.tinqinacademy.hotel.api.exceptions.EntityNotFoundException;
 import com.tinqinacademy.hotel.api.models.input.RoomInput;
@@ -22,7 +22,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UpdateRoomOperationImpl implements UpdateRoomOperation {
+public class UpdateRoomOperationProcessor implements UpdateRoomOperation {
 
   private final RoomRepository roomRepository;
   private final ConversionService conversionService;

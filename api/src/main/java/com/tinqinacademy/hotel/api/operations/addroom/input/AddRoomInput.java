@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.api.operations.addroom.input;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import com.tinqinacademy.hotel.api.models.input.RoomInput;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Builder
 @ToString
-public class AddRoomInput {
+public class AddRoomInput implements OperationInput {
 
   @JsonUnwrapped
   @Valid

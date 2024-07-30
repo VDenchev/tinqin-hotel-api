@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.api.operations.checkavailablerooms.input;
 
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import com.tinqinacademy.hotel.api.enums.BathroomType;
 import com.tinqinacademy.hotel.api.enums.BedType;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Builder
-public class AvailableRoomsInput {
+public class AvailableRoomsInput implements OperationInput {
 
   private Integer bedCount;
   private BathroomType bathroomType;

@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.api.operations.removebooking.output;
 
+import com.tinqinacademy.hotel.api.base.OperationOutput;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,5 +12,5 @@ import lombok.ToString;
 @AllArgsConstructor
 @Builder
 @ToString
-public class RemoveBookingOutput {
+public class RemoveBookingOutput implements OperationOutput {
 }

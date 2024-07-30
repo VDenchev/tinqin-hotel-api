@@ -1,7 +1,8 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
-import com.tinqinacademy.hotel.api.operations.base.BaseOperation;
+import com.tinqinacademy.hotel.api.base.Operation;
 import com.tinqinacademy.hotel.api.operations.signup.input.SignUpInput;
+import com.tinqinacademy.hotel.api.operations.signup.operation.SignUpOperation;
 import com.tinqinacademy.hotel.api.operations.signup.output.SignUpOutput;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import static com.tinqinacademy.hotel.api.RestApiRoutes.SIGN_UP;
 @RequiredArgsConstructor
 public class UserController {
 
-  private final BaseOperation<SignUpInput, SignUpOutput> signUpOperation;
+  private final SignUpOperation signUpOperation;
 
   @PostMapping(SIGN_UP)
   public ResponseEntity<SignUpOutput> signUp(@RequestBody @Valid SignUpInput input) {

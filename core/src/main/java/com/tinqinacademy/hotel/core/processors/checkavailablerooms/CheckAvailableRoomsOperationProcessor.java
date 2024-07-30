@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.operations.checkavailablerooms;
+package com.tinqinacademy.hotel.core.processors.checkavailablerooms;
 
 import com.tinqinacademy.hotel.persistence.enums.BathroomType;
 import com.tinqinacademy.hotel.api.enums.BedType;
@@ -19,7 +19,7 @@ import java.util.UUID;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class CheckAvailableRoomsOperationImpl implements CheckAvailableRoomsOperation {
+public class CheckAvailableRoomsOperationProcessor implements CheckAvailableRoomsOperation {
 
   public static final int DEFAULT_BED_COUNT = 0;
   public static final int DEFAULT_WEEKS = 1;

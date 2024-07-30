@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.api.operations.registervisitors.input;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import com.tinqinacademy.hotel.api.models.input.VisitorDetailsInput;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -20,7 +21,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @ToString
-public class RegisterVisitorsInput {
+public class RegisterVisitorsInput implements OperationInput {
 
   @NotNull(message = "Visitors cannot be empty")
   @Valid

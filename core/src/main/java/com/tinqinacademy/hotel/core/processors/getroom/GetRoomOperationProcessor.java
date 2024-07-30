@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.operations.getroom;
+package com.tinqinacademy.hotel.core.processors.getroom;
 
 import com.tinqinacademy.hotel.api.enums.BedType;
 import com.tinqinacademy.hotel.api.exceptions.EntityNotFoundException;
@@ -22,7 +22,7 @@ import java.util.UUID;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class GetRoomOperationImpl implements GetRoomOperation {
+public class GetRoomOperationProcessor implements GetRoomOperation {
 
   private final RoomRepository roomRepository;
   private final ConversionService conversionService;

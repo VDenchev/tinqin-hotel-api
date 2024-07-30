@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.operations.deleteroom;
+package com.tinqinacademy.hotel.core.processors.deleteroom;
 
 import com.tinqinacademy.hotel.api.exceptions.EntityNotFoundException;
 import com.tinqinacademy.hotel.api.operations.deleteroom.input.DeleteRoomInput;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class DeleteRoomOperationImpl implements DeleteRoomOperation {
+public class DeleteRoomOperationProcessor implements DeleteRoomOperation {
 
   private final RoomRepository roomRepository;
   private final BookingRepository bookingRepository;
