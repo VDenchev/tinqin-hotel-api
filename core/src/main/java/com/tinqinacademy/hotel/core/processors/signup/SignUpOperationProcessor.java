@@ -43,15 +43,15 @@ public class SignUpOperationProcessor extends BaseOperationProcessor implements 
     return validateInput(input)
         .flatMap(validInput ->
             Try.of(() -> {
-                  log.info("Start signUp input: {}", input);
+                  log.info("Start signUp input: {}", validInput);
 
-                  ensureUserWithSameEmailDoesNotExist(input.getEmail());
-                  ensureUserWithSamePhoneNoDoesNotExist(input.getPhoneNo());
+                  ensureUserWithSameEmailDoesNotExist(validInput.getEmail());
+                  ensureUserWithSamePhoneNoDoesNotExist(validInput.getPhoneNo());
 
 
-                  String hashedPassword = hashPassword(input.getPassword());
+                  String hashedPassword = hashPassword(validInput.getPassword());
 
-                  User user = convertSignUpInputToUser(input, hashedPassword);
+                  User user = convertSignUpInputToUser(validInput, hashedPassword);
                   userRepository.save(user);
 
                   SignUpOutput output = createOutput(user);

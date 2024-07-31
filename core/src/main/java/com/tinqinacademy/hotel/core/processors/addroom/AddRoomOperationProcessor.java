@@ -53,9 +53,9 @@ public class AddRoomOperationProcessor extends BaseOperationProcessor implements
     return validateInput(input)
         .flatMap(validInput ->
             Try.of(() -> {
-                  log.info("Start addRoom input: {}", input);
+                  log.info("Start addRoom input: {}", validInput);
 
-                  RoomInput roomInput = input.getRoomInput();
+                  RoomInput roomInput = validInput.getRoomInput();
 
                   checkForExistingRoomWithTheSameNumber(roomInput.getRoomNo());
 
