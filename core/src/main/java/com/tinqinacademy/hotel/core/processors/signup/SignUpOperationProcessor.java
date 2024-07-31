@@ -40,28 +40,30 @@ public class SignUpOperationProcessor extends BaseOperationProcessor implements 
 
   @Override
   public Either<ErrorOutput, SignUpOutput> process(SignUpInput input) {
-    return Try.of(() -> {
+    return validateInput(input)
+        .flatMap(validInput ->
+            Try.of(() -> {
+                  log.info("Start signUp input: {}", input);
 
-          log.info("Start signUp input: {}", input);
-
-          ensureUserWithSameEmailDoesNotExist(input.getEmail());
-          ensureUserWithSamePhoneNoDoesNotExist(input.getPhoneNo());
+                  ensureUserWithSameEmailDoesNotExist(input.getEmail());
+                  ensureUserWithSamePhoneNoDoesNotExist(input.getPhoneNo());
 
 
-          String hashedPassword = hashPassword(input.getPassword());
+                  String hashedPassword = hashPassword(input.getPassword());
 
-          User user = convertSignUpInputToUser(input, hashedPassword);
-          userRepository.save(user);
+                  User user = convertSignUpInputToUser(input, hashedPassword);
+                  userRepository.save(user);
 
-          SignUpOutput output = createOutput(user);
-          log.info("End signUp output: {}", output);
-          return output;
-        })
-        .toEither()
-        .mapLeft(t -> Match(t).of(
-            customStatusCase(t, EntityAlreadyExistsException.class, HttpStatus.BAD_REQUEST),
-            customStatusCase(t, GeneralSecurityException.class, HttpStatus.BAD_REQUEST)
-        ));
+                  SignUpOutput output = createOutput(user);
+                  log.info("End signUp output: {}", output);
+                  return output;
+                })
+                .toEither()
+                .mapLeft(t -> Match(t).of(
+                    customStatusCase(t, EntityAlreadyExistsException.class, HttpStatus.BAD_REQUEST),
+                    customStatusCase(t, GeneralSecurityException.class, HttpStatus.BAD_REQUEST)
+                ))
+        );
   }
 
   private void ensureUserWithSameEmailDoesNotExist(String email) {

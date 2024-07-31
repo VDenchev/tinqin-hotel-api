@@ -7,7 +7,6 @@ import com.tinqinacademy.hotel.api.operations.signup.operation.SignUpOperation;
 import com.tinqinacademy.hotel.api.operations.signup.output.SignUpOutput;
 import com.tinqinacademy.hotel.rest.base.BaseController;
 import io.vavr.control.Either;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +23,7 @@ public class UserController extends BaseController {
   private final SignUpOperation signUpOperation;
 
   @PostMapping(SIGN_UP)
-  public ResponseEntity<OperationOutput> signUp(@RequestBody @Valid SignUpInput input) {
+  public ResponseEntity<OperationOutput> signUp(@RequestBody SignUpInput input) {
 
     Either<ErrorOutput, SignUpOutput> output = signUpOperation.process(input);
 
