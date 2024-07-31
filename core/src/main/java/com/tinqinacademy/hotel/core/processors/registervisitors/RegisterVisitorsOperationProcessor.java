@@ -1,5 +1,7 @@
 package com.tinqinacademy.hotel.core.processors.registervisitors;
 
+import com.tinqinacademy.hotel.api.base.BaseOperationProcessor;
+import com.tinqinacademy.hotel.api.errors.ErrorOutput;
 import com.tinqinacademy.hotel.api.exceptions.EntityAlreadyExistsException;
 import com.tinqinacademy.hotel.api.exceptions.EntityNotFoundException;
 import com.tinqinacademy.hotel.api.exceptions.VisitorDateMismatchException;
@@ -11,54 +13,75 @@ import com.tinqinacademy.hotel.persistence.entities.booking.Booking;
 import com.tinqinacademy.hotel.persistence.entities.guest.Guest;
 import com.tinqinacademy.hotel.persistence.repositories.BookingRepository;
 import com.tinqinacademy.hotel.persistence.repositories.GuestRepository;
-import lombok.RequiredArgsConstructor;
+import io.vavr.control.Either;
+import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Validator;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static io.vavr.API.Match;
+
 @Service
 @Slf4j
-@RequiredArgsConstructor
-public class RegisterVisitorsOperationProcessor implements RegisterVisitorsOperation {
+public class RegisterVisitorsOperationProcessor extends BaseOperationProcessor implements RegisterVisitorsOperation {
 
   private final BookingRepository bookingRepository;
   private final GuestRepository guestRepository;
-  private final ConversionService conversionService;
+
+  public RegisterVisitorsOperationProcessor(
+      ConversionService conversionService, Validator validator,
+      BookingRepository bookingRepository, GuestRepository guestRepository
+  ) {
+    super(conversionService, validator);
+    this.bookingRepository = bookingRepository;
+    this.guestRepository = guestRepository;
+  }
 
   @Override
-  public RegisterVisitorsOutput process(RegisterVisitorsInput input) {
-    log.info("Start registerVisitors input: {}", input);
+  public Either<ErrorOutput, RegisterVisitorsOutput> process(RegisterVisitorsInput input) {
+    return Try.of(() -> {
 
-    Booking booking = bookingRepository.findById(input.getBookingId())
-        .orElseThrow(() -> new EntityNotFoundException("Booking", input.getBookingId()));
+          log.info("Start registerVisitors input: {}", input);
 
-    validateVisitors(input.getVisitors(), booking);
+          Booking booking = bookingRepository.findById(input.getBookingId())
+              .orElseThrow(() -> new EntityNotFoundException("Booking", input.getBookingId()));
 
-    List<String> inputIdCardNumbers = input.getVisitors().stream()
-        .map(VisitorDetailsInput::getIdCardNo)
-        .toList();
-    //TODO: check for duplicate guests
-    checkIfGuestsAlreadyInBooking(booking, inputIdCardNumbers);
+          validateVisitors(input.getVisitors(), booking);
 
-    List<Guest> existingGuests = guestRepository.getAllGuestsByIdCardNumberList(inputIdCardNumbers);
-    List<Guest> guestsToSave = getNotYetPersistedVisitors(existingGuests,
-        input.getVisitors());
+          List<String> inputIdCardNumbers = input.getVisitors().stream()
+              .map(VisitorDetailsInput::getIdCardNo)
+              .toList();
+          //TODO: check for duplicate guests in input
+          checkIfGuestsAlreadyInBooking(booking, inputIdCardNumbers);
 
-    log.info("Guests to be saved: {}", guestsToSave);
+          List<Guest> existingGuests = guestRepository.getAllGuestsByIdCardNumberList(inputIdCardNumbers);
+          List<Guest> guestsToSave = getNotYetPersistedVisitors(existingGuests,
+              input.getVisitors());
 
-    guestsToSave = guestRepository.saveAll(guestsToSave);
-    booking.getGuests().addAll(guestsToSave);
-    booking.getGuests().addAll(existingGuests);
-    bookingRepository.save(booking);
+          log.info("Guests to be saved: {}", guestsToSave);
 
-    RegisterVisitorsOutput output = createOutput();
+          guestsToSave = guestRepository.saveAll(guestsToSave);
+          booking.getGuests().addAll(guestsToSave);
+          booking.getGuests().addAll(existingGuests);
+          bookingRepository.save(booking);
 
-    log.info("End registerVisitors output: {}", output);
-    return output;
+          RegisterVisitorsOutput output = createOutput();
+
+          log.info("End registerVisitors output: {}", output);
+          return output;
+        })
+        .toEither()
+        .mapLeft(t -> Match(t).of(
+            customStatusCase(t, VisitorDateMismatchException.class, HttpStatus.UNPROCESSABLE_ENTITY),
+            customStatusCase(t, EntityNotFoundException.class, HttpStatus.BAD_REQUEST),
+            defaultCase(t)
+        ));
   }
 
   private void validateVisitors(List<VisitorDetailsInput> visitors, Booking booking) {

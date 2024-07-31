@@ -1,5 +1,7 @@
 package com.tinqinacademy.hotel.core.processors.searchvisitors;
 
+import com.tinqinacademy.hotel.api.base.BaseOperationProcessor;
+import com.tinqinacademy.hotel.api.errors.ErrorOutput;
 import com.tinqinacademy.hotel.api.models.input.VisitorDetailsInput;
 import com.tinqinacademy.hotel.api.models.output.VisitorDetailsOutput;
 import com.tinqinacademy.hotel.api.operations.searchvisitors.input.SearchVisitorsInput;
@@ -7,43 +9,62 @@ import com.tinqinacademy.hotel.api.operations.searchvisitors.operation.SearchVis
 import com.tinqinacademy.hotel.api.operations.searchvisitors.output.SearchVisitorsOutput;
 import com.tinqinacademy.hotel.persistence.models.output.VisitorSearchResult;
 import com.tinqinacademy.hotel.persistence.repositories.CustomGuestRepository;
-import lombok.RequiredArgsConstructor;
+import io.vavr.control.Either;
+import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Validator;
 
 import java.util.List;
 
+import static io.vavr.API.Match;
+
 @Service
 @Slf4j
-@RequiredArgsConstructor
-public class SearchVisitorsOperationProcessor implements SearchVisitorsOperation {
+public class SearchVisitorsOperationProcessor extends BaseOperationProcessor implements SearchVisitorsOperation {
 
   private final CustomGuestRepository customGuestRepository;
 
+  public SearchVisitorsOperationProcessor(
+      ConversionService conversionService,
+      Validator validator, CustomGuestRepository customGuestRepository
+  ) {
+    super(conversionService, validator);
+    this.customGuestRepository = customGuestRepository;
+  }
+
   @Override
-  public SearchVisitorsOutput process(SearchVisitorsInput input) {
-    log.info("Start searchVisitors input: {}", input);
+  public Either<ErrorOutput, SearchVisitorsOutput> process(SearchVisitorsInput input) {
+    return Try.of(() -> {
 
-    VisitorDetailsInput visitorDetailsInput = input.getVisitorDetailsInput();
+          log.info("Start searchVisitors input: {}", input);
 
-    List<VisitorSearchResult> results = customGuestRepository.searchVisitors(
-        visitorDetailsInput.getStartDate(),
-        visitorDetailsInput.getEndDate(),
-        visitorDetailsInput.getFirstName(),
-        visitorDetailsInput.getLastName(),
-        visitorDetailsInput.getBirthDate(),
-        visitorDetailsInput.getPhoneNo(),
-        visitorDetailsInput.getIdCardNo(),
-        visitorDetailsInput.getIdCardIssueAuthority(),
-        input.getRoomNo()
-    );
+          VisitorDetailsInput visitorDetailsInput = input.getVisitorDetailsInput();
 
-    List<VisitorDetailsOutput> visitors = convertSearchResultListToVistorDetailsOutputList(results);
+          List<VisitorSearchResult> results = customGuestRepository.searchVisitors(
+              visitorDetailsInput.getStartDate(),
+              visitorDetailsInput.getEndDate(),
+              visitorDetailsInput.getFirstName(),
+              visitorDetailsInput.getLastName(),
+              visitorDetailsInput.getBirthDate(),
+              visitorDetailsInput.getPhoneNo(),
+              visitorDetailsInput.getIdCardNo(),
+              visitorDetailsInput.getIdCardIssueAuthority(),
+              input.getRoomNo()
+          );
 
-    SearchVisitorsOutput output = createOutput(visitors);
+          List<VisitorDetailsOutput> visitors = convertSearchResultListToVistorDetailsOutputList(results);
 
-    log.info("End searchVisitors output: {}", output);
-    return output;
+          SearchVisitorsOutput output = createOutput(visitors);
+
+          log.info("End searchVisitors output: {}", output);
+          return output;
+        })
+        .toEither()
+        .mapLeft(t -> Match(t).of(
+          defaultCase(t)
+        ));
   }
 
   private List<VisitorDetailsOutput> convertSearchResultListToVistorDetailsOutputList(List<VisitorSearchResult> results) {

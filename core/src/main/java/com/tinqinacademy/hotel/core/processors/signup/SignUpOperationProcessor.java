@@ -1,15 +1,20 @@
 package com.tinqinacademy.hotel.core.processors.signup;
 
+import com.tinqinacademy.hotel.api.base.BaseOperationProcessor;
+import com.tinqinacademy.hotel.api.errors.ErrorOutput;
 import com.tinqinacademy.hotel.api.exceptions.EntityAlreadyExistsException;
 import com.tinqinacademy.hotel.api.operations.signup.input.SignUpInput;
 import com.tinqinacademy.hotel.api.operations.signup.operation.SignUpOperation;
 import com.tinqinacademy.hotel.api.operations.signup.output.SignUpOutput;
 import com.tinqinacademy.hotel.persistence.entities.user.User;
 import com.tinqinacademy.hotel.persistence.repositories.UserRepository;
-import lombok.RequiredArgsConstructor;
+import io.vavr.control.Either;
+import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Validator;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -20,40 +25,49 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Optional;
 
+import static io.vavr.API.Match;
+
 @Service
 @Slf4j
-@RequiredArgsConstructor
-public class SignUpOperationProcessor implements SignUpOperation {
+public class SignUpOperationProcessor extends BaseOperationProcessor implements SignUpOperation {
 
   private final UserRepository userRepository;
-  private final ConversionService conversionService;
+
+  public SignUpOperationProcessor(ConversionService conversionService, Validator validator, UserRepository userRepository) {
+    super(conversionService, validator);
+    this.userRepository = userRepository;
+  }
 
   @Override
-  public SignUpOutput process(SignUpInput input) {
-    log.info("Start signUp input: {}", input);
+  public Either<ErrorOutput, SignUpOutput> process(SignUpInput input) {
+    return Try.of(() -> {
 
-    ensureUserWithSameEmailDoesNotExist(input.getEmail());
-    ensureUserWithSamePhoneNoDoesNotExist(input.getPhoneNo());
+          log.info("Start signUp input: {}", input);
 
-    String hashedPassword;
-    try {
-      hashedPassword = hashPassword(input.getPassword());
-    } catch (GeneralSecurityException ex) {
-      throw new RuntimeException("Error while hashing password");
-    }
+          ensureUserWithSameEmailDoesNotExist(input.getEmail());
+          ensureUserWithSamePhoneNoDoesNotExist(input.getPhoneNo());
 
-    User user = convertSignUpInputToUser(input, hashedPassword);
-    userRepository.save(user);
 
-    SignUpOutput output = createOutput(user);
-    log.info("End signUp output: {}", output);
-    return output;
+          String hashedPassword = hashPassword(input.getPassword());
+
+          User user = convertSignUpInputToUser(input, hashedPassword);
+          userRepository.save(user);
+
+          SignUpOutput output = createOutput(user);
+          log.info("End signUp output: {}", output);
+          return output;
+        })
+        .toEither()
+        .mapLeft(t -> Match(t).of(
+            customStatusCase(t, EntityAlreadyExistsException.class, HttpStatus.BAD_REQUEST),
+            customStatusCase(t, GeneralSecurityException.class, HttpStatus.BAD_REQUEST)
+        ));
   }
 
   private void ensureUserWithSameEmailDoesNotExist(String email) {
     Optional<User> userMaybe = userRepository.findByEmail(email);
 
-    if(userMaybe.isPresent()) {
+    if (userMaybe.isPresent()) {
       throw new EntityAlreadyExistsException("User with the provided email already exists");
     }
   }
@@ -61,7 +75,7 @@ public class SignUpOperationProcessor implements SignUpOperation {
   private void ensureUserWithSamePhoneNoDoesNotExist(String phoneNo) {
     Optional<User> userMaybe = userRepository.findByPhoneNumber(phoneNo);
 
-    if(userMaybe.isPresent()) {
+    if (userMaybe.isPresent()) {
       throw new EntityAlreadyExistsException("User with the provided phone number already exists");
     }
   }

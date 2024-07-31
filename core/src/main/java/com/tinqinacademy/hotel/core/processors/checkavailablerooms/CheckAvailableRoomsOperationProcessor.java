@@ -1,5 +1,7 @@
 package com.tinqinacademy.hotel.core.processors.checkavailablerooms;
 
+import com.tinqinacademy.hotel.api.base.BaseOperationProcessor;
+import com.tinqinacademy.hotel.api.errors.ErrorOutput;
 import com.tinqinacademy.hotel.persistence.enums.BathroomType;
 import com.tinqinacademy.hotel.api.enums.BedType;
 import com.tinqinacademy.hotel.api.operations.checkavailablerooms.input.AvailableRoomsInput;
@@ -7,42 +9,59 @@ import com.tinqinacademy.hotel.api.operations.checkavailablerooms.operation.Chec
 import com.tinqinacademy.hotel.api.operations.checkavailablerooms.output.AvailableRoomsOutput;
 import com.tinqinacademy.hotel.persistence.enums.BedSize;
 import com.tinqinacademy.hotel.persistence.repositories.RoomRepository;
-import lombok.RequiredArgsConstructor;
+import io.vavr.control.Either;
+import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Validator;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import static io.vavr.API.Match;
+
 @Service
 @Slf4j
-@RequiredArgsConstructor
-public class CheckAvailableRoomsOperationProcessor implements CheckAvailableRoomsOperation {
+public class CheckAvailableRoomsOperationProcessor extends BaseOperationProcessor implements CheckAvailableRoomsOperation {
 
   public static final int DEFAULT_BED_COUNT = 0;
   public static final int DEFAULT_WEEKS = 1;
 
   private final RoomRepository roomRepository;
-  private final ConversionService conversionService;
+
+  public CheckAvailableRoomsOperationProcessor(
+      ConversionService conversionService,
+      Validator validator, RoomRepository roomRepository
+  ) {
+    super(conversionService, validator);
+    this.roomRepository = roomRepository;
+  }
 
   @Override
-  public AvailableRoomsOutput process(AvailableRoomsInput input) {
-    log.info("Start checkAvailableRooms input: {}", input);
+  public Either<ErrorOutput, AvailableRoomsOutput> process(AvailableRoomsInput input) {
+    return Try.of(() -> {
 
-    LocalDate startDate = getStartDateOrNow(input.getStartDate());
-    LocalDate endDate = getEndDateOrOneWeekAhead(startDate, input.getEndDate());
-    Integer bedCount = getBedCountOrDefault(input.getBedCount());
-    List<String> bedSizes = getBedSizesAsStringList(input.getBedSizes());
-    String bathroomTypeName = getBathroomTypeName(input.getBathroomType());
+          log.info("Start checkAvailableRooms input: {}", input);
 
-    List<UUID> result = roomRepository.findAllAvailableRoomIds(startDate, endDate, bathroomTypeName,
-        bedSizes, bedCount);
+          LocalDate startDate = getStartDateOrNow(input.getStartDate());
+          LocalDate endDate = getEndDateOrOneWeekAhead(startDate, input.getEndDate());
+          Integer bedCount = getBedCountOrDefault(input.getBedCount());
+          List<String> bedSizes = getBedSizesAsStringList(input.getBedSizes());
+          String bathroomTypeName = getBathroomTypeName(input.getBathroomType());
 
-    AvailableRoomsOutput output = convertUUIDListToOutput(result);
-    log.info("End checkAvailableRooms output: {}", output);
-    return output;
+          List<UUID> result = roomRepository.findAllAvailableRoomIds(startDate, endDate, bathroomTypeName,
+              bedSizes, bedCount);
+
+          AvailableRoomsOutput output = convertUUIDListToOutput(result);
+          log.info("End checkAvailableRooms output: {}", output);
+          return output;
+        })
+        .toEither()
+        .mapLeft(t -> Match(t).of(
+            defaultCase(t)
+        ));
   }
 
   private LocalDate getStartDateOrNow(LocalDate startDate) {
