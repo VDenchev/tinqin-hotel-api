@@ -50,28 +50,30 @@ public class AddRoomOperationProcessor extends BaseOperationProcessor implements
   @Override
   @Transactional
   public Either<ErrorOutput, AddRoomOutput> process(AddRoomInput input) {
-    return Try.of(() -> {
-          log.info("Start addRoom input: {}", input);
+    return validateInput(input)
+        .flatMap(validInput ->
+            Try.of(() -> {
+                  log.info("Start addRoom input: {}", input);
 
-          RoomInput roomInput = input.getRoomInput();
+                  RoomInput roomInput = input.getRoomInput();
 
-          checkForExistingRoomWithTheSameNumber(roomInput.getRoomNo());
+                  checkForExistingRoomWithTheSameNumber(roomInput.getRoomNo());
 
-          List<Bed> beds = getBedEntitiesFromRoomInput(roomInput);
-          Room roomToAdd = convertRoomInputToRoom(roomInput, beds);
+                  List<Bed> beds = getBedEntitiesFromRoomInput(roomInput);
+                  Room roomToAdd = convertRoomInputToRoom(roomInput, beds);
 
-          Room persistedRoom = roomRepository.save(roomToAdd);
+                  Room persistedRoom = roomRepository.save(roomToAdd);
 
-          AddRoomOutput output = convertRoomToRoomOutput(persistedRoom);
-          log.info("End addRoom output: {}", output);
-          return output;
-        })
-        .toEither()
-        .mapLeft(t -> Match(t).of(
-            customStatusCase(t, EntityAlreadyExistsException.class, HttpStatus.CONFLICT),
-            customStatusCase(t, BedDoesNotExistException.class, HttpStatus.UNPROCESSABLE_ENTITY),
-            defaultCase(t)
-        ));
+                  AddRoomOutput output = convertRoomToRoomOutput(persistedRoom);
+                  log.info("End addRoom output: {}", output);
+                  return output;
+                })
+                .toEither()
+                .mapLeft(t -> Match(t).of(
+                    customStatusCase(t, EntityAlreadyExistsException.class, HttpStatus.CONFLICT),
+                    customStatusCase(t, BedDoesNotExistException.class, HttpStatus.UNPROCESSABLE_ENTITY),
+                    defaultCase(t)))
+        );
   }
 
 

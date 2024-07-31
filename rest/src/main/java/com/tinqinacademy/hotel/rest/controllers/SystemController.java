@@ -175,7 +175,7 @@ public class SystemController extends BaseController {
       )
   })
   @PostMapping(ADD_ROOM)
-  public ResponseEntity<OperationOutput> addRoom(@RequestBody @Validated AddRoomInput input) {
+  public ResponseEntity<OperationOutput> addRoom(@RequestBody AddRoomInput input) {
     Either<ErrorOutput, AddRoomOutput> output = addRoomOperation.process(input);
 
     return consumeEither(output, HttpStatus.CREATED);
