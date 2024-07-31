@@ -182,7 +182,6 @@ public class SystemController extends BaseController {
   }
 
 
-
   @Operation(
       summary = "Updates room details"
   )
@@ -241,7 +240,7 @@ public class SystemController extends BaseController {
   @PatchMapping(PARTIAL_UPDATE_ROOM)
   public ResponseEntity<OperationOutput> partialUpdateRoom(
       @PathVariable UUID roomId,
-      @Validated(NonMandatoryFieldsGroup.class) @RequestBody PartialUpdateRoomInput input
+      @RequestBody PartialUpdateRoomInput input
   ) {
     input.setRoomId(roomId);
     Either<ErrorOutput, PartialUpdateRoomOutput> output = partialUpdateRoomOperation.process(input);

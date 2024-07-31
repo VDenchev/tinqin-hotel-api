@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tinqinacademy.hotel.api.base.BaseOperationProcessor;
 import com.tinqinacademy.hotel.api.errors.ErrorOutput;
 import com.tinqinacademy.hotel.api.exceptions.BedDoesNotExistException;
+import com.tinqinacademy.hotel.api.validation.groups.NonMandatoryFieldsGroup;
 import com.tinqinacademy.hotel.persistence.entities.bed.Bed;
 import com.tinqinacademy.hotel.persistence.enums.BathroomType;
 import com.tinqinacademy.hotel.api.exceptions.EntityNotFoundException;
@@ -54,35 +55,37 @@ public class PartialUpdateRoomOperationProcessor extends BaseOperationProcessor 
 
   @Override
   public Either<ErrorOutput, PartialUpdateRoomOutput> process(PartialUpdateRoomInput input) {
-    return Try.of(() -> {
+    return validateInput(input, NonMandatoryFieldsGroup.class)
+        .flatMap(validInput ->
+            Try.of(() -> {
+                  log.info("Start partialUpdateRoom input: {}", validInput);
 
-          log.info("Start partialUpdateRoom input: {}", input);
+                  Room savedRoom = getRoomByIdOrThrow(validInput);
 
-          Room savedRoom = getRoomByIdOrThrow(input);
+                  RoomInput roomInput = validInput.getRoomInput();
+                  Room partialRoom = convertPartialInputToRoom(validInput.getRoomId(), roomInput);
 
-          RoomInput roomInput = input.getRoomInput();
-          Room partialRoom = convertPartialInputToRoom(input.getRoomId(), roomInput);
+                  JsonObject savedRoomValue = convertToJsonObject(savedRoom);
+                  JsonObject patchRoomValue = convertToJsonObject(partialRoom);
 
-          JsonObject savedRoomValue = convertToJsonObject(savedRoom);
-          JsonObject patchRoomValue = convertToJsonObject(partialRoom);
+                  JsonValue result = Json.createMergePatch(patchRoomValue).apply(savedRoomValue);
+                  Room updatedRoom = objectMapper.readValue(result.toString(), Room.class);
+                  log.info("Merge patch json value: {}", updatedRoom);
 
-          JsonValue result = Json.createMergePatch(patchRoomValue).apply(savedRoomValue);
-          Room updatedRoom = objectMapper.readValue(result.toString(), Room.class);
-          log.info("Merge patch json value: {}", updatedRoom);
+                  roomRepository.save(updatedRoom);
 
-          roomRepository.save(updatedRoom);
-
-          PartialUpdateRoomOutput output = convertRoomToRoomOutput(savedRoom);
-          log.info("End partialUpdateRoom output: {}", output);
-          return output;
-        })
-        .toEither()
-        .mapLeft(t -> Match(t).of(
-            customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
-            customStatusCase(t, JsonProcessingException.class, HttpStatus.BAD_REQUEST),
-            customStatusCase(t, BedDoesNotExistException.class, HttpStatus.UNPROCESSABLE_ENTITY),
-            defaultCase(t)
-        ));
+                  PartialUpdateRoomOutput output = convertRoomToRoomOutput(savedRoom);
+                  log.info("End partialUpdateRoom output: {}", output);
+                  return output;
+                })
+                .toEither()
+                .mapLeft(t -> Match(t).of(
+                    customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
+                    customStatusCase(t, JsonProcessingException.class, HttpStatus.BAD_REQUEST),
+                    customStatusCase(t, BedDoesNotExistException.class, HttpStatus.UNPROCESSABLE_ENTITY),
+                    defaultCase(t)
+                ))
+        );
   }
 
   private Room getRoomByIdOrThrow(PartialUpdateRoomInput input) {
