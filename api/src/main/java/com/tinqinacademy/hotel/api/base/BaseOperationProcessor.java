@@ -3,11 +3,11 @@ package com.tinqinacademy.hotel.api.base;
 import com.tinqinacademy.hotel.api.errors.Error;
 import com.tinqinacademy.hotel.api.errors.ErrorOutput;
 import io.vavr.API;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.validation.Validator;
 
 import java.util.List;
 

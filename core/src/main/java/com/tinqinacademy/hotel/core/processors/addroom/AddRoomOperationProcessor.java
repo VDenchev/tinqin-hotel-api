@@ -16,13 +16,13 @@ import com.tinqinacademy.hotel.persistence.repositories.BedRepository;
 import com.tinqinacademy.hotel.persistence.repositories.RoomRepository;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
+import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
 
 import java.util.ArrayList;
 import java.util.List;
