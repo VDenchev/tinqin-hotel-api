@@ -1,5 +1,8 @@
 package com.tinqinacademy.hotel.core.processors.updateroom;
 
+import com.tinqinacademy.hotel.api.base.BaseOperationProcessor;
+import com.tinqinacademy.hotel.api.errors.ErrorOutput;
+import com.tinqinacademy.hotel.api.exceptions.BedDoesNotExistException;
 import com.tinqinacademy.hotel.api.exceptions.EntityNotFoundException;
 import com.tinqinacademy.hotel.api.models.input.RoomInput;
 import com.tinqinacademy.hotel.api.operations.updateroom.input.UpdateRoomInput;
@@ -11,41 +14,62 @@ import com.tinqinacademy.hotel.persistence.enums.BathroomType;
 import com.tinqinacademy.hotel.persistence.enums.BedSize;
 import com.tinqinacademy.hotel.persistence.repositories.BedRepository;
 import com.tinqinacademy.hotel.persistence.repositories.RoomRepository;
-import lombok.RequiredArgsConstructor;
+import io.vavr.control.Either;
+import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Validator;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.vavr.API.Match;
+
 @Service
 @Slf4j
-@RequiredArgsConstructor
-public class UpdateRoomOperationProcessor implements UpdateRoomOperation {
+public class UpdateRoomOperationProcessor extends BaseOperationProcessor implements UpdateRoomOperation {
 
   private final RoomRepository roomRepository;
-  private final ConversionService conversionService;
   private final BedRepository bedRepository;
 
+  public UpdateRoomOperationProcessor(
+      ConversionService conversionService, Validator validator,
+      RoomRepository roomRepository, BedRepository bedRepository
+  ) {
+    super(conversionService, validator);
+    this.roomRepository = roomRepository;
+    this.bedRepository = bedRepository;
+  }
+
   @Override
-  public UpdateRoomOutput process(UpdateRoomInput input) {
-    log.info("Start updateRoom input: {}", input);
+  public Either<ErrorOutput, UpdateRoomOutput> process(UpdateRoomInput input) {
+    return Try.of(() -> {
 
-    roomRepository.findById(input.getRoomId())
-        .orElseThrow(() -> new EntityNotFoundException("Room", input.getRoomId()));
+          log.info("Start updateRoom input: {}", input);
 
-    RoomInput roomInput = input.getRoomInput();
-    List<Bed> beds = getBedEntitiesFromRoomInput(roomInput);
+          roomRepository.findById(input.getRoomId())
+              .orElseThrow(() -> new EntityNotFoundException("Room", input.getRoomId()));
 
-    Room roomToUpdate = convertRoomIntputToRoom(roomInput, beds);
+          RoomInput roomInput = input.getRoomInput();
+          List<Bed> beds = getBedEntitiesFromRoomInput(roomInput);
 
-    roomRepository.save(roomToUpdate);
+          Room roomToUpdate = convertRoomIntputToRoom(roomInput, beds);
 
-    UpdateRoomOutput output = createOutput(roomToUpdate);
+          roomRepository.save(roomToUpdate);
 
-    log.info("End updateRoom output: {}", output);
-    return output;
+          UpdateRoomOutput output = createOutput(roomToUpdate);
+
+          log.info("End updateRoom output: {}", output);
+          return output;
+        })
+        .toEither()
+        .mapLeft(t -> Match(t).of(
+            customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
+            customStatusCase(t, BedDoesNotExistException.class, HttpStatus.UNPROCESSABLE_ENTITY),
+            defaultCase(t)
+        ));
   }
 
   private List<Bed> getBedEntitiesFromRoomInput(RoomInput input) {
@@ -53,8 +77,7 @@ public class UpdateRoomOperationProcessor implements UpdateRoomOperation {
     input.getBedSizes().forEach(b ->
         beds.add(bedRepository
             .findByBedSize(BedSize.getByCode(b.getCode()))
-            //TODO: throw custom exception (this will (almost) never fail but w/e)
-            .orElseThrow()
+            .orElseThrow(() -> new BedDoesNotExistException(b.getCode()))
         )
     );
     return beds;

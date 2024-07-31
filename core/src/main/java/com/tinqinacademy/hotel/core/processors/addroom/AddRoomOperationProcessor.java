@@ -1,6 +1,9 @@
 package com.tinqinacademy.hotel.core.processors.addroom;
 
+import com.tinqinacademy.hotel.api.base.BaseOperationProcessor;
+import com.tinqinacademy.hotel.api.exceptions.BedDoesNotExistException;
 import com.tinqinacademy.hotel.api.exceptions.EntityAlreadyExistsException;
+import com.tinqinacademy.hotel.api.errors.ErrorOutput;
 import com.tinqinacademy.hotel.api.models.input.RoomInput;
 import com.tinqinacademy.hotel.api.operations.addroom.operation.AddRoomOperation;
 import com.tinqinacademy.hotel.api.operations.addroom.input.AddRoomInput;
@@ -11,42 +14,64 @@ import com.tinqinacademy.hotel.persistence.enums.BathroomType;
 import com.tinqinacademy.hotel.persistence.enums.BedSize;
 import com.tinqinacademy.hotel.persistence.repositories.BedRepository;
 import com.tinqinacademy.hotel.persistence.repositories.RoomRepository;
-import lombok.RequiredArgsConstructor;
+import io.vavr.control.Either;
+import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static io.vavr.API.Match;
+
 @Service
 @Slf4j
-@RequiredArgsConstructor
-public class AddRoomOperationProcessor implements AddRoomOperation {
+public class AddRoomOperationProcessor extends BaseOperationProcessor implements AddRoomOperation {
 
   private final RoomRepository roomRepository;
   private final BedRepository bedRepository;
-  private final ConversionService conversionService;
+
+  @Autowired
+  public AddRoomOperationProcessor(
+      RoomRepository roomRepository, BedRepository bedRepository,
+      ConversionService conversionService, Validator validator
+  ) {
+    super(conversionService, validator);
+    this.roomRepository = roomRepository;
+    this.bedRepository = bedRepository;
+  }
 
   @Override
   @Transactional
-  public AddRoomOutput process(AddRoomInput input) {
-    log.info("Start addRoom input: {}", input);
+  public Either<ErrorOutput, AddRoomOutput> process(AddRoomInput input) {
+    return Try.of(() -> {
+          log.info("Start addRoom input: {}", input);
 
-    RoomInput roomInput = input.getRoomInput();
+          RoomInput roomInput = input.getRoomInput();
 
-    checkForExistingRoomWithTheSameNumber(roomInput.getRoomNo());
+          checkForExistingRoomWithTheSameNumber(roomInput.getRoomNo());
 
-    List<Bed> beds = getBedEntitiesFromRoomInput(roomInput);
-    Room roomToAdd = convertRoomInputToRoom(roomInput, beds);
+          List<Bed> beds = getBedEntitiesFromRoomInput(roomInput);
+          Room roomToAdd = convertRoomInputToRoom(roomInput, beds);
 
-    Room persistedRoom = roomRepository.save(roomToAdd);
+          Room persistedRoom = roomRepository.save(roomToAdd);
 
-    AddRoomOutput output = convertRoomToRoomOutput(persistedRoom);
-    log.info("End addRoom output: {}", output);
-    return output;
+          AddRoomOutput output = convertRoomToRoomOutput(persistedRoom);
+          log.info("End addRoom output: {}", output);
+          return output;
+        })
+        .toEither()
+        .mapLeft(t -> Match(t).of(
+            customStatusCase(t, EntityAlreadyExistsException.class, HttpStatus.CONFLICT),
+            customStatusCase(t, BedDoesNotExistException.class, HttpStatus.UNPROCESSABLE_ENTITY),
+            defaultCase(t)
+        ));
   }
 
 
@@ -63,6 +88,7 @@ public class AddRoomOperationProcessor implements AddRoomOperation {
     Room room = conversionService.convert(roomInput, Room.class);
     room.setBeds(beds);
     room.setBathroomType(conversionService.convert(roomInput.getBathroomType(), BathroomType.class));
+
     return room;
   }
 
@@ -71,8 +97,7 @@ public class AddRoomOperationProcessor implements AddRoomOperation {
     input.getBedSizes().forEach(b ->
         beds.add(bedRepository
             .findByBedSize(BedSize.getByCode(b.getCode()))
-            //TODO: throw custom exception (this will (almost) never fail but w/e)
-            .orElseThrow()
+            .orElseThrow(() -> new BedDoesNotExistException(b.getCode()))
         )
     );
     return beds;

@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.api.exceptions;
+package com.tinqinacademy.hotel.api.errors;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

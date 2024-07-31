@@ -1,8 +1,9 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
+import com.tinqinacademy.hotel.api.base.OperationOutput;
 import com.tinqinacademy.hotel.api.enums.BathroomType;
 import com.tinqinacademy.hotel.api.enums.BedType;
-import com.tinqinacademy.hotel.api.base.Operation;
+import com.tinqinacademy.hotel.api.errors.ErrorOutput;
 import com.tinqinacademy.hotel.api.operations.bookroom.input.BookRoomInput;
 import com.tinqinacademy.hotel.api.operations.bookroom.operation.BookRoomOperation;
 import com.tinqinacademy.hotel.api.operations.bookroom.output.BookRoomOutput;
@@ -15,9 +16,10 @@ import com.tinqinacademy.hotel.api.operations.getroom.output.RoomDetailsOutput;
 import com.tinqinacademy.hotel.api.operations.removebooking.input.RemoveBookingInput;
 import com.tinqinacademy.hotel.api.operations.removebooking.operation.RemoveBookingOperation;
 import com.tinqinacademy.hotel.api.operations.removebooking.output.RemoveBookingOutput;
-import com.tinqinacademy.hotel.api.services.contracts.HotelService;
+import com.tinqinacademy.hotel.rest.base.BaseController;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +45,7 @@ import static com.tinqinacademy.hotel.api.RestApiRoutes.REMOVE_BOOKING;
 
 @RestController
 @RequiredArgsConstructor
-public class HotelController {
+public class HotelController extends BaseController {
 
   private final BookRoomOperation bookRoomOperation;
   private final CheckAvailableRoomsOperation checkAvailableRoomsOperation;
@@ -58,7 +60,7 @@ public class HotelController {
       @ApiResponse(description = "Returns the IDs of all available rooms", responseCode = "200"),
   })
   @GetMapping(CHECK_ROOM_AVAILABILITY)
-  public ResponseEntity<AvailableRoomsOutput> checkRoomAvailability(
+  public ResponseEntity<OperationOutput> checkRoomAvailability(
       @RequestParam(required = false) LocalDate startDate,
       @RequestParam(required = false) LocalDate endDate,
       @RequestParam(required = false) Integer bedCount,
@@ -77,8 +79,8 @@ public class HotelController {
         .bathroomType(BathroomType.getByCode(bathroomType))
         .build();
 
-    AvailableRoomsOutput output = checkAvailableRoomsOperation.process(input);
-    return ResponseEntity.ok(output);
+    Either<ErrorOutput, AvailableRoomsOutput> output = checkAvailableRoomsOperation.process(input);
+    return consumeEither(output, HttpStatus.OK);
   }
 
 
@@ -91,13 +93,13 @@ public class HotelController {
       @ApiResponse(description = "Room with the provided id does not exist", responseCode = "404"),
   })
   @GetMapping(GET_ROOM)
-  public ResponseEntity<RoomDetailsOutput> getRoom(
+  public ResponseEntity<OperationOutput> getRoom(
       @PathVariable UUID roomId
   ) {
-    RoomDetailsOutput output = getRoomOperation.process(RoomDetailsInput.builder()
+    Either<ErrorOutput, RoomDetailsOutput> output = getRoomOperation.process(RoomDetailsInput.builder()
         .roomId(roomId)
         .build());
-    return new ResponseEntity<>(output, HttpStatus.OK);
+    return consumeEither(output, HttpStatus.OK);
   }
 
 
@@ -111,11 +113,11 @@ public class HotelController {
       @ApiResponse(description = "You dont have permission", responseCode = "403"),
   })
   @PostMapping(BOOK_ROOM)
-  public ResponseEntity<BookRoomOutput> bookRoom(@PathVariable UUID roomId, @Validated @RequestBody BookRoomInput input) {
+  public ResponseEntity<OperationOutput> bookRoom(@PathVariable UUID roomId, @Validated @RequestBody BookRoomInput input) {
     input.setRoomId(roomId);
-    BookRoomOutput output = bookRoomOperation.process(input);
+    Either<ErrorOutput, BookRoomOutput> output = bookRoomOperation.process(input);
 
-    return new ResponseEntity<>(output, HttpStatus.OK);
+    return consumeEither(output, HttpStatus.OK);
   }
 
 
@@ -128,12 +130,12 @@ public class HotelController {
       @ApiResponse(description = "No book with the provided id", responseCode = "404"),
   })
   @DeleteMapping(REMOVE_BOOKING)
-  public ResponseEntity<RemoveBookingOutput> removeBooking(@PathVariable UUID bookingId) {
+  public ResponseEntity<OperationOutput> removeBooking(@PathVariable UUID bookingId) {
     RemoveBookingInput input = RemoveBookingInput.builder()
         .bookingId(bookingId)
         .build();
-    RemoveBookingOutput output = removeBookingOperation.process(input);
+    Either<ErrorOutput, RemoveBookingOutput> output = removeBookingOperation.process(input);
 
-    return new ResponseEntity<>(output, HttpStatus.OK);
+    return consumeEither(output, HttpStatus.OK);
   }
 }

@@ -2,6 +2,9 @@ package com.tinqinacademy.hotel.core.processors.partialupdateroom;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tinqinacademy.hotel.api.base.BaseOperationProcessor;
+import com.tinqinacademy.hotel.api.errors.ErrorOutput;
+import com.tinqinacademy.hotel.api.exceptions.BedDoesNotExistException;
 import com.tinqinacademy.hotel.persistence.entities.bed.Bed;
 import com.tinqinacademy.hotel.persistence.enums.BathroomType;
 import com.tinqinacademy.hotel.api.exceptions.EntityNotFoundException;
@@ -13,55 +16,73 @@ import com.tinqinacademy.hotel.persistence.entities.room.Room;
 import com.tinqinacademy.hotel.persistence.enums.BedSize;
 import com.tinqinacademy.hotel.persistence.repositories.BedRepository;
 import com.tinqinacademy.hotel.persistence.repositories.RoomRepository;
+import io.vavr.control.Either;
+import io.vavr.control.Try;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Validator;
 
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static io.vavr.API.Match;
+
 @Service
 @Slf4j
-@RequiredArgsConstructor
-public class PartialUpdateRoomOperationProcessor implements PartialUpdateRoomOperation {
-  
+public class PartialUpdateRoomOperationProcessor extends BaseOperationProcessor implements PartialUpdateRoomOperation {
+
   private final RoomRepository roomRepository;
   private final BedRepository bedRepository;
-  private final ConversionService conversionService;
   private final ObjectMapper objectMapper;
 
+  public PartialUpdateRoomOperationProcessor(
+      ConversionService conversionService, Validator validator,
+      RoomRepository roomRepository, BedRepository bedRepository, ObjectMapper objectMapper
+  ) {
+    super(conversionService, validator);
+    this.roomRepository = roomRepository;
+    this.bedRepository = bedRepository;
+    this.objectMapper = objectMapper;
+  }
+
   @Override
-  public PartialUpdateRoomOutput process(PartialUpdateRoomInput input) {
-    log.info("Start partialUpdateRoom input: {}", input);
+  public Either<ErrorOutput, PartialUpdateRoomOutput> process(PartialUpdateRoomInput input) {
+    return Try.of(() -> {
 
-    Room savedRoom = getRoomByIdOrThrow(input);
+          log.info("Start partialUpdateRoom input: {}", input);
 
-    RoomInput roomInput = input.getRoomInput();
-    Room partialRoom = convertPartialInputToRoom(input.getRoomId(), roomInput);
+          Room savedRoom = getRoomByIdOrThrow(input);
 
-    try {
-      JsonObject savedRoomValue = convertToJsonObject(savedRoom);
-      JsonObject patchRoomValue = convertToJsonObject(partialRoom);
+          RoomInput roomInput = input.getRoomInput();
+          Room partialRoom = convertPartialInputToRoom(input.getRoomId(), roomInput);
 
-      JsonValue result = Json.createMergePatch(patchRoomValue).apply(savedRoomValue);
-      Room updatedRoom = objectMapper.readValue(result.toString(), Room.class);
-      log.info("Merge patch json value: {}", updatedRoom);
+          JsonObject savedRoomValue = convertToJsonObject(savedRoom);
+          JsonObject patchRoomValue = convertToJsonObject(partialRoom);
 
-      roomRepository.save(updatedRoom);
-    } catch (JsonProcessingException e) {
-      //TODO: handle exception
-      throw new RuntimeException(e);
-    }
+          JsonValue result = Json.createMergePatch(patchRoomValue).apply(savedRoomValue);
+          Room updatedRoom = objectMapper.readValue(result.toString(), Room.class);
+          log.info("Merge patch json value: {}", updatedRoom);
 
-    PartialUpdateRoomOutput output = convertRoomToRoomOutput(savedRoom);
-    log.info("End partialUpdateRoom output: {}", output);
-    return output;
+          roomRepository.save(updatedRoom);
+
+          PartialUpdateRoomOutput output = convertRoomToRoomOutput(savedRoom);
+          log.info("End partialUpdateRoom output: {}", output);
+          return output;
+        })
+        .toEither()
+        .mapLeft(t -> Match(t).of(
+            customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
+            customStatusCase(t, JsonProcessingException.class, HttpStatus.BAD_REQUEST),
+            customStatusCase(t, BedDoesNotExistException.class, HttpStatus.UNPROCESSABLE_ENTITY),
+            defaultCase(t)
+        ));
   }
 
   private Room getRoomByIdOrThrow(PartialUpdateRoomInput input) {
@@ -89,8 +110,7 @@ public class PartialUpdateRoomOperationProcessor implements PartialUpdateRoomOpe
     input.getBedSizes().forEach(b ->
         beds.add(bedRepository
             .findByBedSize(BedSize.getByCode(b.getCode()))
-            //TODO: throw custom exception (this will (almost) never fail but w/e)
-            .orElseThrow()
+            .orElseThrow(() -> new BedDoesNotExistException(b.getCode()))
         )
     );
     return beds;
