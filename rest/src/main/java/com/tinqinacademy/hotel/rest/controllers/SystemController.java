@@ -21,7 +21,6 @@ import com.tinqinacademy.hotel.api.operations.searchvisitors.output.SearchVisito
 import com.tinqinacademy.hotel.api.operations.updateroom.input.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.updateroom.operation.UpdateRoomOperation;
 import com.tinqinacademy.hotel.api.operations.updateroom.output.UpdateRoomOutput;
-import com.tinqinacademy.hotel.api.validation.groups.NonMandatoryFieldsGroup;
 import com.tinqinacademy.hotel.rest.base.BaseController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,7 +29,6 @@ import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -206,7 +204,7 @@ public class SystemController extends BaseController {
   @PutMapping(UPDATE_ROOM)
   public ResponseEntity<OperationOutput> updateRoom(
       @PathVariable UUID roomId,
-      @Validated @RequestBody UpdateRoomInput input
+      @RequestBody UpdateRoomInput input
   ) {
 
     input.setRoomId(roomId);
