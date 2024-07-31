@@ -21,7 +21,6 @@ import com.tinqinacademy.hotel.api.operations.searchvisitors.output.SearchVisito
 import com.tinqinacademy.hotel.api.operations.updateroom.input.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.updateroom.operation.UpdateRoomOperation;
 import com.tinqinacademy.hotel.api.operations.updateroom.output.UpdateRoomOutput;
-import com.tinqinacademy.hotel.api.validation.groups.NonMandatoryFieldsGroup;
 import com.tinqinacademy.hotel.rest.base.BaseController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,7 +29,6 @@ import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -97,7 +95,7 @@ public class SystemController extends BaseController {
   })
   @PostMapping(REGISTER_VISITORS)
   public ResponseEntity<OperationOutput> registerVisitors(
-      @Validated @RequestBody RegisterVisitorsInput input,
+      @RequestBody RegisterVisitorsInput input,
       @PathVariable UUID bookingId
   ) {
     input.setBookingId(bookingId);
@@ -175,12 +173,11 @@ public class SystemController extends BaseController {
       )
   })
   @PostMapping(ADD_ROOM)
-  public ResponseEntity<OperationOutput> addRoom(@RequestBody @Validated AddRoomInput input) {
+  public ResponseEntity<OperationOutput> addRoom(@RequestBody AddRoomInput input) {
     Either<ErrorOutput, AddRoomOutput> output = addRoomOperation.process(input);
 
     return consumeEither(output, HttpStatus.CREATED);
   }
-
 
 
   @Operation(
@@ -207,7 +204,7 @@ public class SystemController extends BaseController {
   @PutMapping(UPDATE_ROOM)
   public ResponseEntity<OperationOutput> updateRoom(
       @PathVariable UUID roomId,
-      @Validated @RequestBody UpdateRoomInput input
+      @RequestBody UpdateRoomInput input
   ) {
 
     input.setRoomId(roomId);
@@ -241,7 +238,7 @@ public class SystemController extends BaseController {
   @PatchMapping(PARTIAL_UPDATE_ROOM)
   public ResponseEntity<OperationOutput> partialUpdateRoom(
       @PathVariable UUID roomId,
-      @Validated(NonMandatoryFieldsGroup.class) @RequestBody PartialUpdateRoomInput input
+      @RequestBody PartialUpdateRoomInput input
   ) {
     input.setRoomId(roomId);
     Either<ErrorOutput, PartialUpdateRoomOutput> output = partialUpdateRoomOperation.process(input);

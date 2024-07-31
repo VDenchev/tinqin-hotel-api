@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.Validator;
+import jakarta.validation.Validator;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -40,28 +40,30 @@ public class SignUpOperationProcessor extends BaseOperationProcessor implements 
 
   @Override
   public Either<ErrorOutput, SignUpOutput> process(SignUpInput input) {
-    return Try.of(() -> {
+    return validateInput(input)
+        .flatMap(validInput ->
+            Try.of(() -> {
+                  log.info("Start signUp input: {}", validInput);
 
-          log.info("Start signUp input: {}", input);
-
-          ensureUserWithSameEmailDoesNotExist(input.getEmail());
-          ensureUserWithSamePhoneNoDoesNotExist(input.getPhoneNo());
+                  ensureUserWithSameEmailDoesNotExist(validInput.getEmail());
+                  ensureUserWithSamePhoneNoDoesNotExist(validInput.getPhoneNo());
 
 
-          String hashedPassword = hashPassword(input.getPassword());
+                  String hashedPassword = hashPassword(validInput.getPassword());
 
-          User user = convertSignUpInputToUser(input, hashedPassword);
-          userRepository.save(user);
+                  User user = convertSignUpInputToUser(validInput, hashedPassword);
+                  userRepository.save(user);
 
-          SignUpOutput output = createOutput(user);
-          log.info("End signUp output: {}", output);
-          return output;
-        })
-        .toEither()
-        .mapLeft(t -> Match(t).of(
-            customStatusCase(t, EntityAlreadyExistsException.class, HttpStatus.BAD_REQUEST),
-            customStatusCase(t, GeneralSecurityException.class, HttpStatus.BAD_REQUEST)
-        ));
+                  SignUpOutput output = createOutput(user);
+                  log.info("End signUp output: {}", output);
+                  return output;
+                })
+                .toEither()
+                .mapLeft(t -> Match(t).of(
+                    customStatusCase(t, EntityAlreadyExistsException.class, HttpStatus.BAD_REQUEST),
+                    customStatusCase(t, GeneralSecurityException.class, HttpStatus.BAD_REQUEST)
+                ))
+        );
   }
 
   private void ensureUserWithSameEmailDoesNotExist(String email) {

@@ -23,7 +23,6 @@ import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -113,7 +112,7 @@ public class HotelController extends BaseController {
       @ApiResponse(description = "You dont have permission", responseCode = "403"),
   })
   @PostMapping(BOOK_ROOM)
-  public ResponseEntity<OperationOutput> bookRoom(@PathVariable UUID roomId, @Validated @RequestBody BookRoomInput input) {
+  public ResponseEntity<OperationOutput> bookRoom(@PathVariable UUID roomId, @RequestBody BookRoomInput input) {
     input.setRoomId(roomId);
     Either<ErrorOutput, BookRoomOutput> output = bookRoomOperation.process(input);
 

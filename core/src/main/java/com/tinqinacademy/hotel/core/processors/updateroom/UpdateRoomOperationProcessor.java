@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.Validator;
+import jakarta.validation.Validator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,31 +45,33 @@ public class UpdateRoomOperationProcessor extends BaseOperationProcessor impleme
 
   @Override
   public Either<ErrorOutput, UpdateRoomOutput> process(UpdateRoomInput input) {
-    return Try.of(() -> {
+    return validateInput(input)
+        .flatMap(validInput ->
+            Try.of(() -> {
+                  log.info("Start updateRoom input: {}", validInput);
 
-          log.info("Start updateRoom input: {}", input);
+                  roomRepository.findById(validInput.getRoomId())
+                      .orElseThrow(() -> new EntityNotFoundException("Room", validInput.getRoomId()));
 
-          roomRepository.findById(input.getRoomId())
-              .orElseThrow(() -> new EntityNotFoundException("Room", input.getRoomId()));
+                  RoomInput roomInput = validInput.getRoomInput();
+                  List<Bed> beds = getBedEntitiesFromRoomInput(roomInput);
 
-          RoomInput roomInput = input.getRoomInput();
-          List<Bed> beds = getBedEntitiesFromRoomInput(roomInput);
+                  Room roomToUpdate = convertRoomIntputToRoom(roomInput, beds);
 
-          Room roomToUpdate = convertRoomIntputToRoom(roomInput, beds);
+                  roomRepository.save(roomToUpdate);
 
-          roomRepository.save(roomToUpdate);
+                  UpdateRoomOutput output = createOutput(roomToUpdate);
 
-          UpdateRoomOutput output = createOutput(roomToUpdate);
-
-          log.info("End updateRoom output: {}", output);
-          return output;
-        })
-        .toEither()
-        .mapLeft(t -> Match(t).of(
-            customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
-            customStatusCase(t, BedDoesNotExistException.class, HttpStatus.UNPROCESSABLE_ENTITY),
-            defaultCase(t)
-        ));
+                  log.info("End updateRoom output: {}", output);
+                  return output;
+                })
+                .toEither()
+                .mapLeft(t -> Match(t).of(
+                    customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
+                    customStatusCase(t, BedDoesNotExistException.class, HttpStatus.UNPROCESSABLE_ENTITY),
+                    defaultCase(t)
+                ))
+        );
   }
 
   private List<Bed> getBedEntitiesFromRoomInput(RoomInput input) {

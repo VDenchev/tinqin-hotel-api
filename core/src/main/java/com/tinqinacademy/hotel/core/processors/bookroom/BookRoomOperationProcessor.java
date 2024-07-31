@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.Validator;
+import jakarta.validation.Validator;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -51,29 +51,32 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor implement
 
   @Override
   public Either<ErrorOutput, BookRoomOutput> process(BookRoomInput input) {
-    return Try.of(() -> {
+    return validateInput(input)
+        .flatMap(validInput ->
+            Try.of(() -> {
 
-          log.info("Start bookRoom input: {}", input);
+                  log.info("Start bookRoom input: {}", validInput);
 
-          ensueRoomIsNotAlreadyBookedForTheSamePeriod(input.getRoomId(), input.getStartDate(),
-              input.getEndDate());
+                  ensueRoomIsNotAlreadyBookedForTheSamePeriod(validInput.getRoomId(), validInput.getStartDate(),
+                      validInput.getEndDate());
 
-          User user = getExistingOrCreateNewUser(input);
-          Room room = roomRepository.findById(input.getRoomId())
-              .orElseThrow(() -> new EntityNotFoundException("Room", input.getRoomId()));
-          Booking booking = convertBookRoomInputToBooking(input, room, user);
+                  User user = getExistingOrCreateNewUser(validInput);
+                  Room room = roomRepository.findById(validInput.getRoomId())
+                      .orElseThrow(() -> new EntityNotFoundException("Room", validInput.getRoomId()));
+                  Booking booking = convertBookRoomInputToBooking(validInput, room, user);
 
-          bookingRepository.save(booking);
+                  bookingRepository.save(booking);
 
-          BookRoomOutput output = createOutput();
-          log.info("End bookRoom output: {}", output);
-          return output;
-        })
-        .toEither()
-        .mapLeft(t -> Match(t).of(
-            customStatusCase(t, RoomUnavailableException.class, HttpStatus.CONFLICT),
-            defaultCase(t)
-        ));
+                  BookRoomOutput output = createOutput();
+                  log.info("End bookRoom output: {}", output);
+                  return output;
+                })
+                .toEither()
+                .mapLeft(t -> Match(t).of(
+                    customStatusCase(t, RoomUnavailableException.class, HttpStatus.CONFLICT),
+                    defaultCase(t)
+                ))
+        );
   }
 
   private void ensueRoomIsNotAlreadyBookedForTheSamePeriod(UUID roomId, LocalDate startDate, LocalDate endDate) {

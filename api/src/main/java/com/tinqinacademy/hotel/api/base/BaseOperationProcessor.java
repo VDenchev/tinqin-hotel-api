@@ -2,14 +2,19 @@ package com.tinqinacademy.hotel.api.base;
 
 import com.tinqinacademy.hotel.api.errors.Error;
 import com.tinqinacademy.hotel.api.errors.ErrorOutput;
+import com.tinqinacademy.hotel.api.validation.groups.NonMandatoryFieldsGroup;
 import io.vavr.API;
+import io.vavr.control.Either;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
+import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.validation.Validator;
 
 import java.util.List;
+import java.util.Set;
 
 import static io.vavr.API.$;
 import static io.vavr.API.Case;
@@ -49,5 +54,29 @@ public abstract class BaseOperationProcessor {
 
   protected API.Match.Case<? extends Throwable, ErrorOutput> createDefaultCase(ErrorOutput errorOutput) {
     return Case($(), errorOutput);
+  }
+
+  protected <T extends OperationInput> Either<ErrorOutput, T> validateInput(T input) {
+    return validateInput(input, Default.class);
+  }
+
+  protected <T extends OperationInput> Either<ErrorOutput, T> validateInput(T input, Class<?> validationGroup) {
+    Set<ConstraintViolation<T>> violations = validator.validate(input, validationGroup);
+    if (violations.isEmpty()) {
+      return Either.right(input);
+    }
+
+    List<Error> errors = violations.stream()
+        .map(v -> Error.builder()
+            .message(v.getMessage())
+            .field(v.getPropertyPath().toString())
+            .build()
+        ).toList();
+
+    return Either.left(
+        ErrorOutput.builder()
+            .errors(errors)
+            .code(HttpStatus.UNPROCESSABLE_ENTITY)
+            .build());
   }
 }

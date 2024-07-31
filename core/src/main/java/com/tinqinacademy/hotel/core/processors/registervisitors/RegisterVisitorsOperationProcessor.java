@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.Validator;
+import jakarta.validation.Validator;
 
 import java.util.List;
 import java.util.Set;
@@ -45,43 +45,45 @@ public class RegisterVisitorsOperationProcessor extends BaseOperationProcessor i
 
   @Override
   public Either<ErrorOutput, RegisterVisitorsOutput> process(RegisterVisitorsInput input) {
-    return Try.of(() -> {
+    return validateInput(input)
+        .flatMap(validInput ->
+            Try.of(() -> {
+                  log.info("Start registerVisitors input: {}", validInput);
 
-          log.info("Start registerVisitors input: {}", input);
+                  Booking booking = bookingRepository.findById(validInput.getBookingId())
+                      .orElseThrow(() -> new EntityNotFoundException("Booking", validInput.getBookingId()));
 
-          Booking booking = bookingRepository.findById(input.getBookingId())
-              .orElseThrow(() -> new EntityNotFoundException("Booking", input.getBookingId()));
+                  validateVisitors(input.getVisitors(), booking);
 
-          validateVisitors(input.getVisitors(), booking);
+                  List<String> inputIdCardNumbers = validInput.getVisitors().stream()
+                      .map(VisitorDetailsInput::getIdCardNo)
+                      .toList();
+                  //TODO: check for duplicate guests in input
+                  checkIfGuestsAlreadyInBooking(booking, inputIdCardNumbers);
 
-          List<String> inputIdCardNumbers = input.getVisitors().stream()
-              .map(VisitorDetailsInput::getIdCardNo)
-              .toList();
-          //TODO: check for duplicate guests in input
-          checkIfGuestsAlreadyInBooking(booking, inputIdCardNumbers);
+                  List<Guest> existingGuests = guestRepository.getAllGuestsByIdCardNumberList(inputIdCardNumbers);
+                  List<Guest> guestsToSave = getNotYetPersistedVisitors(existingGuests,
+                      validInput.getVisitors());
 
-          List<Guest> existingGuests = guestRepository.getAllGuestsByIdCardNumberList(inputIdCardNumbers);
-          List<Guest> guestsToSave = getNotYetPersistedVisitors(existingGuests,
-              input.getVisitors());
+                  log.info("Guests to be saved: {}", guestsToSave);
 
-          log.info("Guests to be saved: {}", guestsToSave);
+                  guestsToSave = guestRepository.saveAll(guestsToSave);
+                  booking.getGuests().addAll(guestsToSave);
+                  booking.getGuests().addAll(existingGuests);
+                  bookingRepository.save(booking);
 
-          guestsToSave = guestRepository.saveAll(guestsToSave);
-          booking.getGuests().addAll(guestsToSave);
-          booking.getGuests().addAll(existingGuests);
-          bookingRepository.save(booking);
+                  RegisterVisitorsOutput output = createOutput();
 
-          RegisterVisitorsOutput output = createOutput();
-
-          log.info("End registerVisitors output: {}", output);
-          return output;
-        })
-        .toEither()
-        .mapLeft(t -> Match(t).of(
-            customStatusCase(t, VisitorDateMismatchException.class, HttpStatus.UNPROCESSABLE_ENTITY),
-            customStatusCase(t, EntityNotFoundException.class, HttpStatus.BAD_REQUEST),
-            defaultCase(t)
-        ));
+                  log.info("End registerVisitors output: {}", output);
+                  return output;
+                })
+                .toEither()
+                .mapLeft(t -> Match(t).of(
+                    customStatusCase(t, VisitorDateMismatchException.class, HttpStatus.UNPROCESSABLE_ENTITY),
+                    customStatusCase(t, EntityNotFoundException.class, HttpStatus.BAD_REQUEST),
+                    defaultCase(t)
+                ))
+        );
   }
 
   private void validateVisitors(List<VisitorDetailsInput> visitors, Booking booking) {
