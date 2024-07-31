@@ -97,7 +97,7 @@ public class SystemController extends BaseController {
   })
   @PostMapping(REGISTER_VISITORS)
   public ResponseEntity<OperationOutput> registerVisitors(
-      @Validated @RequestBody RegisterVisitorsInput input,
+      @RequestBody RegisterVisitorsInput input,
       @PathVariable UUID bookingId
   ) {
     input.setBookingId(bookingId);
