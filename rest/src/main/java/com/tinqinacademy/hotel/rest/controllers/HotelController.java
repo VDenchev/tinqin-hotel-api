@@ -113,7 +113,7 @@ public class HotelController extends BaseController {
       @ApiResponse(description = "You dont have permission", responseCode = "403"),
   })
   @PostMapping(BOOK_ROOM)
-  public ResponseEntity<OperationOutput> bookRoom(@PathVariable UUID roomId, @Validated @RequestBody BookRoomInput input) {
+  public ResponseEntity<OperationOutput> bookRoom(@PathVariable UUID roomId, @RequestBody BookRoomInput input) {
     input.setRoomId(roomId);
     Either<ErrorOutput, BookRoomOutput> output = bookRoomOperation.process(input);
 

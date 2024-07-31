@@ -26,7 +26,8 @@ import java.util.UUID;
 @Builder
 @DatesMatch(startField = "startDate",
     endField = "endDate",
-    message = "Start date must be before endDate")
+    message = "Start date must be before endDate"
+)
 public class BookRoomInput implements OperationInput {
 
   @JsonIgnore
@@ -42,6 +43,7 @@ public class BookRoomInput implements OperationInput {
   @Schema(example = "2025-10-11")
   private LocalDate endDate;
 
+  @NotBlank(message = "Phone number cannot be blank")
   @Size(min = 10, max = 15, message = "Invalid phone number format")
   @Schema(example = "+359 972947321")
   private String phoneNumber;
