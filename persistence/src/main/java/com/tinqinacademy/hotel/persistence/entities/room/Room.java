@@ -22,6 +22,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -52,8 +53,8 @@ public class Room extends BaseEntity {
       joinColumns = {@JoinColumn(name = "room_id", referencedColumnName = "id")},
       inverseJoinColumns = {@JoinColumn(name = "bed_id", referencedColumnName = "id")}
   )
-  private List<Bed> beds;
+  private List<Bed> beds = new ArrayList<>();
 
   @OneToMany(fetch = FetchType.EAGER, mappedBy = "room")
-  private List<Booking> bookings;
+  private List<Booking> bookings = new ArrayList<>();
 }

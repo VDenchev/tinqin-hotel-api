@@ -22,6 +22,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -56,5 +57,5 @@ public class Booking extends BaseEntity {
       joinColumns = {@JoinColumn(name = "booking_id", referencedColumnName = "id")},
       inverseJoinColumns = {@JoinColumn(name = "guest_id", referencedColumnName = "id")}
   )
-  private List<Guest> guests;
+  private List<Guest> guests = new ArrayList<>();
 }

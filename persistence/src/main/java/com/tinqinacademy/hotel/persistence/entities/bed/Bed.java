@@ -29,7 +29,4 @@ public class Bed extends BaseEntity {
 
   @Column(name = "capacity", nullable = false)
   private Integer capacity;
-
-//  @ManyToMany(mappedBy = "beds")
-//  private List<Room> rooms;
 }
