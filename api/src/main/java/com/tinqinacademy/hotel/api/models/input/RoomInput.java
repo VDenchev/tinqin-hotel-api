@@ -29,9 +29,8 @@ import java.util.List;
 public class RoomInput {
 
   @NotNull(message = "Bed size cannot be empty")
-  @Valid
   @Schema(example = "[\"single\", \"double\"]")
-  private List<BedType> bedSizes;
+  private List<@Valid BedType> bedSizes;
 
   @NotBlank(message = "Room number must not be blank")
   // TODO: add regex validation
