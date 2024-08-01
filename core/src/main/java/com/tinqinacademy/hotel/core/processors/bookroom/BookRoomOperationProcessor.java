@@ -55,14 +55,16 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor implement
         .flatMap(validInput ->
             Try.of(() -> {
 
+                  UUID roomId = UUID.fromString(validInput.getRoomId());
+
                   log.info("Start bookRoom input: {}", validInput);
 
-                  ensueRoomIsNotAlreadyBookedForTheSamePeriod(validInput.getRoomId(), validInput.getStartDate(),
+                  Room room = roomRepository.findById(roomId)
+                      .orElseThrow(() -> new EntityNotFoundException("Room", roomId));
+                  ensueRoomIsNotAlreadyBookedForTheSamePeriod(roomId, validInput.getStartDate(),
                       validInput.getEndDate());
 
                   User user = getExistingOrCreateNewUser(validInput);
-                  Room room = roomRepository.findById(validInput.getRoomId())
-                      .orElseThrow(() -> new EntityNotFoundException("Room", validInput.getRoomId()));
                   Booking booking = convertBookRoomInputToBooking(validInput, room, user);
 
                   bookingRepository.save(booking);
@@ -74,6 +76,7 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor implement
                 .toEither()
                 .mapLeft(t -> Match(t).of(
                     customStatusCase(t, RoomUnavailableException.class, HttpStatus.CONFLICT),
+                    customStatusCase(t, IllegalArgumentException.class, HttpStatus.UNPROCESSABLE_ENTITY),
                     defaultCase(t)
                 ))
         );

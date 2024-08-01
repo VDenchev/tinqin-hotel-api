@@ -50,8 +50,9 @@ public class HotelServiceImpl implements HotelService {
     log.info("Start bookRoom input: {}", input);
 
     Optional<User> userOpt = userRepository.findByPhoneNumber(input.getPhoneNumber());
+    UUID roomId = UUID.fromString(input.getRoomId());
 
-    List<Booking> roomBookingsForPeriod = bookingRepository.getBookingsOfRoomForPeriod(input.getRoomId(), input.getStartDate(), input.getEndDate());
+    List<Booking> roomBookingsForPeriod = bookingRepository.getBookingsOfRoomForPeriod(roomId, input.getStartDate(), input.getEndDate());
 
     if (!roomBookingsForPeriod.isEmpty()) {
       throw new RoomUnavailableException("Room has already been booked for the specified period");
@@ -71,8 +72,8 @@ public class HotelServiceImpl implements HotelService {
       user = userOpt.get();
     }
 
-    Room room = roomRepository.findById(input.getRoomId())
-        .orElseThrow(() -> new EntityNotFoundException("Room", input.getRoomId()));
+    Room room = roomRepository.findById(roomId)
+        .orElseThrow(() -> new EntityNotFoundException("Room", roomId));
 
     Booking booking = conversionService.convert(input, Booking.class);
     booking.setRoom(room);
