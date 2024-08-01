@@ -84,6 +84,7 @@ public class PartialUpdateRoomOperationProcessor extends BaseOperationProcessor 
                     customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
                     customStatusCase(t, JsonProcessingException.class, HttpStatus.BAD_REQUEST),
                     customStatusCase(t, BedDoesNotExistException.class, HttpStatus.UNPROCESSABLE_ENTITY),
+                    customStatusCase(t, IllegalArgumentException.class, HttpStatus.UNPROCESSABLE_ENTITY),
                     defaultCase(t)
                 ))
         );

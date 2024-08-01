@@ -23,6 +23,7 @@ import jakarta.validation.Validator;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static io.vavr.API.Match;
@@ -49,9 +50,9 @@ public class RegisterVisitorsOperationProcessor extends BaseOperationProcessor i
         .flatMap(validInput ->
             Try.of(() -> {
                   log.info("Start registerVisitors input: {}", validInput);
-
-                  Booking booking = bookingRepository.findById(validInput.getBookingId())
-                      .orElseThrow(() -> new EntityNotFoundException("Booking", validInput.getBookingId()));
+                  UUID bookingId = UUID.fromString(validInput.getBookingId());
+                  Booking booking = bookingRepository.findById(bookingId)
+                      .orElseThrow(() -> new EntityNotFoundException("Booking", bookingId));
 
                   validateVisitors(input.getVisitors(), booking);
 
@@ -81,6 +82,7 @@ public class RegisterVisitorsOperationProcessor extends BaseOperationProcessor i
                 .mapLeft(t -> Match(t).of(
                     customStatusCase(t, VisitorDateMismatchException.class, HttpStatus.UNPROCESSABLE_ENTITY),
                     customStatusCase(t, EntityNotFoundException.class, HttpStatus.BAD_REQUEST),
+                    customStatusCase(t, IllegalArgumentException.class, HttpStatus.UNPROCESSABLE_ENTITY),
                     defaultCase(t)
                 ))
         );

@@ -20,5 +20,5 @@ import java.util.UUID;
 public class RemoveBookingInput implements OperationInput {
 
   @JsonValue
-  private UUID bookingId;
+  private String bookingId;
 }

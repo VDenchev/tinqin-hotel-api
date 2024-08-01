@@ -39,8 +39,9 @@ public class RemoveBookingOperationProcessor extends BaseOperationProcessor impl
     return Try.of(() -> {
 
           log.info("Start removeBooking input: {}", input);
+          UUID bookingId = UUID.fromString(input.getBookingId());
 
-          Booking booking = getBookingByIdOrThrow(input.getBookingId());
+          Booking booking = getBookingByIdOrThrow(bookingId);
 
           bookingRepository.delete(booking);
 

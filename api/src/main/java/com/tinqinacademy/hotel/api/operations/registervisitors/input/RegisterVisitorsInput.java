@@ -24,9 +24,8 @@ import java.util.UUID;
 public class RegisterVisitorsInput implements OperationInput {
 
   @NotNull(message = "Visitors cannot be empty")
-  @Valid
-  private List<VisitorDetailsInput> visitors;
+  private List<@Valid VisitorDetailsInput> visitors;
 
   @JsonIgnore
-  private UUID bookingId;
+  private String bookingId;
 }
