@@ -43,7 +43,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDate;
-import java.util.UUID;
 
 import static com.tinqinacademy.hotel.api.RestApiRoutes.ADD_ROOM;
 import static com.tinqinacademy.hotel.api.RestApiRoutes.DELETE_ROOM;
