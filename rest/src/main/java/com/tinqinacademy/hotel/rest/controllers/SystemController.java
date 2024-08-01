@@ -68,9 +68,10 @@ public class SystemController extends BaseController {
   public void initBinder(WebDataBinder binder) {
     binder.registerCustomEditor(DeleteRoomInput.class, new PropertyEditorSupport() {
       @Override
-      public void setAsText(String text) throws IllegalArgumentException {
-        UUID id = UUID.fromString(text);
-        DeleteRoomInput input = new DeleteRoomInput(id);
+      public void setAsText(String id) throws IllegalArgumentException {
+        DeleteRoomInput input = DeleteRoomInput.builder()
+            .id(id)
+            .build();
         setValue(input);
       }
     });
@@ -237,7 +238,7 @@ public class SystemController extends BaseController {
   })
   @PatchMapping(PARTIAL_UPDATE_ROOM)
   public ResponseEntity<OperationOutput> partialUpdateRoom(
-      @PathVariable UUID roomId,
+      @PathVariable String roomId,
       @RequestBody PartialUpdateRoomInput input
   ) {
     input.setRoomId(roomId);

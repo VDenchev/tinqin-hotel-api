@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -227,14 +228,14 @@ public class SystemServiceImpl implements SystemService {
   @Transactional
   public PartialUpdateRoomOutput partialUpdateRoom(PartialUpdateRoomInput input) {
     log.info("Start partialUpdateRoom input: {}", input);
-
-    Room savedRoom = roomRepository.findById(input.getRoomId())
-        .orElseThrow(() -> new EntityNotFoundException("Room", input.getRoomId()));
+     UUID roomId = UUID.fromString(input.getRoomId());
+    Room savedRoom = roomRepository.findById(roomId)
+        .orElseThrow(() -> new EntityNotFoundException("Room", roomId));
 
     RoomInput roomInput = input.getRoomInput();
     Room partialRoom = conversionService.convert(roomInput, Room.class);
 
-    partialRoom.setId(input.getRoomId());
+    partialRoom.setId(roomId);
     partialRoom.setBathroomType(conversionService.convert(roomInput.getBathroomType(), BathroomType.class));
 
     List<Bed> beds = null;
@@ -261,7 +262,7 @@ public class SystemServiceImpl implements SystemService {
     }
 
     PartialUpdateRoomOutput output = PartialUpdateRoomOutput.builder()
-        .id(savedRoom.getId())
+        .id(savedRoom.getId().toString())
         .build();
 
     log.info("End partialUpdateRoom output: {}", output);
@@ -273,8 +274,9 @@ public class SystemServiceImpl implements SystemService {
   public DeleteRoomOutput deleteRoom(DeleteRoomInput input) {
     log.info("Start deleteRoom input: {}", input);
 
-    Room room = roomRepository.findById(input.getId())
-        .orElseThrow(() -> new EntityNotFoundException("Room", input.getId()));
+    UUID roomId = UUID.fromString(input.getId());
+    Room room = roomRepository.findById(roomId)
+        .orElseThrow(() -> new EntityNotFoundException("Room", roomId));
 
 //      List<Booking> roomBookings = bookingRepository.getBetweenDatesForRoom(room.getId(), LocalDate.now(), LocalDate.MAX);
 //

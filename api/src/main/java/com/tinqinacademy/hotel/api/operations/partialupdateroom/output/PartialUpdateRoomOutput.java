@@ -19,5 +19,5 @@ import java.util.UUID;
 @ToString
 public class PartialUpdateRoomOutput implements OperationOutput {
 
-  private UUID id;
+  private String id;
 }

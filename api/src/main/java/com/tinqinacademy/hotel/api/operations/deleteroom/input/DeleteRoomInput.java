@@ -20,5 +20,5 @@ import java.util.UUID;
 public class DeleteRoomInput implements OperationInput {
 
   @JsonValue
-  private UUID id;
+  private String id;
 }

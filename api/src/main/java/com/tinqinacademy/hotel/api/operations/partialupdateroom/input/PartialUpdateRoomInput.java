@@ -27,5 +27,5 @@ public class PartialUpdateRoomInput implements OperationInput {
   private RoomInput roomInput;
 
   @JsonIgnore
-  private UUID roomId;
+  private String roomId;
 }
