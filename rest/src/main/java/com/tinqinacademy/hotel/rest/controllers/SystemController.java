@@ -204,7 +204,7 @@ public class SystemController extends BaseController {
   })
   @PutMapping(UPDATE_ROOM)
   public ResponseEntity<OperationOutput> updateRoom(
-      @PathVariable UUID roomId,
+      @PathVariable String roomId,
       @RequestBody UpdateRoomInput input
   ) {
 

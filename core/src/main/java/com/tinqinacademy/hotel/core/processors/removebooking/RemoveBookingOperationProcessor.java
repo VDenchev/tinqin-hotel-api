@@ -37,7 +37,6 @@ public class RemoveBookingOperationProcessor extends BaseOperationProcessor impl
   @Override
   public Either<ErrorOutput, RemoveBookingOutput> process(RemoveBookingInput input) {
     return Try.of(() -> {
-
           log.info("Start removeBooking input: {}", input);
           UUID bookingId = UUID.fromString(input.getBookingId());
 
@@ -52,6 +51,7 @@ public class RemoveBookingOperationProcessor extends BaseOperationProcessor impl
         .toEither()
         .mapLeft(t -> Match(t).of(
             customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
+            customStatusCase(t, IllegalArgumentException.class, HttpStatus.UNPROCESSABLE_ENTITY),
             defaultCase(t)
         ));
   }

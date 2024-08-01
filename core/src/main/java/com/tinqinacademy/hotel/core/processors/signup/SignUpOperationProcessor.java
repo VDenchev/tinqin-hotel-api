@@ -90,7 +90,7 @@ public class SignUpOperationProcessor extends BaseOperationProcessor implements 
 
   private SignUpOutput createOutput(User user) {
     return SignUpOutput.builder()
-        .id(user.getId())
+        .id(user.getId().toString())
         .build();
   }
 

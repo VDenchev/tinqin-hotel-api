@@ -18,5 +18,5 @@ import java.util.UUID;
 @ToString
 public class UpdateRoomOutput implements OperationOutput {
 
-  private UUID id;
+  private String id;
 }

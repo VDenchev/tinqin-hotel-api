@@ -202,9 +202,9 @@ public class SystemServiceImpl implements SystemService {
   @Transactional
   public UpdateRoomOutput updateRoom(UpdateRoomInput input) {
     log.info("Start updateRoom input: {}", input);
-
-    roomRepository.findById(input.getRoomId())
-        .orElseThrow(() -> new EntityNotFoundException("Room", input.getRoomId()));
+    UUID roomId = UUID.fromString(input.getRoomId());
+    roomRepository.findById(roomId)
+        .orElseThrow(() -> new EntityNotFoundException("Room", roomId));
 
     RoomInput roomInput = input.getRoomInput();
     List<Bed> beds = getBedEntitiesFromRoomInput(roomInput);
@@ -217,7 +217,7 @@ public class SystemServiceImpl implements SystemService {
     roomRepository.save(roomToUpdate);
 
     UpdateRoomOutput output = UpdateRoomOutput.builder()
-        .id(roomToUpdate.getId())
+        .id(roomToUpdate.getId().toString())
         .build();
 
     log.info("End updateRoom output: {}", output);

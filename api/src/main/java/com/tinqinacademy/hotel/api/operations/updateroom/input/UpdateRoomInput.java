@@ -26,5 +26,5 @@ public class UpdateRoomInput implements OperationInput {
   @Valid
   private RoomInput roomInput;
   @JsonIgnore
-  private UUID roomId;
+  private String roomId;
 }
