@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.UUID;
 
 import java.util.List;
 
@@ -26,5 +27,6 @@ public class RegisterVisitorsInput implements OperationInput {
   private List<@Valid VisitorDetailsInput> visitors;
 
   @JsonIgnore
+  @UUID(message = "BookingId has to be a valid UUID string")
   private String bookingId;
 }
