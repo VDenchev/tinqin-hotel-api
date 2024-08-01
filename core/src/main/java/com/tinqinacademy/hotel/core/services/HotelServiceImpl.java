@@ -95,8 +95,9 @@ public class HotelServiceImpl implements HotelService {
   public RoomDetailsOutput getRoom(RoomDetailsInput input) {
     log.info("Start getRoom input: {}", input);
 
-    Room room = roomRepository.findById(input.getRoomId())
-        .orElseThrow(() -> new EntityNotFoundException("Room", input.getRoomId()));
+    UUID roomId = UUID.fromString(input.getRoomId());
+    Room room = roomRepository.findById(roomId)
+        .orElseThrow(() -> new EntityNotFoundException("Room", roomId));
 
     List<LocalDate> dates = room.getBookings().stream()
         .flatMap(b -> b.getStartDate().datesUntil(b.getEndDate().plusDays(1)))

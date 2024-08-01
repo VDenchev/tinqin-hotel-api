@@ -107,7 +107,7 @@ public class AddRoomOperationProcessor extends BaseOperationProcessor implements
 
   private AddRoomOutput convertRoomToRoomOutput(Room room) {
     return AddRoomOutput.builder()
-        .id(room.getId())
+        .id(room.getId().toString())
         .build();
   }
 }

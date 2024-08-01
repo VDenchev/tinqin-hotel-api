@@ -10,7 +10,7 @@ public class RoomToRoomOutput extends BaseConverter<Room, RoomOutput> {
   @Override
   protected RoomOutput doConvert(Room source) {
     return RoomOutput.builder()
-        .id(source.getId())
+        .id(source.getId().toString())
         .floor(source.getFloor())
         .price(source.getPrice())
         .number(source.getNumber())

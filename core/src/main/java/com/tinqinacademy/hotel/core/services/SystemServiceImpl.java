@@ -178,7 +178,7 @@ public class SystemServiceImpl implements SystemService {
     roomRepository.save(roomToAdd);
 
     AddRoomOutput output = AddRoomOutput.builder()
-        .id(roomToAdd.getId())
+        .id(roomToAdd.getId().toString())
         .build();
 
     log.info("End addRoom output: {}", output);

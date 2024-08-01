@@ -18,5 +18,5 @@ import java.util.UUID;
 @Builder
 public class RoomDetailsInput implements OperationInput {
 
-  private UUID roomId;
+  private String roomId;
 }

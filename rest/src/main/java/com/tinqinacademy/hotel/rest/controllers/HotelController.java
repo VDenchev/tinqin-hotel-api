@@ -93,7 +93,7 @@ public class HotelController extends BaseController {
   })
   @GetMapping(GET_ROOM)
   public ResponseEntity<OperationOutput> getRoom(
-      @PathVariable UUID roomId
+      @PathVariable String roomId
   ) {
     Either<ErrorOutput, RoomDetailsOutput> output = getRoomOperation.process(RoomDetailsInput.builder()
         .roomId(roomId)

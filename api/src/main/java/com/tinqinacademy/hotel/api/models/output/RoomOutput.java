@@ -21,7 +21,7 @@ import java.util.UUID;
 @Builder
 public class RoomOutput {
 
-  private UUID id;
+  private String id;
   private String number;
   private BigDecimal price;
   private Integer floor;
