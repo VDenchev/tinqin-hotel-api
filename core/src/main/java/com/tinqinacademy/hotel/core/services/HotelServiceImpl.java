@@ -152,9 +152,9 @@ public class HotelServiceImpl implements HotelService {
   @Transactional
   public RemoveBookingOutput removeBooking(RemoveBookingInput input) {
     log.info("Start removeBooking input: {}", input);
-
-    Booking booking = bookingRepository.findById(input.getBookingId())
-        .orElseThrow(() -> new EntityNotFoundException("Booking", input.getBookingId()));
+    UUID bookingId = UUID.fromString(input.getBookingId());
+    Booking booking = bookingRepository.findById(bookingId)
+        .orElseThrow(() -> new EntityNotFoundException("Booking", bookingId));
 
     bookingRepository.delete(booking);
 

@@ -97,7 +97,7 @@ public class SystemController extends BaseController {
   @PostMapping(REGISTER_VISITORS)
   public ResponseEntity<OperationOutput> registerVisitors(
       @RequestBody RegisterVisitorsInput input,
-      @PathVariable UUID bookingId
+      @PathVariable String bookingId
   ) {
     input.setBookingId(bookingId);
     Either<ErrorOutput, RegisterVisitorsOutput> output = registerVisitorsOperation.process(input);

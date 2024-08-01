@@ -131,7 +131,7 @@ public class HotelController extends BaseController {
   @DeleteMapping(REMOVE_BOOKING)
   public ResponseEntity<OperationOutput> removeBooking(@PathVariable UUID bookingId) {
     RemoveBookingInput input = RemoveBookingInput.builder()
-        .bookingId(bookingId)
+        .bookingId(bookingId.toString())
         .build();
     Either<ErrorOutput, RemoveBookingOutput> output = removeBookingOperation.process(input);
 

@@ -67,9 +67,9 @@ public class SystemServiceImpl implements SystemService {
   @Transactional
   public RegisterVisitorsOutput registerVisitors(RegisterVisitorsInput input) {
     log.info("Start registerVisitors input: {}", input);
-
-    Booking booking = bookingRepository.findById(input.getBookingId())
-        .orElseThrow(() -> new EntityNotFoundException("Booking", input.getBookingId()));
+    UUID bookingId = UUID.fromString(input.getBookingId());
+    Booking booking = bookingRepository.findById(bookingId)
+        .orElseThrow(() -> new EntityNotFoundException("Booking", bookingId));
 
     boolean validVisitors = input.getVisitors().stream()
         .allMatch(v -> checkVisitorValidity(v, booking));
