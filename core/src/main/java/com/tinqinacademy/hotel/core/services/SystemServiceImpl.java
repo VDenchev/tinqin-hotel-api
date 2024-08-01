@@ -81,12 +81,12 @@ public class SystemServiceImpl implements SystemService {
     List<String> inputIdCardNumbers = input.getVisitors().stream()
         .map(VisitorDetailsInput::getIdCardNo)
         .toList();
-    List<Guest> guestsInBooking = guestRepository.getAllGuestsByBookingIdAndIdCardNumberList(booking.getId(), inputIdCardNumbers);
+    List<Guest> guestsInBooking = guestRepository.getAllGuestsByBookingIdAndIdCardNumberCollection(booking.getId(), inputIdCardNumbers);
     if (!guestsInBooking.isEmpty()) {
       throw new EntityAlreadyExistsException(String.format("Guest already registered in booking with id %s", booking.getId()));
     }
 
-    List<Guest> existingGuests = guestRepository.getAllGuestsByIdCardNumberList(inputIdCardNumbers);
+    List<Guest> existingGuests = guestRepository.getAllGuestsByIdCardNumberCollection(inputIdCardNumbers);
     Set<String> existingGuestsIdCardNumbers = existingGuests.stream()
         .map(Guest::getIdCardNumber)
         .collect(Collectors.toSet());

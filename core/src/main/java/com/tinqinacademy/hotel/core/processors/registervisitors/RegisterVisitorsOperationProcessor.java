@@ -2,19 +2,23 @@ package com.tinqinacademy.hotel.core.processors.registervisitors;
 
 import com.tinqinacademy.hotel.api.base.BaseOperationProcessor;
 import com.tinqinacademy.hotel.api.errors.ErrorOutput;
+import com.tinqinacademy.hotel.api.exceptions.DuplicateInputException;
 import com.tinqinacademy.hotel.api.exceptions.EntityAlreadyExistsException;
 import com.tinqinacademy.hotel.api.exceptions.EntityNotFoundException;
+import com.tinqinacademy.hotel.api.exceptions.ExceedsRoomBedsCapacityException;
 import com.tinqinacademy.hotel.api.exceptions.VisitorDateMismatchException;
 import com.tinqinacademy.hotel.api.models.input.VisitorDetailsInput;
 import com.tinqinacademy.hotel.api.operations.registervisitors.input.RegisterVisitorsInput;
 import com.tinqinacademy.hotel.api.operations.registervisitors.operation.RegisterVisitorsOperation;
 import com.tinqinacademy.hotel.api.operations.registervisitors.output.RegisterVisitorsOutput;
+import com.tinqinacademy.hotel.persistence.entities.bed.Bed;
 import com.tinqinacademy.hotel.persistence.entities.booking.Booking;
 import com.tinqinacademy.hotel.persistence.entities.guest.Guest;
 import com.tinqinacademy.hotel.persistence.repositories.BookingRepository;
 import com.tinqinacademy.hotel.persistence.repositories.GuestRepository;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
@@ -54,17 +58,22 @@ public class RegisterVisitorsOperationProcessor extends BaseOperationProcessor i
                   Booking booking = bookingRepository.findById(bookingId)
                       .orElseThrow(() -> new EntityNotFoundException("Booking", bookingId));
 
-                  validateVisitors(input.getVisitors(), booking);
+                  List<VisitorDetailsInput> inputVisitors = validInput.getVisitors();
+                  validateVisitors(inputVisitors, booking);
 
-                  List<String> inputIdCardNumbers = validInput.getVisitors().stream()
+                  Set<String> inputIdCardNumbers = inputVisitors.stream()
                       .map(VisitorDetailsInput::getIdCardNo)
-                      .toList();
-                  //TODO: check for duplicate guests in input
+                      .collect(Collectors.toSet());
+
+                  checkForDuplicateVisitorsInInput(inputVisitors, inputIdCardNumbers);
                   checkIfGuestsAlreadyInBooking(booking, inputIdCardNumbers);
 
-                  List<Guest> existingGuests = guestRepository.getAllGuestsByIdCardNumberList(inputIdCardNumbers);
+                  List<Guest> existingGuests = guestRepository.getAllGuestsByIdCardNumberCollection(inputIdCardNumbers);
                   List<Guest> guestsToSave = getNotYetPersistedVisitors(existingGuests,
-                      validInput.getVisitors());
+                      inputVisitors);
+
+                  int totalVisitors = booking.getGuests().size() + inputVisitors.size();
+                      checkIfMaximumCapacityReached(booking, totalVisitors);
 
                   log.info("Guests to be saved: {}", guestsToSave);
 
@@ -81,11 +90,35 @@ public class RegisterVisitorsOperationProcessor extends BaseOperationProcessor i
                 .toEither()
                 .mapLeft(t -> Match(t).of(
                     customStatusCase(t, VisitorDateMismatchException.class, HttpStatus.UNPROCESSABLE_ENTITY),
-                    customStatusCase(t, EntityNotFoundException.class, HttpStatus.BAD_REQUEST),
+                    customStatusCase(t, DuplicateInputException.class, HttpStatus.UNPROCESSABLE_ENTITY),
+                    customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
+                    customStatusCase(t, ExceedsRoomBedsCapacityException.class, HttpStatus.BAD_REQUEST),
+                    customStatusCase(t, EntityAlreadyExistsException.class, HttpStatus.CONFLICT),
                     customStatusCase(t, IllegalArgumentException.class, HttpStatus.UNPROCESSABLE_ENTITY),
                     defaultCase(t)
                 ))
         );
+  }
+
+  private static void checkIfMaximumCapacityReached(
+      Booking booking, int totalVisitors
+  ) throws ExceedsRoomBedsCapacityException {
+    List<Bed> roomBeds = booking.getRoom().getBeds();
+    Integer totalBedCapacity = roomBeds.stream()
+        .map(Bed::getCapacity)
+        .reduce(0, Integer::sum);
+    if (totalVisitors > totalBedCapacity) {
+      throw new ExceedsRoomBedsCapacityException(String.format("Maximum room capacity of %d reached", totalBedCapacity));
+    }
+  }
+
+  private static void checkForDuplicateVisitorsInInput(
+      List<VisitorDetailsInput> inputVisitors,
+      Set<String> inputIdCardNumbers
+  ) throws DuplicateInputException {
+    if (inputIdCardNumbers.size() != inputVisitors.size()) {
+      throw new DuplicateInputException("Visitors must have unique id card numbers");
+    }
   }
 
   private void validateVisitors(List<VisitorDetailsInput> visitors, Booking booking) {
@@ -116,8 +149,8 @@ public class RegisterVisitorsOperationProcessor extends BaseOperationProcessor i
         .toList();
   }
 
-  private void checkIfGuestsAlreadyInBooking(Booking booking, List<String> inputIdCardNumbers) {
-    List<Guest> guestsInBooking = guestRepository.getAllGuestsByBookingIdAndIdCardNumberList(booking.getId(), inputIdCardNumbers);
+  private void checkIfGuestsAlreadyInBooking(Booking booking, Set<String> inputIdCardNumbers) {
+    List<Guest> guestsInBooking = guestRepository.getAllGuestsByBookingIdAndIdCardNumberCollection(booking.getId(), inputIdCardNumbers);
     if (!guestsInBooking.isEmpty()) {
       throw new EntityAlreadyExistsException(String.format("Guest already registered in booking with id %s", booking.getId()));
     }
