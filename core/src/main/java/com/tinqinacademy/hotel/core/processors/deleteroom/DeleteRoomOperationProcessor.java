@@ -36,29 +36,32 @@ public class DeleteRoomOperationProcessor extends BaseOperationProcessor impleme
 
   @Override
   public Either<ErrorOutput, DeleteRoomOutput> process(DeleteRoomInput input) {
-    return Try.of(() -> {
-          log.info("Start deleteRoom input: {}", input);
-          UUID roomId = UUID.fromString(input.getId());
+    return validateInput(input)
+        .flatMap(validInput ->
+                Try.of(() -> {
+                      log.info("Start deleteRoom input: {}", validInput);
+                      UUID roomId = UUID.fromString(input.getId());
 
-          Room room = getRoomByIdOrThrow(roomId);
+                      Room room = getRoomByIdOrThrow(roomId);
 
 //      if (!roomBookings.isEmpty()) {
 //        throw new RoomUnavailableException("Unable to delete room: Room is still being used");
 //      }
 
-          bookingRepository.deleteBookingsByRoom(room);
-          roomRepository.delete(room);
+                      bookingRepository.deleteBookingsByRoom(room);
+                      roomRepository.delete(room);
 
-          DeleteRoomOutput output = createOutput();
-          log.info("End deleteRoom output: {}", output);
-          return output;
-        })
-        .toEither()
-        .mapLeft(t -> Match(t).of(
-            customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
-            customStatusCase(t, IllegalArgumentException.class, HttpStatus.UNPROCESSABLE_ENTITY),
-            defaultCase(t)
-        ));
+                      DeleteRoomOutput output = createOutput();
+                      log.info("End deleteRoom output: {}", output);
+                      return output;
+                    })
+                    .toEither()
+                    .mapLeft(t -> Match(t).of(
+                        customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
+                        customStatusCase(t, IllegalArgumentException.class, HttpStatus.UNPROCESSABLE_ENTITY),
+                        defaultCase(t)
+                    ))
+        );
   }
 
   private DeleteRoomOutput createOutput() {

@@ -63,7 +63,7 @@ public class SearchVisitorsOperationProcessor extends BaseOperationProcessor imp
         })
         .toEither()
         .mapLeft(t -> Match(t).of(
-          defaultCase(t)
+            defaultCase(t)
         ));
   }
 
