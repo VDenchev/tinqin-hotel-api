@@ -38,8 +38,9 @@ public class DeleteRoomOperationProcessor extends BaseOperationProcessor impleme
   public Either<ErrorOutput, DeleteRoomOutput> process(DeleteRoomInput input) {
     return Try.of(() -> {
           log.info("Start deleteRoom input: {}", input);
+          UUID roomId = UUID.fromString(input.getId());
 
-          Room room = getRoomByIdOrThrow(input.getId());
+          Room room = getRoomByIdOrThrow(roomId);
 
 //      if (!roomBookings.isEmpty()) {
 //        throw new RoomUnavailableException("Unable to delete room: Room is still being used");
@@ -55,6 +56,7 @@ public class DeleteRoomOperationProcessor extends BaseOperationProcessor impleme
         .toEither()
         .mapLeft(t -> Match(t).of(
             customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
+            customStatusCase(t, IllegalArgumentException.class, HttpStatus.UNPROCESSABLE_ENTITY),
             defaultCase(t)
         ));
   }

@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
     log.info("user: {}", user);
 
     SignUpOutput output = SignUpOutput.builder()
-        .id(user.getId())
+        .id(user.getId().toString())
         .build();
     log.info("End signUp output: {}", output);
     return output;

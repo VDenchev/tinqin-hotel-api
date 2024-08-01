@@ -13,7 +13,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -24,9 +23,8 @@ import java.util.UUID;
 public class RegisterVisitorsInput implements OperationInput {
 
   @NotNull(message = "Visitors cannot be empty")
-  @Valid
-  private List<VisitorDetailsInput> visitors;
+  private List<@Valid VisitorDetailsInput> visitors;
 
   @JsonIgnore
-  private UUID bookingId;
+  private String bookingId;
 }

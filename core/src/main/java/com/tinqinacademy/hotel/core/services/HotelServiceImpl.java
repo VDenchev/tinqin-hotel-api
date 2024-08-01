@@ -50,8 +50,9 @@ public class HotelServiceImpl implements HotelService {
     log.info("Start bookRoom input: {}", input);
 
     Optional<User> userOpt = userRepository.findByPhoneNumber(input.getPhoneNumber());
+    UUID roomId = UUID.fromString(input.getRoomId());
 
-    List<Booking> roomBookingsForPeriod = bookingRepository.getBookingsOfRoomForPeriod(input.getRoomId(), input.getStartDate(), input.getEndDate());
+    List<Booking> roomBookingsForPeriod = bookingRepository.getBookingsOfRoomForPeriod(roomId, input.getStartDate(), input.getEndDate());
 
     if (!roomBookingsForPeriod.isEmpty()) {
       throw new RoomUnavailableException("Room has already been booked for the specified period");
@@ -71,8 +72,8 @@ public class HotelServiceImpl implements HotelService {
       user = userOpt.get();
     }
 
-    Room room = roomRepository.findById(input.getRoomId())
-        .orElseThrow(() -> new EntityNotFoundException("Room", input.getRoomId()));
+    Room room = roomRepository.findById(roomId)
+        .orElseThrow(() -> new EntityNotFoundException("Room", roomId));
 
     Booking booking = conversionService.convert(input, Booking.class);
     booking.setRoom(room);
@@ -94,8 +95,9 @@ public class HotelServiceImpl implements HotelService {
   public RoomDetailsOutput getRoom(RoomDetailsInput input) {
     log.info("Start getRoom input: {}", input);
 
-    Room room = roomRepository.findById(input.getRoomId())
-        .orElseThrow(() -> new EntityNotFoundException("Room", input.getRoomId()));
+    UUID roomId = UUID.fromString(input.getRoomId());
+    Room room = roomRepository.findById(roomId)
+        .orElseThrow(() -> new EntityNotFoundException("Room", roomId));
 
     List<LocalDate> dates = room.getBookings().stream()
         .flatMap(b -> b.getStartDate().datesUntil(b.getEndDate().plusDays(1)))
@@ -142,7 +144,7 @@ public class HotelServiceImpl implements HotelService {
 
     log.info("End checkAvailableRooms output: {}", result);
     return AvailableRoomsOutput.builder()
-        .roomIds(result)
+        .roomIds(result.stream().map(UUID::toString).toList())
         .build();
   }
 
@@ -150,9 +152,9 @@ public class HotelServiceImpl implements HotelService {
   @Transactional
   public RemoveBookingOutput removeBooking(RemoveBookingInput input) {
     log.info("Start removeBooking input: {}", input);
-
-    Booking booking = bookingRepository.findById(input.getBookingId())
-        .orElseThrow(() -> new EntityNotFoundException("Booking", input.getBookingId()));
+    UUID bookingId = UUID.fromString(input.getBookingId());
+    Booking booking = bookingRepository.findById(bookingId)
+        .orElseThrow(() -> new EntityNotFoundException("Booking", bookingId));
 
     bookingRepository.delete(booking);
 

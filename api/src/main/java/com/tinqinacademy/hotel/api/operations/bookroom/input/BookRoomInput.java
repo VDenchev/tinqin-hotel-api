@@ -16,7 +16,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -31,7 +30,7 @@ import java.util.UUID;
 public class BookRoomInput implements OperationInput {
 
   @JsonIgnore
-  private UUID roomId;
+  private String roomId;
 
   @NotNull(message = "Start date cannot be null")
   @FutureOrPresent(message = "Start date must be a future date")

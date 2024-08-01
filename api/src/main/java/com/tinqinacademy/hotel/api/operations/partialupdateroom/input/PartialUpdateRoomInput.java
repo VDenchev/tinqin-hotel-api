@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,5 +25,5 @@ public class PartialUpdateRoomInput implements OperationInput {
   private RoomInput roomInput;
 
   @JsonIgnore
-  private UUID roomId;
+  private String roomId;
 }

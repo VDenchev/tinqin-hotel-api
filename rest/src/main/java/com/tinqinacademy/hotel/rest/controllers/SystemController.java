@@ -43,7 +43,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDate;
-import java.util.UUID;
 
 import static com.tinqinacademy.hotel.api.RestApiRoutes.ADD_ROOM;
 import static com.tinqinacademy.hotel.api.RestApiRoutes.DELETE_ROOM;
@@ -68,9 +67,10 @@ public class SystemController extends BaseController {
   public void initBinder(WebDataBinder binder) {
     binder.registerCustomEditor(DeleteRoomInput.class, new PropertyEditorSupport() {
       @Override
-      public void setAsText(String text) throws IllegalArgumentException {
-        UUID id = UUID.fromString(text);
-        DeleteRoomInput input = new DeleteRoomInput(id);
+      public void setAsText(String id) throws IllegalArgumentException {
+        DeleteRoomInput input = DeleteRoomInput.builder()
+            .id(id)
+            .build();
         setValue(input);
       }
     });
@@ -96,7 +96,7 @@ public class SystemController extends BaseController {
   @PostMapping(REGISTER_VISITORS)
   public ResponseEntity<OperationOutput> registerVisitors(
       @RequestBody RegisterVisitorsInput input,
-      @PathVariable UUID bookingId
+      @PathVariable String bookingId
   ) {
     input.setBookingId(bookingId);
     Either<ErrorOutput, RegisterVisitorsOutput> output = registerVisitorsOperation.process(input);
@@ -203,7 +203,7 @@ public class SystemController extends BaseController {
   })
   @PutMapping(UPDATE_ROOM)
   public ResponseEntity<OperationOutput> updateRoom(
-      @PathVariable UUID roomId,
+      @PathVariable String roomId,
       @RequestBody UpdateRoomInput input
   ) {
 
@@ -237,7 +237,7 @@ public class SystemController extends BaseController {
   })
   @PatchMapping(PARTIAL_UPDATE_ROOM)
   public ResponseEntity<OperationOutput> partialUpdateRoom(
-      @PathVariable UUID roomId,
+      @PathVariable String roomId,
       @RequestBody PartialUpdateRoomInput input
   ) {
     input.setRoomId(roomId);

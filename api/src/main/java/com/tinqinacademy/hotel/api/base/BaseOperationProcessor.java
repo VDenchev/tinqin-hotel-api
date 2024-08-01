@@ -2,7 +2,6 @@ package com.tinqinacademy.hotel.api.base;
 
 import com.tinqinacademy.hotel.api.errors.Error;
 import com.tinqinacademy.hotel.api.errors.ErrorOutput;
-import com.tinqinacademy.hotel.api.validation.groups.NonMandatoryFieldsGroup;
 import io.vavr.API;
 import io.vavr.control.Either;
 import jakarta.validation.ConstraintViolation;

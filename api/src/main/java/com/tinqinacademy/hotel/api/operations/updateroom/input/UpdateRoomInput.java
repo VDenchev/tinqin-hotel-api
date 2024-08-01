@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -26,5 +24,5 @@ public class UpdateRoomInput implements OperationInput {
   @Valid
   private RoomInput roomInput;
   @JsonIgnore
-  private UUID roomId;
+  private String roomId;
 }

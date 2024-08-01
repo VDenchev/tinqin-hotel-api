@@ -46,8 +46,9 @@ public class GetRoomOperationProcessor extends BaseOperationProcessor implements
     return Try.of(() -> {
 
           log.info("Start getRoom input: {}", input);
+          UUID roomId = UUID.fromString(input.getRoomId());
 
-          Room room = getRoomOrThrow(input.getRoomId());
+          Room room = getRoomOrThrow(roomId);
 
           List<LocalDate> dates = room.getBookings().stream()
               .flatMap(b -> b.getStartDate().datesUntil(b.getEndDate().plusDays(1)))
@@ -64,6 +65,7 @@ public class GetRoomOperationProcessor extends BaseOperationProcessor implements
         .toEither()
         .mapLeft(t -> Match(t).of(
             customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
+            customStatusCase(t, IllegalArgumentException.class, HttpStatus.UNPROCESSABLE_ENTITY),
             defaultCase(t)
         ));
   }

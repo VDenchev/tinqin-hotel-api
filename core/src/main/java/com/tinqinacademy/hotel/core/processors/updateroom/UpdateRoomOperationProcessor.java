@@ -24,6 +24,7 @@ import jakarta.validation.Validator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static io.vavr.API.Match;
 
@@ -49,9 +50,9 @@ public class UpdateRoomOperationProcessor extends BaseOperationProcessor impleme
         .flatMap(validInput ->
             Try.of(() -> {
                   log.info("Start updateRoom input: {}", validInput);
-
-                  roomRepository.findById(validInput.getRoomId())
-                      .orElseThrow(() -> new EntityNotFoundException("Room", validInput.getRoomId()));
+                  UUID roomId = UUID.fromString(validInput.getRoomId());
+                  roomRepository.findById(roomId)
+                      .orElseThrow(() -> new EntityNotFoundException("Room",roomId));
 
                   RoomInput roomInput = validInput.getRoomInput();
                   List<Bed> beds = getBedEntitiesFromRoomInput(roomInput);
@@ -69,6 +70,7 @@ public class UpdateRoomOperationProcessor extends BaseOperationProcessor impleme
                 .mapLeft(t -> Match(t).of(
                     customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
                     customStatusCase(t, BedDoesNotExistException.class, HttpStatus.UNPROCESSABLE_ENTITY),
+                    customStatusCase(t, IllegalArgumentException.class, HttpStatus.UNPROCESSABLE_ENTITY),
                     defaultCase(t)
                 ))
         );
@@ -94,7 +96,7 @@ public class UpdateRoomOperationProcessor extends BaseOperationProcessor impleme
 
   private UpdateRoomOutput createOutput(Room roomToUpdate) {
     return UpdateRoomOutput.builder()
-        .id(roomToUpdate.getId())
+        .id(roomToUpdate.getId().toString())
         .build();
   }
 }

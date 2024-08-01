@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -20,5 +18,5 @@ import java.util.UUID;
 public class RemoveBookingInput implements OperationInput {
 
   @JsonValue
-  private UUID bookingId;
+  private String bookingId;
 }

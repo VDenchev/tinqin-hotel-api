@@ -9,7 +9,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -19,5 +18,5 @@ import java.util.UUID;
 @ToString
 public class AvailableRoomsOutput implements OperationOutput {
 
-  private List<UUID> roomIds;
+  private List<String> roomIds;
 }

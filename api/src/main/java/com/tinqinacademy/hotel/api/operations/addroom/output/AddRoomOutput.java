@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,5 +16,5 @@ import java.util.UUID;
 @ToString
 public class AddRoomOutput implements OperationOutput {
 
-  private UUID id;
+  private String id;
 }

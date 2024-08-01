@@ -11,7 +11,6 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -21,7 +20,7 @@ import java.util.UUID;
 @Builder
 public class RoomOutput {
 
-  private UUID id;
+  private String id;
   private String number;
   private BigDecimal price;
   private Integer floor;

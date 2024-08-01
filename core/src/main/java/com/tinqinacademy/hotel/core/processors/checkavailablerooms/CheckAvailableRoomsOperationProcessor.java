@@ -95,9 +95,10 @@ public class CheckAvailableRoomsOperationProcessor extends BaseOperationProcesso
     return conversionService.convert(bathroomType, BathroomType.class).name();
   }
 
-  private AvailableRoomsOutput convertUUIDListToOutput(List<UUID> uuids) {
+  private AvailableRoomsOutput convertUUIDListToOutput(List<UUID> ids) {
+    List<String> idsAsString = ids.stream().map(UUID::toString).toList();
     return AvailableRoomsOutput.builder()
-        .roomIds(uuids)
+        .roomIds(idsAsString)
         .build();
   }
 }

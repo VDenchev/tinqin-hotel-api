@@ -93,7 +93,7 @@ public class HotelController extends BaseController {
   })
   @GetMapping(GET_ROOM)
   public ResponseEntity<OperationOutput> getRoom(
-      @PathVariable UUID roomId
+      @PathVariable String roomId
   ) {
     Either<ErrorOutput, RoomDetailsOutput> output = getRoomOperation.process(RoomDetailsInput.builder()
         .roomId(roomId)
@@ -112,7 +112,7 @@ public class HotelController extends BaseController {
       @ApiResponse(description = "You dont have permission", responseCode = "403"),
   })
   @PostMapping(BOOK_ROOM)
-  public ResponseEntity<OperationOutput> bookRoom(@PathVariable UUID roomId, @RequestBody BookRoomInput input) {
+  public ResponseEntity<OperationOutput> bookRoom(@PathVariable String roomId, @RequestBody BookRoomInput input) {
     input.setRoomId(roomId);
     Either<ErrorOutput, BookRoomOutput> output = bookRoomOperation.process(input);
 
@@ -131,7 +131,7 @@ public class HotelController extends BaseController {
   @DeleteMapping(REMOVE_BOOKING)
   public ResponseEntity<OperationOutput> removeBooking(@PathVariable UUID bookingId) {
     RemoveBookingInput input = RemoveBookingInput.builder()
-        .bookingId(bookingId)
+        .bookingId(bookingId.toString())
         .build();
     Either<ErrorOutput, RemoveBookingOutput> output = removeBookingOperation.process(input);
 

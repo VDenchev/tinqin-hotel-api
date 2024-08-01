@@ -60,10 +60,11 @@ public class PartialUpdateRoomOperationProcessor extends BaseOperationProcessor 
             Try.of(() -> {
                   log.info("Start partialUpdateRoom input: {}", validInput);
 
-                  Room savedRoom = getRoomByIdOrThrow(validInput);
+                  UUID roomId = UUID.fromString(validInput.getRoomId());
+                  Room savedRoom = getRoomByIdOrThrow(roomId);
 
                   RoomInput roomInput = validInput.getRoomInput();
-                  Room partialRoom = convertPartialInputToRoom(validInput.getRoomId(), roomInput);
+                  Room partialRoom = convertPartialInputToRoom(roomId, roomInput);
 
                   JsonObject savedRoomValue = convertToJsonObject(savedRoom);
                   JsonObject patchRoomValue = convertToJsonObject(partialRoom);
@@ -83,14 +84,15 @@ public class PartialUpdateRoomOperationProcessor extends BaseOperationProcessor 
                     customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
                     customStatusCase(t, JsonProcessingException.class, HttpStatus.BAD_REQUEST),
                     customStatusCase(t, BedDoesNotExistException.class, HttpStatus.UNPROCESSABLE_ENTITY),
+                    customStatusCase(t, IllegalArgumentException.class, HttpStatus.UNPROCESSABLE_ENTITY),
                     defaultCase(t)
                 ))
         );
   }
 
-  private Room getRoomByIdOrThrow(PartialUpdateRoomInput input) {
-    return roomRepository.findById(input.getRoomId())
-        .orElseThrow(() -> new EntityNotFoundException("Room", input.getRoomId()));
+  private Room getRoomByIdOrThrow(UUID roomId) {
+    return roomRepository.findById(roomId)
+        .orElseThrow(() -> new EntityNotFoundException("Room", roomId));
   }
 
   private Room convertPartialInputToRoom(UUID roomId, RoomInput roomInput) {
@@ -127,7 +129,7 @@ public class PartialUpdateRoomOperationProcessor extends BaseOperationProcessor 
 
   private PartialUpdateRoomOutput convertRoomToRoomOutput(Room room) {
     return PartialUpdateRoomOutput.builder()
-        .id(room.getId())
+        .id(room.getId().toString())
         .build();
   }
 }
