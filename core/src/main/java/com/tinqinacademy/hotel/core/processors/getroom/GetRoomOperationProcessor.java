@@ -43,31 +43,33 @@ public class GetRoomOperationProcessor extends BaseOperationProcessor implements
 
   @Override
   public Either<ErrorOutput, RoomDetailsOutput> process(RoomDetailsInput input) {
-    return Try.of(() -> {
+    return validateInput(input)
+        .flatMap(validInput ->
+            Try.of(() -> {
+                  log.info("Start getRoom input: {}", validInput);
+                  UUID roomId = UUID.fromString(validInput.getRoomId());
 
-          log.info("Start getRoom input: {}", input);
-          UUID roomId = UUID.fromString(input.getRoomId());
+                  Room room = getRoomOrThrow(roomId);
 
-          Room room = getRoomOrThrow(roomId);
+                  List<LocalDate> dates = room.getBookings().stream()
+                      .flatMap(b -> b.getStartDate().datesUntil(b.getEndDate().plusDays(1)))
+                      .toList();
+                  DatesOccupied datesOccupied = convertDateListToDatesOccupied(dates);
+                  List<Bed> beds = roomRepository.getAllBedsByRoomId(room.getId());
 
-          List<LocalDate> dates = room.getBookings().stream()
-              .flatMap(b -> b.getStartDate().datesUntil(b.getEndDate().plusDays(1)))
-              .toList();
-          DatesOccupied datesOccupied = convertDateListToDatesOccupied(dates);
-          List<Bed> beds = roomRepository.getAllBedsByRoomId(room.getId());
+                  RoomOutput roomOutput = convertRoomToRoomOutput(room, beds, datesOccupied);
 
-          RoomOutput roomOutput = convertRoomToRoomOutput(room, beds, datesOccupied);
-
-          RoomDetailsOutput output = createOutput(roomOutput);
-          log.info("End getRoom output: {}", output);
-          return output;
-        })
-        .toEither()
-        .mapLeft(t -> Match(t).of(
-            customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
-            customStatusCase(t, IllegalArgumentException.class, HttpStatus.UNPROCESSABLE_ENTITY),
-            defaultCase(t)
-        ));
+                  RoomDetailsOutput output = createOutput(roomOutput);
+                  log.info("End getRoom output: {}", output);
+                  return output;
+                })
+                .toEither()
+                .mapLeft(t -> Match(t).of(
+                    customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
+                    customStatusCase(t, IllegalArgumentException.class, HttpStatus.UNPROCESSABLE_ENTITY),
+                    defaultCase(t)
+                ))
+        );
   }
 
   private RoomDetailsOutput createOutput(RoomOutput roomOutput) {

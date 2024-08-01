@@ -73,7 +73,7 @@ public class RegisterVisitorsOperationProcessor extends BaseOperationProcessor i
                       inputVisitors);
 
                   int totalVisitors = booking.getGuests().size() + inputVisitors.size();
-                      checkIfMaximumCapacityReached(booking, totalVisitors);
+                  checkIfMaximumCapacityReached(booking, totalVisitors);
 
                   log.info("Guests to be saved: {}", guestsToSave);
 

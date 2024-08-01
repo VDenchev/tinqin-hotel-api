@@ -52,7 +52,7 @@ public class UpdateRoomOperationProcessor extends BaseOperationProcessor impleme
                   log.info("Start updateRoom input: {}", validInput);
                   UUID roomId = UUID.fromString(validInput.getRoomId());
                   roomRepository.findById(roomId)
-                      .orElseThrow(() -> new EntityNotFoundException("Room",roomId));
+                      .orElseThrow(() -> new EntityNotFoundException("Room", roomId));
 
                   RoomInput roomInput = validInput.getRoomInput();
                   List<Bed> beds = getBedEntitiesFromRoomInput(roomInput);

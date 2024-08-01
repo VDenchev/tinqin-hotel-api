@@ -36,24 +36,27 @@ public class RemoveBookingOperationProcessor extends BaseOperationProcessor impl
 
   @Override
   public Either<ErrorOutput, RemoveBookingOutput> process(RemoveBookingInput input) {
-    return Try.of(() -> {
-          log.info("Start removeBooking input: {}", input);
-          UUID bookingId = UUID.fromString(input.getBookingId());
+    return validateInput(input)
+        .flatMap(validInput ->
+            Try.of(() -> {
+                  log.info("Start removeBooking input: {}", validInput);
+                  UUID bookingId = UUID.fromString(validInput.getBookingId());
 
-          Booking booking = getBookingByIdOrThrow(bookingId);
+                  Booking booking = getBookingByIdOrThrow(bookingId);
 
-          bookingRepository.delete(booking);
+                  bookingRepository.delete(booking);
 
-          RemoveBookingOutput output = createOutput();
-          log.info("End removeBooking output: {}", output);
-          return output;
-        })
-        .toEither()
-        .mapLeft(t -> Match(t).of(
-            customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
-            customStatusCase(t, IllegalArgumentException.class, HttpStatus.UNPROCESSABLE_ENTITY),
-            defaultCase(t)
-        ));
+                  RemoveBookingOutput output = createOutput();
+                  log.info("End removeBooking output: {}", output);
+                  return output;
+                })
+                .toEither()
+                .mapLeft(t -> Match(t).of(
+                    customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
+                    customStatusCase(t, IllegalArgumentException.class, HttpStatus.UNPROCESSABLE_ENTITY),
+                    defaultCase(t)
+                ))
+        );
   }
 
   private Booking getBookingByIdOrThrow(UUID bookingId) {
