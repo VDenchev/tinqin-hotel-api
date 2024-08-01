@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.UUID;
 
 @Getter
 @Setter
@@ -24,5 +25,6 @@ public class UpdateRoomInput implements OperationInput {
   @Valid
   private RoomInput roomInput;
   @JsonIgnore
+  @UUID(message = "RoomId has to be a valid UUID string")
   private String roomId;
 }

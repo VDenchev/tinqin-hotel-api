@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.UUID;
 
 @Getter
 @Setter
@@ -18,5 +19,6 @@ import lombok.ToString;
 public class DeleteRoomInput implements OperationInput {
 
   @JsonValue
+  @UUID(message = "Id has to be a valid UUID string")
   private String id;
 }

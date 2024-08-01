@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.UUID;
 
 import java.time.LocalDate;
 
@@ -30,6 +31,7 @@ import java.time.LocalDate;
 public class BookRoomInput implements OperationInput {
 
   @JsonIgnore
+  @UUID(message = "RoomId has to be a valid UUID string")
   private String roomId;
 
   @NotNull(message = "Start date cannot be null")
