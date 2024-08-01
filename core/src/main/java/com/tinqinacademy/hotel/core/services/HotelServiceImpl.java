@@ -144,7 +144,7 @@ public class HotelServiceImpl implements HotelService {
 
     log.info("End checkAvailableRooms output: {}", result);
     return AvailableRoomsOutput.builder()
-        .roomIds(result)
+        .roomIds(result.stream().map(UUID::toString).toList())
         .build();
   }
 

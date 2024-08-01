@@ -19,5 +19,5 @@ import java.util.UUID;
 @ToString
 public class AvailableRoomsOutput implements OperationOutput {
 
-  private List<UUID> roomIds;
+  private List<String> roomIds;
 }
