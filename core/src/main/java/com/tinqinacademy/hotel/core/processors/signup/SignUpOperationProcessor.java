@@ -60,7 +60,7 @@ public class SignUpOperationProcessor extends BaseOperationProcessor implements 
                 })
                 .toEither()
                 .mapLeft(t -> Match(t).of(
-                    customStatusCase(t, EntityAlreadyExistsException.class, HttpStatus.BAD_REQUEST),
+                    customStatusCase(t, EntityAlreadyExistsException.class, HttpStatus.CONFLICT),
                     customStatusCase(t, GeneralSecurityException.class, HttpStatus.BAD_REQUEST)
                 ))
         );

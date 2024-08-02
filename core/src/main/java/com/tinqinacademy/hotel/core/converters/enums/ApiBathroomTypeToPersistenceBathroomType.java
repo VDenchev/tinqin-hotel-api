@@ -5,10 +5,10 @@ import com.tinqinacademy.hotel.persistence.enums.BathroomType;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ApiBathroomTypeToPersistenceBathroomType extends BaseConverter<com.tinqinacademy.hotel.api.enums.BathroomType, BathroomType> {
+public class ApiBathroomTypeToPersistenceBathroomType extends BaseConverter<String, BathroomType> {
 
   @Override
-  public BathroomType doConvert(com.tinqinacademy.hotel.api.enums.BathroomType source) {
-    return BathroomType.getByCode(source.getCode());
+  public BathroomType doConvert(String source) {
+    return BathroomType.getByCode(source);
   }
 }

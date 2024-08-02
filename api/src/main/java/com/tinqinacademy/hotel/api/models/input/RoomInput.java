@@ -3,8 +3,8 @@ package com.tinqinacademy.hotel.api.models.input;
 import com.tinqinacademy.hotel.api.enums.BathroomType;
 import com.tinqinacademy.hotel.api.enums.BedType;
 import com.tinqinacademy.hotel.api.validation.groups.NonMandatoryFieldsGroup;
+import com.tinqinacademy.hotel.api.validators.annotations.ValidEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -30,10 +30,11 @@ public class RoomInput {
 
   @NotNull(message = "Bed size cannot be empty")
   @Schema(example = "[\"single\", \"double\"]")
-  private List<@Valid BedType> bedSizes;
+  private List<
+      @ValidEnum(enumClass = BedType.class, groups = {NonMandatoryFieldsGroup.class, Default.class}, message = "Invalid bed size")
+      @NotBlank(message = "Bed size cannot be blank") String> bedSizes;
 
   @NotBlank(message = "Room number must not be blank")
-  // TODO: add regex validation
   @Size(
       groups = {NonMandatoryFieldsGroup.class, Default.class},
       message = "Room number should be at most 10 characters long",
@@ -54,7 +55,8 @@ public class RoomInput {
   @Schema(example = "150")
   private BigDecimal price;
 
-  @NotNull(message = "Bathroom type cannot be blank")
+  @NotBlank(message = "Bathroom type cannot be blank")
   @Schema(example = "private")
-  private BathroomType bathroomType;
+  @ValidEnum(enumClass = BathroomType.class, groups = {NonMandatoryFieldsGroup.class, Default.class}, message = "Invalid bathroom type")
+  private String bathroomType;
 }
