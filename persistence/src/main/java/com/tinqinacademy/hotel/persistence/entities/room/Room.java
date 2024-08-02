@@ -47,7 +47,7 @@ public class Room extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private BathroomType bathroomType;
 
-  @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+  @ManyToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
   @JoinTable(
       name = "room_beds",
       joinColumns = {@JoinColumn(name = "room_id", referencedColumnName = "id")},
