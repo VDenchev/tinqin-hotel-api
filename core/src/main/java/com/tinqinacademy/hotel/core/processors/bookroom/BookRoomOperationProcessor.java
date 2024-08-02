@@ -75,6 +75,7 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor implement
                 })
                 .toEither()
                 .mapLeft(t -> Match(t).of(
+                    customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
                     customStatusCase(t, RoomUnavailableException.class, HttpStatus.CONFLICT),
                     customStatusCase(t, IllegalArgumentException.class, HttpStatus.UNPROCESSABLE_ENTITY),
                     defaultCase(t)

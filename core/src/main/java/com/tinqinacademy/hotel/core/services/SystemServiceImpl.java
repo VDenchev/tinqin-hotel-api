@@ -190,7 +190,7 @@ public class SystemServiceImpl implements SystemService {
     List<Bed> beds = new ArrayList<>();
     input.getBedSizes().forEach(b ->
         beds.add(bedRepository
-            .findByBedSize(BedSize.getByCode(b.getCode()))
+            .findByBedSize(BedSize.getByCode(b))
             //TODO: throw custom exception (this will (almost) never fail but w/e)
             .orElseThrow()
         )

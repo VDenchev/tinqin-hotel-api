@@ -98,8 +98,8 @@ public class AddRoomOperationProcessor extends BaseOperationProcessor implements
     List<Bed> beds = new ArrayList<>();
     input.getBedSizes().forEach(b ->
         beds.add(bedRepository
-            .findByBedSize(BedSize.getByCode(b.getCode()))
-            .orElseThrow(() -> new BedDoesNotExistException(b.getCode()))
+            .findByBedSize(BedSize.getByCode(b))
+            .orElseThrow(() -> new BedDoesNotExistException(b))
         )
     );
     return beds;
