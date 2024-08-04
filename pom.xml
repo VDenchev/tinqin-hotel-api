@@ -6,9 +6,8 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.3.1</version>
-        <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.tinqinacademy</groupId>
+    <groupId>com.tinqinacademy.hotel</groupId>
     <artifactId>hotel</artifactId>
     <version>${revision}</version>
     <name>hotel</name>
