@@ -10,7 +10,7 @@ public class FeignClientApiRoutes {
   public static final String REGISTER_VISITORS = "POST " + RestApiRoutes.REGISTER_VISITORS;
   public static final String SEARCH_VISITORS = "GET " + RestApiRoutes.SEARCH_VISITORS +
       "?startDate={startDate}&endDate={endDate}&birthDate={birthDate}&firstName={firstName}" +
-      "&lastName={lastName}&phoneNo={phoneNo}&idCardNo&idCardValidity={idCardValidity}" +
+      "&lastName={lastName}&phoneNo={phoneNo}&idCardNo&idCardNo={idCardNo}&idCardValidity={idCardValidity}" +
       "&idCardIssueDate={idCardIssueDate}&roomNo={roomNo}";
   public static final String ADD_ROOM = "POST " + RestApiRoutes.ADD_ROOM;
   public static final String UPDATE_ROOM = "PUT " + RestApiRoutes.UPDATE_ROOM;
