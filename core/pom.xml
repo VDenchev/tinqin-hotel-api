@@ -7,7 +7,7 @@
         <artifactId>hotel</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>hotel-core</artifactId>
+    <artifactId>core</artifactId>
     <version>${revision}</version>
     <name>core</name>
     <description>core</description>
@@ -18,17 +18,17 @@
     <dependencies>
         <dependency>
             <groupId>com.tinqinacademy.hotel</groupId>
-            <artifactId>hotel-persistence</artifactId>
+            <artifactId>persistence</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.tinqinacademy.hotel</groupId>
-            <artifactId>hotel-domain</artifactId>
+            <artifactId>domain</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.tinqinacademy.hotel</groupId>
-            <artifactId>hotel-api</artifactId>
+            <artifactId>api</artifactId>
             <version>${revision}</version>
         </dependency>
 
