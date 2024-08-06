@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tinqinacademy.hotel.api.base.BaseOperationProcessor;
 import com.tinqinacademy.hotel.api.errors.ErrorOutput;
 import com.tinqinacademy.hotel.api.exceptions.BedDoesNotExistException;
+import com.tinqinacademy.hotel.api.exceptions.EntityAlreadyExistsException;
 import com.tinqinacademy.hotel.api.validation.groups.NonMandatoryFieldsGroup;
 import com.tinqinacademy.hotel.persistence.entities.bed.Bed;
 import com.tinqinacademy.hotel.persistence.enums.BathroomType;
@@ -31,6 +32,7 @@ import jakarta.validation.Validator;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static io.vavr.API.Match;
@@ -61,6 +63,7 @@ public class PartialUpdateRoomOperationProcessor extends BaseOperationProcessor 
                   log.info("Start partialUpdateRoom input: {}", validInput);
 
                   UUID roomId = UUID.fromString(validInput.getRoomId());
+                  checkForDuplicateRoomNumber(validInput, roomId);
                   Room savedRoom = getRoomByIdOrThrow(roomId);
 
                   RoomInput roomInput = validInput.getRoomInput();
@@ -82,6 +85,7 @@ public class PartialUpdateRoomOperationProcessor extends BaseOperationProcessor 
                 .toEither()
                 .mapLeft(t -> Match(t).of(
                     customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
+                    customStatusCase(t, EntityAlreadyExistsException.class, HttpStatus.CONFLICT),
                     customStatusCase(t, JsonProcessingException.class, HttpStatus.BAD_REQUEST),
                     customStatusCase(t, BedDoesNotExistException.class, HttpStatus.UNPROCESSABLE_ENTITY),
                     customStatusCase(t, IllegalArgumentException.class, HttpStatus.UNPROCESSABLE_ENTITY),
@@ -125,6 +129,20 @@ public class PartialUpdateRoomOperationProcessor extends BaseOperationProcessor 
     return Json.createReader(
         new StringReader(objectMapper.writeValueAsString(object))
     ).readObject();
+  }
+
+  private void checkForDuplicateRoomNumber(PartialUpdateRoomInput input, UUID roomId) {
+    String roomNo = input.getRoomInput().getRoomNo();
+    if (roomNo == null || roomNo.isBlank()) {
+      return;
+    }
+    Optional<Room> maybeRoomDuplicateRoomNo = roomRepository.findRoomByNumber(input.getRoomInput().getRoomNo());
+
+    if (maybeRoomDuplicateRoomNo.isPresent() && !maybeRoomDuplicateRoomNo.get().getId().equals(roomId)) {
+      throw new EntityAlreadyExistsException(
+          String.format("Room with number %s already exists", maybeRoomDuplicateRoomNo.get().getNumber())
+      );
+    }
   }
 
   private PartialUpdateRoomOutput convertRoomToRoomOutput(Room room) {
