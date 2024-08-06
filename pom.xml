@@ -19,6 +19,7 @@
         <module>domain</module>
         <module>core</module>
         <module>rest</module>
+        <module>restexport</module>
     </modules>
 
     <properties>
