@@ -92,7 +92,7 @@ public class CheckAvailableRoomsOperationProcessor extends BaseOperationProcesso
   }
 
   private String getBathroomTypeName(com.tinqinacademy.hotel.api.enums.BathroomType bathroomType) {
-    return conversionService.convert(bathroomType, BathroomType.class).name();
+    return conversionService.convert(bathroomType.getCode(), BathroomType.class).name();
   }
 
   private AvailableRoomsOutput convertUUIDListToOutput(List<UUID> ids) {
