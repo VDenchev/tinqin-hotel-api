@@ -11,7 +11,6 @@ import com.tinqinacademy.hotel.api.operations.partialupdateroom.input.PartialUpd
 import com.tinqinacademy.hotel.api.operations.partialupdateroom.output.PartialUpdateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.registervisitors.input.RegisterVisitorsInput;
 import com.tinqinacademy.hotel.api.operations.registervisitors.output.RegisterVisitorsOutput;
-import com.tinqinacademy.hotel.api.operations.removebooking.input.RemoveBookingInput;
 import com.tinqinacademy.hotel.api.operations.removebooking.output.RemoveBookingOutput;
 import com.tinqinacademy.hotel.api.operations.searchvisitors.output.SearchVisitorsOutput;
 import com.tinqinacademy.hotel.api.operations.updateroom.input.UpdateRoomInput;
