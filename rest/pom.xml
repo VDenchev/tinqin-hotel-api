@@ -8,7 +8,7 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>hotel-rest</artifactId>
+    <artifactId>rest</artifactId>
     <version>${revision}</version>
 
     <properties>
@@ -27,12 +27,12 @@
         </dependency>
         <dependency>
             <groupId>com.tinqinacademy.hotel</groupId>
-            <artifactId>hotel-api</artifactId>
+            <artifactId>api</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.tinqinacademy.hotel</groupId>
-            <artifactId>hotel-core</artifactId>
+            <artifactId>core</artifactId>
             <version>${revision}</version>
         </dependency>
     </dependencies>

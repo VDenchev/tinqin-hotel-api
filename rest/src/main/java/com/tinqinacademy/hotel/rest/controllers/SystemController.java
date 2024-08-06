@@ -125,12 +125,12 @@ public class SystemController extends BaseController {
       @RequestParam(required = false) String firstName,
       @RequestParam(required = false) String lastName,
       @RequestParam(required = false) LocalDate birthDate,
-      @RequestParam(required = false) String phoneNumber,
-      @RequestParam(required = false) LocalDate cardValidity,
-      @RequestParam(required = false) String cardIssueAuthority,
-      @RequestParam(required = false) LocalDate cardIssueDate,
-      @RequestParam(required = false) String idCardNumber,
-      @RequestParam(required = false) String roomNumber
+      @RequestParam(required = false) String phoneNo,
+      @RequestParam(required = false) LocalDate idCardValidity,
+      @RequestParam(required = false) String idCardIssueAuthority,
+      @RequestParam(required = false) LocalDate idCardIssueDate,
+      @RequestParam(required = false) String idCardNo,
+      @RequestParam(required = false) String roomNo
   ) {
     VisitorDetailsInput details = VisitorDetailsInput.builder()
         .startDate(startDate)
@@ -138,15 +138,15 @@ public class SystemController extends BaseController {
         .firstName(firstName)
         .lastName(lastName)
         .birthDate(birthDate)
-        .phoneNo(phoneNumber)
-        .idCardValidity(cardValidity)
-        .idCardIssueAuthority(cardIssueAuthority)
-        .idCardIssueDate(cardIssueDate)
-        .idCardNo(idCardNumber)
+        .phoneNo(phoneNo)
+        .idCardValidity(idCardValidity)
+        .idCardIssueAuthority(idCardIssueAuthority)
+        .idCardIssueDate(idCardIssueDate)
+        .idCardNo(idCardNo)
         .build();
     SearchVisitorsInput input = SearchVisitorsInput.builder()
         .visitorDetailsInput(details)
-        .roomNo(roomNumber)
+        .roomNo(roomNo)
         .build();
 
     Either<ErrorOutput, SearchVisitorsOutput> output = searchVisitorsOperation.process(input);

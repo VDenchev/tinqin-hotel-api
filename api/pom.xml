@@ -8,7 +8,7 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>hotel-api</artifactId>
+    <artifactId>api</artifactId>
     <version>${revision}</version>
 
     <properties>

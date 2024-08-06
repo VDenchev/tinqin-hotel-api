@@ -5,10 +5,10 @@
     <parent>
         <groupId>com.tinqinacademy.hotel</groupId>
         <artifactId>hotel</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
-    <artifactId>hotel-persistence</artifactId>
+    <artifactId>persistence</artifactId>
     <version>${revision}</version>
 
     <properties>
