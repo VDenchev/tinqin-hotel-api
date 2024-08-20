@@ -4,6 +4,103 @@ networks:
 
 services:
 
+  hotel-app:
+    container_name: hotel-app
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - rest/src/main/resources/.env
+    environment:
+      - DB_URL=jdbc:postgresql://db:5432/hotel
+      - ADMIN_CLIENT_URL=http://admin-app:42069/api/v1/admin
+    networks:
+      - net1
+    depends_on:
+      db:
+        condition: service_healthy
+      admin-app:
+        condition: service_started
+
+  comments-app:
+    container_name: comments-app
+    platform: linux/amd64
+    build:
+      context: ../comments
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    env_file:
+      - ../comments/rest/src/main/resources/.env
+    environment:
+      - DB_URL=jdbc:postgresql://db:5432/comments
+      - ADMIN_CLIENT_URL=http://admin-app:42069/api/v1/admin
+    networks:
+      - net1
+    depends_on:
+      db:
+        condition: service_healthy
+      admin-app:
+        condition: service_started
+
+  authentication-app:
+    container_name: authentication-app
+    platform: linux/amd64
+    build:
+      context: ../authentication
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    env_file:
+      - ../authentication/rest/src/main/resources/.env
+    environment:
+      - DB_URL=jdbc:postgresql://db:5432/comments
+      - MONGO_DB_HOST=cache-db
+      - ADMIN_CLIENT_URL=http://admin-app:42069/api/v1/admin
+    networks:
+      - net1
+    depends_on:
+      db:
+        condition: service_healthy
+      cache-db:
+        condition: service_started
+      admin-app:
+        condition: service_started
+
+  bff-app:
+    container_name: bff-app
+    platform: linux/amd64
+    build:
+      context: ../bff
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    env_file:
+      - ../bff/rest/src/main/resources/.env
+    environment:
+      - ADMIN_CLIENT_URL=http://admin-app:42069/api/v1/admin
+      - HOTEL_CLIENT_URL=http://hotel-app:8080
+      - COMMENTS_CLIENT_URL=http://comments-app:8081
+      - AUTH_CLIENT_URL=http://authentication-app:8082
+    networks:
+      - net1
+    depends_on:
+      - admin-app
+
+  admin-app:
+    container_name: admin-app
+    platform: linux/amd64
+    build:
+      context: ../admin
+      dockerfile: Dockerfile
+    ports:
+      - "42069:42069"
+    networks:
+      - net1
+
   cache-db:
     image: mongo:7.0.12
     container_name: auth-cache-db
@@ -21,10 +118,10 @@ services:
 
   db:
     container_name: hotel-db
-    image: postgres:latest
+    image: postgres:16.3
     restart: always
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
       POSTGRES_DB: hotel
       POSTGRES_USER: postgres
