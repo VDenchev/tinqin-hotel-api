@@ -3,6 +3,22 @@ networks:
   net1:
 
 services:
+
+  cache-db:
+    image: mongo:7.0.12
+    container_name: auth-cache-db
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=cache
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    volumes:
+      - mongodb:/data/db
+      - mongoconfig:/data/configdb
+    networks:
+      - net1
+
   db:
     container_name: hotel-db
     image: postgres:latest
@@ -44,7 +60,10 @@ services:
         condition: service_healthy
     networks:
       - net1
+
 volumes:
+  mongodb:
+  mongoconfig:
   db_data:
     driver: local
   pgadmin_data:
