@@ -13,7 +13,7 @@ public abstract class BaseConverter<S, T> implements Converter<S, T> {
       return null;
     }
     T result = doConvert(source);
-    log.info("End convert source: {}", result);
+    log.info("End convert target: {}", result);
     return result;
   }
 
