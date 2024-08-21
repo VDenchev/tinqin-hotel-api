@@ -6,6 +6,7 @@ import com.tinqinacademy.hotel.api.operations.bookroom.input.BookRoomInput;
 import com.tinqinacademy.hotel.api.operations.checkavailablerooms.output.AvailableRoomsOutput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.output.DeleteRoomOutput;
 import com.tinqinacademy.hotel.api.operations.getroom.output.RoomDetailsOutput;
+import com.tinqinacademy.hotel.api.operations.getroombyroomno.output.GetRoomByRoomNoOutput;
 import com.tinqinacademy.hotel.api.operations.partialupdateroom.input.PartialUpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.partialupdateroom.output.PartialUpdateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.registervisitors.input.RegisterVisitorsInput;
@@ -26,6 +27,7 @@ import static com.tinqinacademy.hotel.api.FeignClientApiRoutes.BOOK_ROOM;
 import static com.tinqinacademy.hotel.api.FeignClientApiRoutes.CHECK_ROOM_AVAILABILITY;
 import static com.tinqinacademy.hotel.api.FeignClientApiRoutes.DELETE_ROOM;
 import static com.tinqinacademy.hotel.api.FeignClientApiRoutes.GET_ROOM;
+import static com.tinqinacademy.hotel.api.FeignClientApiRoutes.GET_ROOM_BY_ROOM_NO;
 import static com.tinqinacademy.hotel.api.FeignClientApiRoutes.PARTIAL_UPDATE_ROOM;
 import static com.tinqinacademy.hotel.api.FeignClientApiRoutes.REGISTER_VISITORS;
 import static com.tinqinacademy.hotel.api.FeignClientApiRoutes.REMOVE_BOOKING;
@@ -71,4 +73,6 @@ public interface HotelClient {
 
   @RequestLine(DELETE_ROOM)
   DeleteRoomOutput deleteRoom(@Param String roomId);
+  @RequestLine(GET_ROOM_BY_ROOM_NO)
+  GetRoomByRoomNoOutput getRoomByRoomNo(@Param String roomNo);
 }

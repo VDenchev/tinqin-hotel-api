@@ -22,6 +22,7 @@ public class RestApiRoutes {
   public static final String UPDATE_ROOM = SYSTEM + ROOM + ROOM_ID;
   public static final String PARTIAL_UPDATE_ROOM = SYSTEM + ROOM + ROOM_ID;
   public static final String DELETE_ROOM = SYSTEM + ROOM + ROOM_ID;
+  public static final String GET_ROOM_BY_ROOM_NO = HOTEL + ROOM + "/{roomNo}";
 
   public static final String SIGN_UP = USER + "/signup";
 }

@@ -71,6 +71,6 @@ public class DeleteRoomOperationProcessor extends BaseOperationProcessor impleme
 
   private Room getRoomByIdOrThrow(UUID roomId) {
     return roomRepository.findById(roomId)
-        .orElseThrow(() -> new EntityNotFoundException("Room", roomId));
+        .orElseThrow(() -> new EntityNotFoundException("Room", "id", roomId.toString()));
   }
 }

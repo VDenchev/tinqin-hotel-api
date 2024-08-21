@@ -13,10 +13,14 @@ import com.tinqinacademy.hotel.api.operations.checkavailablerooms.output.Availab
 import com.tinqinacademy.hotel.api.operations.getroom.input.RoomDetailsInput;
 import com.tinqinacademy.hotel.api.operations.getroom.operation.GetRoomOperation;
 import com.tinqinacademy.hotel.api.operations.getroom.output.RoomDetailsOutput;
+import com.tinqinacademy.hotel.api.operations.getroombyroomno.input.GetRoomByRoomNoInput;
+import com.tinqinacademy.hotel.api.operations.getroombyroomno.operation.GetRoomByRoomNoOperation;
+import com.tinqinacademy.hotel.api.operations.getroombyroomno.output.GetRoomByRoomNoOutput;
 import com.tinqinacademy.hotel.api.operations.removebooking.input.RemoveBookingInput;
 import com.tinqinacademy.hotel.api.operations.removebooking.operation.RemoveBookingOperation;
 import com.tinqinacademy.hotel.api.operations.removebooking.output.RemoveBookingOutput;
 import com.tinqinacademy.hotel.rest.base.BaseController;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.vavr.control.Either;
@@ -40,6 +44,7 @@ import java.util.UUID;
 import static com.tinqinacademy.hotel.api.RestApiRoutes.BOOK_ROOM;
 import static com.tinqinacademy.hotel.api.RestApiRoutes.CHECK_ROOM_AVAILABILITY;
 import static com.tinqinacademy.hotel.api.RestApiRoutes.GET_ROOM;
+import static com.tinqinacademy.hotel.api.RestApiRoutes.GET_ROOM_BY_ROOM_NO;
 import static com.tinqinacademy.hotel.api.RestApiRoutes.REMOVE_BOOKING;
 
 @RestController
@@ -50,8 +55,9 @@ public class HotelController extends BaseController {
   private final CheckAvailableRoomsOperation checkAvailableRoomsOperation;
   private final GetRoomOperation getRoomOperation;
   private final RemoveBookingOperation removeBookingOperation;
+  private final GetRoomByRoomNoOperation getRoomByRoomNoOperation;
 
-  @io.swagger.v3.oas.annotations.Operation(
+  @Operation(
       summary = "Checks if a room is available",
       description = "Checks whether a room is available fro a certain period. Room requirements should come as query parameters in URL."
   )
@@ -83,7 +89,7 @@ public class HotelController extends BaseController {
   }
 
 
-  @io.swagger.v3.oas.annotations.Operation(
+  @Operation(
       summary = "Returns room details",
       description = "Returns basic info for a room with the specified id"
   )
@@ -102,7 +108,7 @@ public class HotelController extends BaseController {
   }
 
 
-  @io.swagger.v3.oas.annotations.Operation(
+  @Operation(
       summary = "Books a hotel room",
       description = "Books the room with the corresponding id"
   )
@@ -120,7 +126,7 @@ public class HotelController extends BaseController {
   }
 
 
-  @io.swagger.v3.oas.annotations.Operation(
+  @Operation(
       summary = "Unbooks a hotel room",
       description = "Unbooks the room a user had already booked"
   )
@@ -135,6 +141,24 @@ public class HotelController extends BaseController {
         .build();
     Either<ErrorOutput, RemoveBookingOutput> output = removeBookingOperation.process(input);
 
+    return consumeEither(output, HttpStatus.OK);
+  }
+
+  @Operation(
+      summary = "Returns room details",
+      description = "Returns basic info for a room with the room number"
+  )
+  @ApiResponses(value = {
+      @ApiResponse(description = "Room is successfully retrieved", responseCode = "200"),
+      @ApiResponse(description = "Room with the provided roomNo does not exist", responseCode = "400"),
+  })
+  @GetMapping(GET_ROOM_BY_ROOM_NO)
+  public ResponseEntity<OperationOutput> getRoomByRoomNo(
+      @PathVariable String roomNo
+  ) {
+    Either<ErrorOutput, GetRoomByRoomNoOutput> output = getRoomByRoomNoOperation.process(GetRoomByRoomNoInput.builder()
+        .roomNo(roomNo)
+        .build());
     return consumeEither(output, HttpStatus.OK);
   }
 }

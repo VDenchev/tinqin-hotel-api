@@ -27,4 +27,5 @@ public class FeignClientApiRoutes {
   public static final String UPDATE_ROOM = PUT_METHOD + RestApiRoutes.UPDATE_ROOM;
   public static final String PARTIAL_UPDATE_ROOM = PATCH_METHOD + RestApiRoutes.PARTIAL_UPDATE_ROOM;
   public static final String DELETE_ROOM = DELETE_METHOD + RestApiRoutes.DELETE_ROOM;
+  public static final String GET_ROOM_BY_ROOM_NO = GET_METHOD + RestApiRoutes.GET_ROOM_BY_ROOM_NO;
 }

@@ -61,7 +61,7 @@ public class RemoveBookingOperationProcessor extends BaseOperationProcessor impl
 
   private Booking getBookingByIdOrThrow(UUID bookingId) {
     return bookingRepository.findById(bookingId)
-        .orElseThrow(() -> new EntityNotFoundException("Booking", bookingId));
+        .orElseThrow(() -> new EntityNotFoundException("Booking", "id", bookingId.toString()));
   }
 
   private RemoveBookingOutput createOutput() {

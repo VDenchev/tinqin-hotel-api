@@ -56,7 +56,7 @@ public class RegisterVisitorsOperationProcessor extends BaseOperationProcessor i
                   log.info("Start registerVisitors input: {}", validInput);
                   UUID bookingId = UUID.fromString(validInput.getBookingId());
                   Booking booking = bookingRepository.findById(bookingId)
-                      .orElseThrow(() -> new EntityNotFoundException("Booking", bookingId));
+                      .orElseThrow(() -> new EntityNotFoundException("Booking", "id", validInput.getBookingId()));
 
                   List<VisitorDetailsInput> inputVisitors = validInput.getVisitors();
                   validateVisitors(inputVisitors, booking);

@@ -82,7 +82,7 @@ public class UpdateRoomOperationProcessor extends BaseOperationProcessor impleme
   private UUID getRoomIdOrThrow(UpdateRoomInput validInput) {
     UUID roomId = UUID.fromString(validInput.getRoomId());
     roomRepository.findById(roomId)
-        .orElseThrow(() -> new EntityNotFoundException("Room", roomId));
+        .orElseThrow(() -> new EntityNotFoundException("Room", "id", validInput.getRoomId()));
     return roomId;
   }
 
