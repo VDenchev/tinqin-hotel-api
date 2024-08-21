@@ -57,7 +57,7 @@ services:
     env_file:
       - ../authentication/rest/src/main/resources/.env
     environment:
-      - DB_URL=jdbc:postgresql://db:5432/comments
+      - DB_URL=jdbc:postgresql://db:5432/authentication
       - MONGO_DB_HOST=cache-db
       - ADMIN_CLIENT_URL=http://admin-app:42069/api/v1/admin
     networks:
