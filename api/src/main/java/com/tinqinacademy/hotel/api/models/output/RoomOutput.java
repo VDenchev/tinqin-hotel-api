@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -27,5 +28,5 @@ public class RoomOutput {
   private List<BedType> bedSizes;
   private BathroomType bathroomType;
   private Integer bedCount;
-  private DatesOccupied datesOccupied;
+  private List<LocalDate> datesOccupied;
 }
