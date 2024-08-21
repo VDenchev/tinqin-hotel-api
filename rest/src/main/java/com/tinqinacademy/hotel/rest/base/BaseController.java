@@ -14,7 +14,7 @@ public abstract class BaseController {
   ) {
     return either
         .fold(
-            error -> new ResponseEntity<>(error, error.getCode()),
+            error -> new ResponseEntity<>(error, error.getStatusCode()),
             output -> new ResponseEntity<>(output, statusCode)
         );
   }

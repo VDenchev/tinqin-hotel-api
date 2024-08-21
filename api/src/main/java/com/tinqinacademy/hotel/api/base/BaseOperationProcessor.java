@@ -27,7 +27,7 @@ public abstract class BaseOperationProcessor {
 
   protected API.Match.Case<? extends Throwable, ErrorOutput> customStatusCase(Throwable t, Class<? extends Throwable> clazz, HttpStatusCode statusCode) {
     ErrorOutput output = ErrorOutput.builder()
-        .code(statusCode)
+        .statusCode(statusCode)
         .errors(List.of(Error.builder()
             .message(t.getMessage())
             .build()
@@ -38,7 +38,7 @@ public abstract class BaseOperationProcessor {
 
   protected API.Match.Case<? extends Throwable, ErrorOutput> defaultCase(Throwable t) {
     ErrorOutput output = ErrorOutput.builder()
-        .code(HttpStatus.INTERNAL_SERVER_ERROR)
+        .statusCode(HttpStatus.INTERNAL_SERVER_ERROR)
         .errors(List.of(Error.builder()
             .message(t.getMessage())
             .build()
@@ -75,7 +75,7 @@ public abstract class BaseOperationProcessor {
     return Either.left(
         ErrorOutput.builder()
             .errors(errors)
-            .code(HttpStatus.UNPROCESSABLE_ENTITY)
+            .statusCode(HttpStatus.UNPROCESSABLE_ENTITY)
             .build());
   }
 }

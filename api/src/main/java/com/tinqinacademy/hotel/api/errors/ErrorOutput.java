@@ -19,5 +19,5 @@ import java.util.List;
 @ToString
 public class ErrorOutput implements OperationOutput {
   private List<? extends Error> errors;
-  private HttpStatusCode code;
+  private HttpStatusCode statusCode;
 }
