@@ -4,7 +4,6 @@ import com.tinqinacademy.hotel.api.base.BaseOperationProcessor;
 import com.tinqinacademy.hotel.api.enums.BedType;
 import com.tinqinacademy.hotel.api.errors.ErrorOutput;
 import com.tinqinacademy.hotel.api.exceptions.EntityNotFoundException;
-import com.tinqinacademy.hotel.api.models.output.DatesOccupied;
 import com.tinqinacademy.hotel.api.models.output.RoomOutput;
 import com.tinqinacademy.hotel.api.operations.getroom.input.RoomDetailsInput;
 import com.tinqinacademy.hotel.api.operations.getroom.operation.GetRoomOperation;
@@ -51,10 +50,9 @@ public class GetRoomOperationProcessor extends BaseOperationProcessor implements
 
                   Room room = getRoomOrThrow(roomId);
 
-                  List<LocalDate> dates = room.getBookings().stream()
+                  List<LocalDate> datesOccupied = room.getBookings().stream()
                       .flatMap(b -> b.getStartDate().datesUntil(b.getEndDate().plusDays(1)))
                       .toList();
-                  DatesOccupied datesOccupied = convertDateListToDatesOccupied(dates);
                   List<Bed> beds = roomRepository.getAllBedsByRoomId(room.getId());
 
                   RoomOutput roomOutput = convertRoomToRoomOutput(room, beds, datesOccupied);
@@ -78,18 +76,12 @@ public class GetRoomOperationProcessor extends BaseOperationProcessor implements
         .build();
   }
 
-  private DatesOccupied convertDateListToDatesOccupied(List<LocalDate> dates) {
-    return DatesOccupied.builder()
-        .dates(dates)
-        .build();
-  }
-
   private Room getRoomOrThrow(UUID roomId) {
     return roomRepository.findById(roomId)
         .orElseThrow(() -> new EntityNotFoundException("Room", roomId));
   }
 
-  private RoomOutput convertRoomToRoomOutput(Room room, List<Bed> beds, DatesOccupied datesOccupied) {
+  private RoomOutput convertRoomToRoomOutput(Room room, List<Bed> beds, List<LocalDate> datesOccupied) {
     RoomOutput output = conversionService.convert(room, RoomOutput.class);
     output.setBedSizes(beds.stream()
         .map(b -> conversionService.convert(b, BedType.class))

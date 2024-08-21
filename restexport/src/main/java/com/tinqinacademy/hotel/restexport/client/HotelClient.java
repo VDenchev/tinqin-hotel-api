@@ -5,7 +5,6 @@ import com.tinqinacademy.hotel.api.operations.addroom.output.AddRoomOutput;
 import com.tinqinacademy.hotel.api.operations.bookroom.input.BookRoomInput;
 import com.tinqinacademy.hotel.api.operations.checkavailablerooms.output.AvailableRoomsOutput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.output.DeleteRoomOutput;
-import com.tinqinacademy.hotel.api.operations.getroom.input.RoomDetailsInput;
 import com.tinqinacademy.hotel.api.operations.getroom.output.RoomDetailsOutput;
 import com.tinqinacademy.hotel.api.operations.partialupdateroom.input.PartialUpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.partialupdateroom.output.PartialUpdateRoomOutput;
@@ -42,7 +41,7 @@ public interface HotelClient {
       @Param List<String> bedSizes, @Param String bathroomType);
 
   @RequestLine(GET_ROOM)
-  RoomDetailsOutput getRoom(@Param String roomId, RoomDetailsInput roomDetailsInput);
+  RoomDetailsOutput getRoom(@Param String roomId);
 
   @RequestLine(BOOK_ROOM)
   BookRoomInput bookRoom(@Param String roomId, BookRoomInput bookRoomInput);
@@ -71,5 +70,5 @@ public interface HotelClient {
   PartialUpdateRoomOutput partialUpdateRoom(@Param String roomId, PartialUpdateRoomInput partialUpdateRoomInput);
 
   @RequestLine(DELETE_ROOM)
-  DeleteRoomOutput partialUpdateROom(@Param String roomId);
+  DeleteRoomOutput deleteRoom(@Param String roomId);
 }
