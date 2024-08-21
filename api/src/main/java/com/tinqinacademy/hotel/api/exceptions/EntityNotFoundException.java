@@ -2,17 +2,17 @@ package com.tinqinacademy.hotel.api.exceptions;
 
 import lombok.Getter;
 
-import java.util.UUID;
-
 @Getter
 public class EntityNotFoundException extends RuntimeException {
 
   private String entityName;
-  private UUID uuid;
+  private String field;
+  private String value;
 
-  public EntityNotFoundException(String entityName, UUID uuid) {
-    super("Entity of type " + entityName + " and ID " + uuid + " not found!");
+  public EntityNotFoundException(String entityName,String field, String value) {
+    super(String.format("Entity of type %s with field %s with value %s not found", entityName, field, value));
     this.entityName = entityName;
-    this.uuid = uuid;
+    this.field = field;
+    this.value = value;
   }
 }

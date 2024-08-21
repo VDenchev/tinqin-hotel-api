@@ -96,7 +96,7 @@ public class PartialUpdateRoomOperationProcessor extends BaseOperationProcessor 
 
   private Room getRoomByIdOrThrow(UUID roomId) {
     return roomRepository.findById(roomId)
-        .orElseThrow(() -> new EntityNotFoundException("Room", roomId));
+        .orElseThrow(() -> new EntityNotFoundException("Room", "id", roomId.toString()));
   }
 
   private Room convertPartialInputToRoom(UUID roomId, RoomInput roomInput) {

@@ -60,7 +60,7 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor implement
                   log.info("Start bookRoom input: {}", validInput);
 
                   Room room = roomRepository.findById(roomId)
-                      .orElseThrow(() -> new EntityNotFoundException("Room", roomId));
+                      .orElseThrow(() -> new EntityNotFoundException("Room", "id", validInput.getRoomId()));
                   ensueRoomIsNotAlreadyBookedForTheSamePeriod(roomId, validInput.getStartDate(),
                       validInput.getEndDate());
 

@@ -78,7 +78,7 @@ public class GetRoomOperationProcessor extends BaseOperationProcessor implements
 
   private Room getRoomOrThrow(UUID roomId) {
     return roomRepository.findById(roomId)
-        .orElseThrow(() -> new EntityNotFoundException("Room", roomId));
+        .orElseThrow(() -> new EntityNotFoundException("Room","id", roomId.toString()));
   }
 
   private RoomOutput convertRoomToRoomOutput(Room room, List<Bed> beds, List<LocalDate> datesOccupied) {
