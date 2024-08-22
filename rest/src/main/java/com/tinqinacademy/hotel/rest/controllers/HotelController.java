@@ -39,7 +39,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 import static com.tinqinacademy.hotel.api.RestApiRoutes.BOOK_ROOM;
 import static com.tinqinacademy.hotel.api.RestApiRoutes.CHECK_ROOM_AVAILABILITY;
@@ -81,7 +80,7 @@ public class HotelController extends BaseController {
         .endDate(endDate)
         .bedCount(bedCount)
         .bedSizes(bedSizes.stream().map(BedType::getByCode).toList())
-        .bathroomType(BathroomType.getByCode(bathroomType))
+        .bathroomType(bathroomType == null ? null : BathroomType.getByCode(bathroomType))
         .build();
 
     Either<ErrorOutput, AvailableRoomsOutput> output = checkAvailableRoomsOperation.process(input);
@@ -135,10 +134,10 @@ public class HotelController extends BaseController {
       @ApiResponse(description = "No book with the provided id", responseCode = "404"),
   })
   @DeleteMapping(REMOVE_BOOKING)
-  public ResponseEntity<OperationOutput> removeBooking(@PathVariable UUID bookingId) {
-    RemoveBookingInput input = RemoveBookingInput.builder()
-        .bookingId(bookingId.toString())
-        .build();
+  public ResponseEntity<OperationOutput> removeBooking(@PathVariable String bookingId, @RequestBody RemoveBookingInput input) {
+
+    input.setBookingId(bookingId);
+
     Either<ErrorOutput, RemoveBookingOutput> output = removeBookingOperation.process(input);
 
     return consumeEither(output, HttpStatus.OK);
