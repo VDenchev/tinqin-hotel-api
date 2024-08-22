@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tinqinacademy.hotel.api.base.OperationInput;
 import com.tinqinacademy.hotel.api.models.input.VisitorDetailsInput;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,5 +29,6 @@ public class RegisterVisitorsInput implements OperationInput {
 
   @JsonIgnore
   @UUID(message = "BookingId has to be a valid UUID string")
+  @NotBlank(message = "Booking id must not be blank")
   private String bookingId;
 }
