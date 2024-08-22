@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDate;
+import java.util.List;
 
 import static com.tinqinacademy.hotel.api.RestApiRoutes.ADD_ROOM;
 import static com.tinqinacademy.hotel.api.RestApiRoutes.DELETE_ROOM;
@@ -125,7 +126,7 @@ public class SystemController extends BaseController {
       @RequestParam(required = false) String firstName,
       @RequestParam(required = false) String lastName,
       @RequestParam(required = false) LocalDate birthDate,
-      @RequestParam(required = false) String phoneNo,
+      @RequestParam(required = false) List<String> userIds,
       @RequestParam(required = false) LocalDate idCardValidity,
       @RequestParam(required = false) String idCardIssueAuthority,
       @RequestParam(required = false) LocalDate idCardIssueDate,
@@ -138,7 +139,6 @@ public class SystemController extends BaseController {
         .firstName(firstName)
         .lastName(lastName)
         .birthDate(birthDate)
-        .phoneNo(phoneNo)
         .idCardValidity(idCardValidity)
         .idCardIssueAuthority(idCardIssueAuthority)
         .idCardIssueDate(idCardIssueDate)
@@ -147,6 +147,7 @@ public class SystemController extends BaseController {
     SearchVisitorsInput input = SearchVisitorsInput.builder()
         .visitorDetailsInput(details)
         .roomNo(roomNo)
+        .userIds(userIds)
         .build();
 
     Either<ErrorOutput, SearchVisitorsOutput> output = searchVisitorsOperation.process(input);

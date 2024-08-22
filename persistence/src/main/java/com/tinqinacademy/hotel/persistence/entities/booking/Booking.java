@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tinqinacademy.hotel.persistence.entities.base.BaseEntity;
 import com.tinqinacademy.hotel.persistence.entities.guest.Guest;
 import com.tinqinacademy.hotel.persistence.entities.room.Room;
-import com.tinqinacademy.hotel.persistence.entities.user.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,6 +23,7 @@ import lombok.ToString;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -46,9 +46,8 @@ public class Booking extends BaseEntity {
   @JoinColumn(name = "room_id", nullable = false, referencedColumnName = "id")
   private Room room;
 
-  @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
-  private User user;
+  @Column(name = "user_id", nullable = false)
+  private UUID userId;
 
   @ToString.Exclude
   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)

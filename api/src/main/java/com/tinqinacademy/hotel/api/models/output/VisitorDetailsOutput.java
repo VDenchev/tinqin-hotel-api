@@ -21,7 +21,7 @@ public class VisitorDetailsOutput {
   private LocalDate endDate;
   private String firstName;
   private String lastName;
-  private String phoneNo;
+  private String userId;
   private String idCardNo;
   private LocalDate birthDate;
   private LocalDate idCardValidity;

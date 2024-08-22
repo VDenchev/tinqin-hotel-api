@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,8 +32,13 @@ import java.time.LocalDate;
 public class BookRoomInput implements OperationInput {
 
   @JsonIgnore
-  @UUID(message = "RoomId has to be a valid UUID string")
+  @UUID(message = "Room id has to be a valid UUID string")
+  @NotBlank(message = "Room id cannot be blank")
   private String roomId;
+
+  @UUID(message = "User id has to be a valid UUID string")
+  @NotBlank(message = "User id cannot be blank")
+  private String userId;
 
   @NotNull(message = "Start date cannot be null")
   @FutureOrPresent(message = "Start date must be a future date")
@@ -45,9 +51,9 @@ public class BookRoomInput implements OperationInput {
   private LocalDate endDate;
 
   @NotBlank(message = "Phone number cannot be blank")
-  @Size(min = 10, max = 15, message = "Invalid phone number format")
-  @Schema(example = "+359 972947321")
-  private String phoneNumber;
+  @Pattern(regexp = "^\\+\\d{1,3} \\d{9,11}$", message = "Invalid phoneNo format")
+  @Schema(example = "+359 863125171")
+  private String phoneNo;
 
   @NotBlank(message = "First name cannot not be blank")
   @Size(min = 2, max = 40, message = "Last name must be between 2 and 40 characters long")
