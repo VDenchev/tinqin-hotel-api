@@ -18,12 +18,12 @@ import com.tinqinacademy.hotel.persistence.repositories.BookingRepository;
 import com.tinqinacademy.hotel.persistence.repositories.GuestRepository;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import jakarta.validation.Validator;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -49,6 +49,7 @@ public class RegisterVisitorsOperationProcessor extends BaseOperationProcessor i
   }
 
   @Override
+  @Transactional
   public Either<ErrorOutput, RegisterVisitorsOutput> process(RegisterVisitorsInput input) {
     return validateInput(input)
         .flatMap(validInput ->

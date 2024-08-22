@@ -9,10 +9,8 @@ import com.tinqinacademy.hotel.api.operations.bookroom.operation.BookRoomOperati
 import com.tinqinacademy.hotel.api.operations.bookroom.output.BookRoomOutput;
 import com.tinqinacademy.hotel.persistence.entities.booking.Booking;
 import com.tinqinacademy.hotel.persistence.entities.room.Room;
-import com.tinqinacademy.hotel.persistence.entities.user.User;
 import com.tinqinacademy.hotel.persistence.repositories.BookingRepository;
 import com.tinqinacademy.hotel.persistence.repositories.RoomRepository;
-import com.tinqinacademy.hotel.persistence.repositories.UserRepository;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
@@ -21,10 +19,10 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import jakarta.validation.Validator;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static io.vavr.API.Match;
@@ -33,39 +31,37 @@ import static io.vavr.API.Match;
 @Slf4j
 public class BookRoomOperationProcessor extends BaseOperationProcessor implements BookRoomOperation {
 
-  private final UserRepository userRepository;
   private final BookingRepository bookingRepository;
   private final RoomRepository roomRepository;
 
   @Autowired
   public BookRoomOperationProcessor(
       ConversionService conversionService, Validator validator,
-      UserRepository userRepository, BookingRepository bookingRepository,
+      BookingRepository bookingRepository,
       RoomRepository roomRepository
   ) {
     super(conversionService, validator);
-    this.userRepository = userRepository;
     this.bookingRepository = bookingRepository;
     this.roomRepository = roomRepository;
   }
 
   @Override
+  @Transactional
   public Either<ErrorOutput, BookRoomOutput> process(BookRoomInput input) {
     return validateInput(input)
         .flatMap(validInput ->
             Try.of(() -> {
+                  log.info("Start bookRoom input: {}", validInput);
 
                   UUID roomId = UUID.fromString(validInput.getRoomId());
 
-                  log.info("Start bookRoom input: {}", validInput);
-
                   Room room = roomRepository.findById(roomId)
                       .orElseThrow(() -> new EntityNotFoundException("Room", "id", validInput.getRoomId()));
+
                   ensueRoomIsNotAlreadyBookedForTheSamePeriod(roomId, validInput.getStartDate(),
                       validInput.getEndDate());
 
-                  User user = getExistingOrCreateNewUser(validInput);
-                  Booking booking = convertBookRoomInputToBooking(validInput, room, user);
+                  Booking booking = convertBookRoomInputToBooking(validInput, room);
 
                   bookingRepository.save(booking);
 
@@ -91,30 +87,12 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor implement
     }
   }
 
-  private User getExistingOrCreateNewUser(BookRoomInput input) {
-    Optional<User> userMaybe = userRepository.findByPhoneNumber(input.getPhoneNumber());
-
-    if (userMaybe.isEmpty()) {
-      User user = User.builder()
-          .firstName(input.getFirstName())
-          .lastName(input.getLastName())
-          .phoneNumber(input.getPhoneNumber())
-          .email("no.email@example.com")
-          .password("password")
-          .build();
-      return userRepository.save(user);
-    }
-    return userMaybe.get();
-  }
-
   private Booking convertBookRoomInputToBooking(
       BookRoomInput input,
-      Room room,
-      User user
+      Room room
   ) {
     Booking booking = conversionService.convert(input, Booking.class);
     booking.setRoom(room);
-    booking.setUser(user);
     return booking;
   }
 
