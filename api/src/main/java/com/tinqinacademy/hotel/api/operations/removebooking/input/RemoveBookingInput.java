@@ -1,7 +1,8 @@
 package com.tinqinacademy.hotel.api.operations.removebooking.input;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tinqinacademy.hotel.api.base.OperationInput;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +19,12 @@ import org.hibernate.validator.constraints.UUID;
 @Builder
 public class RemoveBookingInput implements OperationInput {
 
-  @JsonValue
-  @UUID(message = "BookingId has to be a valid UUID string")
+  @JsonIgnore
+  @UUID(message = "Booking id has to be a valid UUID string")
+  @NotBlank(message = "Booking id cannot be blank")
   private String bookingId;
+
+  @UUID(message = "User id has to be a valid UUID string")
+  @NotBlank(message = "User id cannot be blank")
+  private String userId;
 }

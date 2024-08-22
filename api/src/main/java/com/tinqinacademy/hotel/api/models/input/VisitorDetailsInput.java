@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,11 +46,6 @@ public class VisitorDetailsInput {
   @Size(min = 2, max = 40, message = "Last name has to be between 2 and 40 characters")
   @Schema(example = "Doe")
   private String lastName;
-
-  @NotBlank(message = "Phone number cannot be blank")
-  @Pattern(regexp = "^\\+\\d{1,3} \\d{9,11}$", message = "Invalid phoneNo format")
-  @Schema(example = "+359984371483")
-  private String phoneNo;
 
   @NotBlank(message = "Id card number must not be blank")
   @Size(min = 8, max = 15, message = "Id card number must be between 8 and 15 characters")

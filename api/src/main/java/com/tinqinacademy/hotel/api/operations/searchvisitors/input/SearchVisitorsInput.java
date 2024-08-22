@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,4 +24,5 @@ public class SearchVisitorsInput implements OperationInput {
   private VisitorDetailsInput visitorDetailsInput;
 
   private String roomNo;
+  private List<String> userIds;
 }

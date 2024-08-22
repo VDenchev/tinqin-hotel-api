@@ -3,11 +3,11 @@ package com.tinqinacademy.hotel.persistence.repositories;
 import com.tinqinacademy.hotel.persistence.entities.booking.Booking;
 import com.tinqinacademy.hotel.persistence.entities.guest.Guest;
 import com.tinqinacademy.hotel.persistence.entities.room.Room;
-import com.tinqinacademy.hotel.persistence.entities.user.User;
 import com.tinqinacademy.hotel.persistence.models.output.VisitorSearchResult;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -36,7 +36,7 @@ public class CustomGuestRepository {
       String firstName,
       String lastName,
       LocalDate birthDate,
-      String phoneNumber,
+      List<String> userIds,
       String idCardNumber,
       String issueAuthority,
       String roomNumber
@@ -46,7 +46,6 @@ public class CustomGuestRepository {
     Root<Booking> booking = query.from(Booking.class);
     Join<Booking, Guest> guest = booking.join("guests", JoinType.INNER);
     Join<Booking, Room> room = booking.join("room", JoinType.INNER);
-    Join<Booking, User> user = booking.join("user", JoinType.INNER);
     List<Predicate> predicates = new ArrayList<>();
 
     if (startDate != null && endDate != null) {
@@ -71,9 +70,10 @@ public class CustomGuestRepository {
       Predicate lastNamePredicate = cb.like(cb.lower(guest.get("lastName")), "%" + lastName.toLowerCase() + "%");
       predicates.add(lastNamePredicate);
     }
-    if (phoneNumber != null && !phoneNumber.isBlank()) {
-      Predicate phoneNumberPredicate = cb.like(user.get("phoneNumber"), "%" + phoneNumber + "%");
-      predicates.add(phoneNumberPredicate);
+    if (userIds != null && !userIds.isEmpty()) {
+      Expression<String> expression = booking.get("userId").as(String.class);
+      Predicate userIdsPredicate = expression.in(userIds);
+      predicates.add(userIdsPredicate);
     }
     if (birthDate != null) {
       Predicate birthDatePredicate = cb.equal(guest.get("birthDate"), birthDate);
@@ -102,7 +102,7 @@ public class CustomGuestRepository {
         booking.get("endDate"),
         guest.get("firstName"),
         guest.get("lastName"),
-        user.get("phoneNumber"),
+        booking.get("userId").as(String.class),
         guest.get("birthDate"),
         guest.get("idCardNumber"),
         guest.get("idCardValidity"),

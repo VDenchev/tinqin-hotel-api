@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
 import com.tinqinacademy.hotel.api.base.OperationOutput;
+import com.tinqinacademy.hotel.api.base.Output;
 import com.tinqinacademy.hotel.api.enums.BathroomType;
 import com.tinqinacademy.hotel.api.enums.BedType;
 import com.tinqinacademy.hotel.api.errors.ErrorOutput;
@@ -39,7 +40,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 import static com.tinqinacademy.hotel.api.RestApiRoutes.BOOK_ROOM;
 import static com.tinqinacademy.hotel.api.RestApiRoutes.CHECK_ROOM_AVAILABILITY;
@@ -65,7 +65,7 @@ public class HotelController extends BaseController {
       @ApiResponse(description = "Returns the IDs of all available rooms", responseCode = "200"),
   })
   @GetMapping(CHECK_ROOM_AVAILABILITY)
-  public ResponseEntity<OperationOutput> checkRoomAvailability(
+  public ResponseEntity<Output> checkRoomAvailability(
       @RequestParam(required = false) LocalDate startDate,
       @RequestParam(required = false) LocalDate endDate,
       @RequestParam(required = false) Integer bedCount,
@@ -81,7 +81,7 @@ public class HotelController extends BaseController {
         .endDate(endDate)
         .bedCount(bedCount)
         .bedSizes(bedSizes.stream().map(BedType::getByCode).toList())
-        .bathroomType(BathroomType.getByCode(bathroomType))
+        .bathroomType(bathroomType == null ? null : BathroomType.getByCode(bathroomType))
         .build();
 
     Either<ErrorOutput, AvailableRoomsOutput> output = checkAvailableRoomsOperation.process(input);
@@ -98,7 +98,7 @@ public class HotelController extends BaseController {
       @ApiResponse(description = "Room with the provided id does not exist", responseCode = "404"),
   })
   @GetMapping(GET_ROOM)
-  public ResponseEntity<OperationOutput> getRoom(
+  public ResponseEntity<Output> getRoom(
       @PathVariable String roomId
   ) {
     Either<ErrorOutput, RoomDetailsOutput> output = getRoomOperation.process(RoomDetailsInput.builder()
@@ -118,7 +118,7 @@ public class HotelController extends BaseController {
       @ApiResponse(description = "You dont have permission", responseCode = "403"),
   })
   @PostMapping(BOOK_ROOM)
-  public ResponseEntity<OperationOutput> bookRoom(@PathVariable String roomId, @RequestBody BookRoomInput input) {
+  public ResponseEntity<Output> bookRoom(@PathVariable String roomId, @RequestBody BookRoomInput input) {
     input.setRoomId(roomId);
     Either<ErrorOutput, BookRoomOutput> output = bookRoomOperation.process(input);
 
@@ -135,10 +135,10 @@ public class HotelController extends BaseController {
       @ApiResponse(description = "No book with the provided id", responseCode = "404"),
   })
   @DeleteMapping(REMOVE_BOOKING)
-  public ResponseEntity<OperationOutput> removeBooking(@PathVariable UUID bookingId) {
-    RemoveBookingInput input = RemoveBookingInput.builder()
-        .bookingId(bookingId.toString())
-        .build();
+  public ResponseEntity<Output> removeBooking(@PathVariable String bookingId, @RequestBody RemoveBookingInput input) {
+
+    input.setBookingId(bookingId);
+
     Either<ErrorOutput, RemoveBookingOutput> output = removeBookingOperation.process(input);
 
     return consumeEither(output, HttpStatus.OK);
@@ -153,7 +153,7 @@ public class HotelController extends BaseController {
       @ApiResponse(description = "Room with the provided roomNo does not exist", responseCode = "400"),
   })
   @GetMapping(GET_ROOM_BY_ROOM_NO)
-  public ResponseEntity<OperationOutput> getRoomByRoomNo(
+  public ResponseEntity<Output> getRoomByRoomNo(
       @PathVariable String roomNo
   ) {
     Either<ErrorOutput, GetRoomByRoomNoOutput> output = getRoomByRoomNoOperation.process(GetRoomByRoomNoInput.builder()

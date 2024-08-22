@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.api.operations.getroom.input;
 
 import com.tinqinacademy.hotel.api.base.OperationInput;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,5 +19,6 @@ import org.hibernate.validator.constraints.UUID;
 public class RoomDetailsInput implements OperationInput {
 
   @UUID(message = "Id has to be a valid UUID string")
+  @NotBlank(message = "Room id must not be blank")
   private String roomId;
 }

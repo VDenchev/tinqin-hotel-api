@@ -20,9 +20,10 @@ public class FeignClientApiRoutes {
   public static final String REGISTER_VISITORS = POST_METHOD + RestApiRoutes.REGISTER_VISITORS;
   public static final String SEARCH_VISITORS = GET_METHOD + RestApiRoutes.SEARCH_VISITORS +
       "?startDate={startDate}&endDate={endDate}&birthDate={birthDate}" +
-      "&firstName={firstName}&lastName={lastName}&phoneNo={phoneNo}" +
+      "&firstName={firstName}&lastName={lastName}&userIds={userIds}" +
       "&idCardNo={idCardNo}&idCardValidity={idCardValidity}" +
-      "&idCardIssueDate={idCardIssueDate}&roomNo={roomNo}";
+      "&idCardIssueDate={idCardIssueDate}&idCardIssueAuthority={idCardIssueAuthority}" +
+      "&roomNo={roomNo}";
   public static final String ADD_ROOM = POST_METHOD + RestApiRoutes.ADD_ROOM;
   public static final String UPDATE_ROOM = PUT_METHOD + RestApiRoutes.UPDATE_ROOM;
   public static final String PARTIAL_UPDATE_ROOM = PATCH_METHOD + RestApiRoutes.PARTIAL_UPDATE_ROOM;

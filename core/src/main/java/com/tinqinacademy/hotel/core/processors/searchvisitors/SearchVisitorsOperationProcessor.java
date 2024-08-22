@@ -1,6 +1,6 @@
 package com.tinqinacademy.hotel.core.processors.searchvisitors;
 
-import com.tinqinacademy.hotel.api.base.BaseOperationProcessor;
+import com.tinqinacademy.hotel.core.processors.base.BaseOperationProcessor;
 import com.tinqinacademy.hotel.api.errors.ErrorOutput;
 import com.tinqinacademy.hotel.api.models.input.VisitorDetailsInput;
 import com.tinqinacademy.hotel.api.models.output.VisitorDetailsOutput;
@@ -36,50 +36,55 @@ public class SearchVisitorsOperationProcessor extends BaseOperationProcessor imp
 
   @Override
   public Either<ErrorOutput, SearchVisitorsOutput> process(SearchVisitorsInput input) {
-    return Try.of(() -> {
+    return validateInput(input)
+        .flatMap(validInput ->
+            Try.of(() -> {
+                  log.info("Start searchVisitors input: {}", validInput);
 
-          log.info("Start searchVisitors input: {}", input);
+                  VisitorDetailsInput visitorDetailsInput = validInput.getVisitorDetailsInput();
 
-          VisitorDetailsInput visitorDetailsInput = input.getVisitorDetailsInput();
+                  List<VisitorSearchResult> results = customGuestRepository.searchVisitors(
+                      visitorDetailsInput.getStartDate(),
+                      visitorDetailsInput.getEndDate(),
+                      visitorDetailsInput.getFirstName(),
+                      visitorDetailsInput.getLastName(),
+                      visitorDetailsInput.getBirthDate(),
+                      validInput.getUserIds(),
+                      visitorDetailsInput.getIdCardNo(),
+                      visitorDetailsInput.getIdCardIssueAuthority(),
+                      input.getRoomNo()
+                  );
 
-          List<VisitorSearchResult> results = customGuestRepository.searchVisitors(
-              visitorDetailsInput.getStartDate(),
-              visitorDetailsInput.getEndDate(),
-              visitorDetailsInput.getFirstName(),
-              visitorDetailsInput.getLastName(),
-              visitorDetailsInput.getBirthDate(),
-              visitorDetailsInput.getPhoneNo(),
-              visitorDetailsInput.getIdCardNo(),
-              visitorDetailsInput.getIdCardIssueAuthority(),
-              input.getRoomNo()
-          );
+                  List<VisitorDetailsOutput> visitors = convertSearchResultListToVistorDetailsOutputList(results);
 
-          List<VisitorDetailsOutput> visitors = convertSearchResultListToVistorDetailsOutputList(results);
+                  SearchVisitorsOutput output = createOutput(visitors);
 
-          SearchVisitorsOutput output = createOutput(visitors);
-
-          log.info("End searchVisitors output: {}", output);
-          return output;
-        })
-        .toEither()
-        .mapLeft(t -> Match(t).of(
-            defaultCase(t)
-        ));
+                  log.info("End searchVisitors output: {}", output);
+                  return output;
+                })
+                .toEither()
+                .mapLeft(t -> Match(t).of(
+                    defaultCase(t)
+                ))
+        );
   }
 
   private List<VisitorDetailsOutput> convertSearchResultListToVistorDetailsOutputList(List<VisitorSearchResult> results) {
     return results.stream().map(r ->
-        VisitorDetailsOutput.builder()
-            .startDate(r.getStartDate())
-            .endDate(r.getEndDate())
-            .firstName(r.getFirstName())
-            .birthDate(r.getBirthDate())
-            .lastName(r.getLastName())
-            .idCardNo(r.getIdCardNumber())
-            .idCardValidity(r.getIdCardValidity())
-            .idCardIssueAuthority(r.getIdCardIssueAuthority())
-            .idCardIssueDate(r.getIdCardIssueDate())
-            .build()).toList();
+            VisitorDetailsOutput.builder()
+                .startDate(r.getStartDate())
+                .endDate(r.getEndDate())
+                .firstName(r.getFirstName())
+                .birthDate(r.getBirthDate())
+                .lastName(r.getLastName())
+                .userId(r.getUserId())
+                .idCardNo(r.getIdCardNumber())
+                .idCardValidity(r.getIdCardValidity())
+                .idCardIssueAuthority(r.getIdCardIssueAuthority())
+                .idCardIssueDate(r.getIdCardIssueDate())
+                .build()
+        )
+        .toList();
   }
 
   private SearchVisitorsOutput createOutput(List<VisitorDetailsOutput> visitors) {

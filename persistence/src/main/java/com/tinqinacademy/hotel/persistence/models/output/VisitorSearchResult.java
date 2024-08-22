@@ -21,7 +21,7 @@ public class VisitorSearchResult {
   private LocalDate endDate;
   private String firstName;
   private String lastName;
-  private String phoneNumber;
+  private String userId;
   private LocalDate birthDate;
   private String idCardNumber;
   private LocalDate idCardValidity;

@@ -1,6 +1,6 @@
 package com.tinqinacademy.hotel.core.processors.removebooking;
 
-import com.tinqinacademy.hotel.api.base.BaseOperationProcessor;
+import com.tinqinacademy.hotel.core.processors.base.BaseOperationProcessor;
 import com.tinqinacademy.hotel.api.errors.ErrorOutput;
 import com.tinqinacademy.hotel.api.exceptions.EntityNotFoundException;
 import com.tinqinacademy.hotel.api.operations.removebooking.input.RemoveBookingInput;
@@ -15,6 +15,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import jakarta.validation.Validator;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -35,14 +36,14 @@ public class RemoveBookingOperationProcessor extends BaseOperationProcessor impl
   }
 
   @Override
+  @Transactional
   public Either<ErrorOutput, RemoveBookingOutput> process(RemoveBookingInput input) {
     return validateInput(input)
         .flatMap(validInput ->
             Try.of(() -> {
                   log.info("Start removeBooking input: {}", validInput);
-                  UUID bookingId = UUID.fromString(validInput.getBookingId());
 
-                  Booking booking = getBookingByIdOrThrow(bookingId);
+                  Booking booking = getBookingByIdAndUserIdOrThrow(validInput);
 
                   bookingRepository.delete(booking);
 
@@ -59,8 +60,11 @@ public class RemoveBookingOperationProcessor extends BaseOperationProcessor impl
         );
   }
 
-  private Booking getBookingByIdOrThrow(UUID bookingId) {
-    return bookingRepository.findById(bookingId)
+  private Booking getBookingByIdAndUserIdOrThrow(RemoveBookingInput input) {
+    UUID bookingId = UUID.fromString(input.getBookingId());
+    UUID userId = UUID.fromString(input.getUserId());
+
+    return bookingRepository.findByIdAndUserId(bookingId, userId)
         .orElseThrow(() -> new EntityNotFoundException("Booking", "id", bookingId.toString()));
   }
 

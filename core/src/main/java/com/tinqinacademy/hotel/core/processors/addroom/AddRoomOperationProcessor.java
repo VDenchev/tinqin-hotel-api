@@ -1,6 +1,6 @@
 package com.tinqinacademy.hotel.core.processors.addroom;
 
-import com.tinqinacademy.hotel.api.base.BaseOperationProcessor;
+import com.tinqinacademy.hotel.core.processors.base.BaseOperationProcessor;
 import com.tinqinacademy.hotel.api.exceptions.BedDoesNotExistException;
 import com.tinqinacademy.hotel.api.exceptions.EntityAlreadyExistsException;
 import com.tinqinacademy.hotel.api.errors.ErrorOutput;

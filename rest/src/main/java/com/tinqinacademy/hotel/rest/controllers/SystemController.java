@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
 import com.tinqinacademy.hotel.api.base.OperationOutput;
+import com.tinqinacademy.hotel.api.base.Output;
 import com.tinqinacademy.hotel.api.errors.ErrorOutput;
 import com.tinqinacademy.hotel.api.models.input.VisitorDetailsInput;
 import com.tinqinacademy.hotel.api.operations.addroom.input.AddRoomInput;
@@ -43,6 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDate;
+import java.util.List;
 
 import static com.tinqinacademy.hotel.api.RestApiRoutes.ADD_ROOM;
 import static com.tinqinacademy.hotel.api.RestApiRoutes.DELETE_ROOM;
@@ -94,7 +96,7 @@ public class SystemController extends BaseController {
       )
   })
   @PostMapping(REGISTER_VISITORS)
-  public ResponseEntity<OperationOutput> registerVisitors(
+  public ResponseEntity<Output> registerVisitors(
       @RequestBody RegisterVisitorsInput input,
       @PathVariable String bookingId
   ) {
@@ -119,13 +121,13 @@ public class SystemController extends BaseController {
       )
   })
   @GetMapping(SEARCH_VISITORS)
-  public ResponseEntity<OperationOutput> searchVisitors(
+  public ResponseEntity<Output> searchVisitors(
       @RequestParam(required = false) LocalDate startDate,
       @RequestParam(required = false) LocalDate endDate,
       @RequestParam(required = false) String firstName,
       @RequestParam(required = false) String lastName,
       @RequestParam(required = false) LocalDate birthDate,
-      @RequestParam(required = false) String phoneNo,
+      @RequestParam(required = false) List<String> userIds,
       @RequestParam(required = false) LocalDate idCardValidity,
       @RequestParam(required = false) String idCardIssueAuthority,
       @RequestParam(required = false) LocalDate idCardIssueDate,
@@ -138,7 +140,6 @@ public class SystemController extends BaseController {
         .firstName(firstName)
         .lastName(lastName)
         .birthDate(birthDate)
-        .phoneNo(phoneNo)
         .idCardValidity(idCardValidity)
         .idCardIssueAuthority(idCardIssueAuthority)
         .idCardIssueDate(idCardIssueDate)
@@ -147,6 +148,7 @@ public class SystemController extends BaseController {
     SearchVisitorsInput input = SearchVisitorsInput.builder()
         .visitorDetailsInput(details)
         .roomNo(roomNo)
+        .userIds(userIds)
         .build();
 
     Either<ErrorOutput, SearchVisitorsOutput> output = searchVisitorsOperation.process(input);
@@ -173,7 +175,7 @@ public class SystemController extends BaseController {
       )
   })
   @PostMapping(ADD_ROOM)
-  public ResponseEntity<OperationOutput> addRoom(@RequestBody AddRoomInput input) {
+  public ResponseEntity<Output> addRoom(@RequestBody AddRoomInput input) {
     Either<ErrorOutput, AddRoomOutput> output = addRoomOperation.process(input);
 
     return consumeEither(output, HttpStatus.CREATED);
@@ -202,7 +204,7 @@ public class SystemController extends BaseController {
       )
   })
   @PutMapping(UPDATE_ROOM)
-  public ResponseEntity<OperationOutput> updateRoom(
+  public ResponseEntity<Output> updateRoom(
       @PathVariable String roomId,
       @RequestBody UpdateRoomInput input
   ) {
@@ -236,7 +238,7 @@ public class SystemController extends BaseController {
       )
   })
   @PatchMapping(PARTIAL_UPDATE_ROOM)
-  public ResponseEntity<OperationOutput> partialUpdateRoom(
+  public ResponseEntity<Output> partialUpdateRoom(
       @PathVariable String roomId,
       @RequestBody PartialUpdateRoomInput input
   ) {
@@ -261,7 +263,7 @@ public class SystemController extends BaseController {
       )
   })
   @DeleteMapping(DELETE_ROOM)
-  public ResponseEntity<OperationOutput> deleteRoom(@PathVariable("roomId") DeleteRoomInput input) {
+  public ResponseEntity<Output> deleteRoom(@PathVariable("roomId") DeleteRoomInput input) {
 
     Either<ErrorOutput, DeleteRoomOutput> output = deleteRoomOperation.process(input);
 

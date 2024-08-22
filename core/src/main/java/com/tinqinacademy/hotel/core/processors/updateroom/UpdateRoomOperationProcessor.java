@@ -1,6 +1,6 @@
 package com.tinqinacademy.hotel.core.processors.updateroom;
 
-import com.tinqinacademy.hotel.api.base.BaseOperationProcessor;
+import com.tinqinacademy.hotel.core.processors.base.BaseOperationProcessor;
 import com.tinqinacademy.hotel.api.errors.ErrorOutput;
 import com.tinqinacademy.hotel.api.exceptions.BedDoesNotExistException;
 import com.tinqinacademy.hotel.api.exceptions.EntityAlreadyExistsException;
@@ -22,6 +22,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import jakarta.validation.Validator;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,7 @@ public class UpdateRoomOperationProcessor extends BaseOperationProcessor impleme
   }
 
   @Override
+  @Transactional
   public Either<ErrorOutput, UpdateRoomOutput> process(UpdateRoomInput input) {
     return validateInput(input)
         .flatMap(validInput ->
