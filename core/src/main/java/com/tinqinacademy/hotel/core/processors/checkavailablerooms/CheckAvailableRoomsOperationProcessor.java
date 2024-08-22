@@ -1,6 +1,6 @@
 package com.tinqinacademy.hotel.core.processors.checkavailablerooms;
 
-import com.tinqinacademy.hotel.api.base.BaseOperationProcessor;
+import com.tinqinacademy.hotel.core.processors.base.BaseOperationProcessor;
 import com.tinqinacademy.hotel.api.errors.ErrorOutput;
 import com.tinqinacademy.hotel.persistence.enums.BathroomType;
 import com.tinqinacademy.hotel.api.enums.BedType;

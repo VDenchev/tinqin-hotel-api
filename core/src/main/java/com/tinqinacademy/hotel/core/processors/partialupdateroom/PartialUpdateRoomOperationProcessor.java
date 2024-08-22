@@ -2,7 +2,7 @@ package com.tinqinacademy.hotel.core.processors.partialupdateroom;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tinqinacademy.hotel.api.base.BaseOperationProcessor;
+import com.tinqinacademy.hotel.core.processors.base.BaseOperationProcessor;
 import com.tinqinacademy.hotel.api.errors.ErrorOutput;
 import com.tinqinacademy.hotel.api.exceptions.BedDoesNotExistException;
 import com.tinqinacademy.hotel.api.exceptions.EntityAlreadyExistsException;

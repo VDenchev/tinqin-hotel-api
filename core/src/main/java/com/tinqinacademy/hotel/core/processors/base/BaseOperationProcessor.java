@@ -1,5 +1,6 @@
-package com.tinqinacademy.hotel.api.base;
+package com.tinqinacademy.hotel.core.processors.base;
 
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import com.tinqinacademy.hotel.api.errors.Error;
 import com.tinqinacademy.hotel.api.errors.ErrorOutput;
 import io.vavr.API;
