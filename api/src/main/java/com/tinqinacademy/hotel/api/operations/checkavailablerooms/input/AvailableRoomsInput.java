@@ -3,6 +3,7 @@ package com.tinqinacademy.hotel.api.operations.checkavailablerooms.input;
 import com.tinqinacademy.hotel.api.base.OperationInput;
 import com.tinqinacademy.hotel.api.enums.BathroomType;
 import com.tinqinacademy.hotel.api.enums.BedType;
+import com.tinqinacademy.hotel.api.validators.annotations.DatesMatch;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +20,11 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Builder
+@DatesMatch(
+    startField = "startDate",
+    endField = "endDate",
+    message = "Start date must be before end date"
+)
 public class AvailableRoomsInput implements OperationInput {
 
   private Integer bedCount;

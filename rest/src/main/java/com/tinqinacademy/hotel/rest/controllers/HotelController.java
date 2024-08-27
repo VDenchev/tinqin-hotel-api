@@ -1,6 +1,5 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
-import com.tinqinacademy.hotel.api.base.OperationOutput;
 import com.tinqinacademy.hotel.api.base.Output;
 import com.tinqinacademy.hotel.api.enums.BathroomType;
 import com.tinqinacademy.hotel.api.enums.BedType;
@@ -63,6 +62,7 @@ public class HotelController extends BaseController {
   )
   @ApiResponses(value = {
       @ApiResponse(description = "Returns the IDs of all available rooms", responseCode = "200"),
+      @ApiResponse(description = "Validation error", responseCode = "422"),
   })
   @GetMapping(CHECK_ROOM_AVAILABILITY)
   public ResponseEntity<Output> checkRoomAvailability(
@@ -95,6 +95,7 @@ public class HotelController extends BaseController {
   )
   @ApiResponses(value = {
       @ApiResponse(description = "Room is successfully retrieved", responseCode = "200"),
+      @ApiResponse(description = "Validation error", responseCode = "422"),
       @ApiResponse(description = "Room with the provided id does not exist", responseCode = "404"),
   })
   @GetMapping(GET_ROOM)
@@ -114,8 +115,8 @@ public class HotelController extends BaseController {
   )
   @ApiResponses(value = {
       @ApiResponse(description = "Room is successfully booked", responseCode = "200"),
-      @ApiResponse(description = "Validation error", responseCode = "400"),
-      @ApiResponse(description = "You dont have permission", responseCode = "403"),
+      @ApiResponse(description = "Validation error", responseCode = "422"),
+      @ApiResponse(description = "Room already booked for the period", responseCode = "409"),
   })
   @PostMapping(BOOK_ROOM)
   public ResponseEntity<Output> bookRoom(@PathVariable String roomId, @RequestBody BookRoomInput input) {

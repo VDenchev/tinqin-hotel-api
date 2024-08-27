@@ -18,7 +18,7 @@ import org.hibernate.validator.constraints.UUID;
 @Builder
 public class RoomDetailsInput implements OperationInput {
 
-  @UUID(message = "Id has to be a valid UUID string")
-  @NotBlank(message = "Room id must not be blank")
+  @UUID(message = "Room id has to be a valid UUID string")
+  @NotBlank(message = "Room id cannot be blank")
   private String roomId;
 }
