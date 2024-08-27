@@ -41,27 +41,29 @@ public class CheckAvailableRoomsOperationProcessor extends BaseOperationProcesso
 
   @Override
   public Either<ErrorOutput, AvailableRoomsOutput> process(AvailableRoomsInput input) {
-    return Try.of(() -> {
+    return validateInput(input)
+        .flatMap(validInput ->
+            Try.of(() -> {
+                  log.info("Start checkAvailableRooms input: {}", input);
 
-          log.info("Start checkAvailableRooms input: {}", input);
+                  LocalDate startDate = getStartDateOrNow(input.getStartDate());
+                  LocalDate endDate = getEndDateOrOneWeekAhead(startDate, input.getEndDate());
+                  Integer bedCount = getBedCountOrDefault(input.getBedCount());
+                  List<String> bedSizes = getBedSizesAsStringList(input.getBedSizes());
+                  String bathroomTypeName = getBathroomTypeName(input.getBathroomType());
 
-          LocalDate startDate = getStartDateOrNow(input.getStartDate());
-          LocalDate endDate = getEndDateOrOneWeekAhead(startDate, input.getEndDate());
-          Integer bedCount = getBedCountOrDefault(input.getBedCount());
-          List<String> bedSizes = getBedSizesAsStringList(input.getBedSizes());
-          String bathroomTypeName = getBathroomTypeName(input.getBathroomType());
+                  List<UUID> result = roomRepository.findAllAvailableRoomIds(startDate, endDate, bathroomTypeName,
+                      bedSizes, bedCount);
 
-          List<UUID> result = roomRepository.findAllAvailableRoomIds(startDate, endDate, bathroomTypeName,
-              bedSizes, bedCount);
-
-          AvailableRoomsOutput output = convertUUIDListToOutput(result);
-          log.info("End checkAvailableRooms output: {}", output);
-          return output;
-        })
-        .toEither()
-        .mapLeft(t -> Match(t).of(
-            defaultCase(t)
-        ));
+                  AvailableRoomsOutput output = convertUUIDListToOutput(result);
+                  log.info("End checkAvailableRooms output: {}", output);
+                  return output;
+                })
+                .toEither()
+                .mapLeft(t -> Match(t).of(
+                    defaultCase(t)
+                ))
+        );
   }
 
   private LocalDate getStartDateOrNow(LocalDate startDate) {
