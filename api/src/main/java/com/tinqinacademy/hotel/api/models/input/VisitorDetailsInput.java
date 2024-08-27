@@ -25,7 +25,7 @@ import java.time.LocalDate;
 @DatesMatch(
     startField = "startDate",
     endField = "endDate",
-    message = "Start date must be fore end date"
+    message = "Start date must be before end date"
 )
 public class VisitorDetailsInput {
 

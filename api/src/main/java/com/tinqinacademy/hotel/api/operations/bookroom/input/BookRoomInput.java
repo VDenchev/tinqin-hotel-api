@@ -55,12 +55,12 @@ public class BookRoomInput implements OperationInput {
   @Schema(example = "+359 863125171")
   private String phoneNo;
 
-  @NotBlank(message = "First name cannot not be blank")
-  @Size(min = 2, max = 40, message = "Last name must be between 2 and 40 characters long")
+  @NotBlank(message = "First name cannot be blank")
+  @Size(min = 2, max = 40, message = "First name must be between 2 and 40 characters long")
   @Schema(example = "John")
   private String firstName;
 
-  @NotBlank(message = "Last name cannot not be blank")
+  @NotBlank(message = "Last name cannot be blank")
   @Size(min = 2, max = 40, message = "Last name must be between 2 and 40 characters long")
   @Schema(example = "Doe")
   private String lastName;
