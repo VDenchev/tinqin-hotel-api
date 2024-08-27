@@ -1,6 +1,5 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
-import com.tinqinacademy.hotel.api.base.OperationOutput;
 import com.tinqinacademy.hotel.api.base.Output;
 import com.tinqinacademy.hotel.api.errors.ErrorOutput;
 import com.tinqinacademy.hotel.api.models.input.VisitorDetailsInput;
