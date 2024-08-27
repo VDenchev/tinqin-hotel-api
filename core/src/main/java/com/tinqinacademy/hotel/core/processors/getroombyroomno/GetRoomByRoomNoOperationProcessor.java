@@ -47,9 +47,8 @@ public class GetRoomByRoomNoOperationProcessor extends BaseOperationProcessor im
                   List<LocalDate> datesOccupied = room.getBookings().stream()
                       .flatMap(b -> b.getStartDate().datesUntil(b.getEndDate().plusDays(1)))
                       .toList();
-                  List<Bed> beds = roomRepository.getAllBedsByRoomId(room.getId());
 
-                  RoomOutput roomOutput = convertRoomToRoomOutput(room, beds, datesOccupied);
+                  RoomOutput roomOutput = convertRoomToRoomOutput(room, datesOccupied);
 
                   GetRoomByRoomNoOutput output = createOutput(roomOutput);
                   log.info("End getRoom output: {}", output);
@@ -75,8 +74,11 @@ public class GetRoomByRoomNoOperationProcessor extends BaseOperationProcessor im
         .orElseThrow(() -> new EntityNotFoundException("Room", "roomNo", input.getRoomNo()));
   }
 
-  private RoomOutput convertRoomToRoomOutput(Room room, List<Bed> beds, List<LocalDate> datesOccupied) {
+  private RoomOutput convertRoomToRoomOutput(Room room, List<LocalDate> datesOccupied) {
     RoomOutput output = conversionService.convert(room, RoomOutput.class);
+
+    List<Bed> beds = room.getBeds();
+
     output.setBedSizes(beds.stream()
         .map(b -> conversionService.convert(b, BedType.class))
         .toList());
@@ -84,6 +86,7 @@ public class GetRoomByRoomNoOperationProcessor extends BaseOperationProcessor im
         com.tinqinacademy.hotel.api.enums.BathroomType.class));
     output.setBedCount(beds.size());
     output.setDatesOccupied(datesOccupied);
+
     return output;
   }
 }

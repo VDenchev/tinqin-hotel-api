@@ -1,6 +1,5 @@
 package com.tinqinacademy.hotel.persistence.repositories;
 
-import com.tinqinacademy.hotel.persistence.entities.bed.Bed;
 import com.tinqinacademy.hotel.persistence.entities.room.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,12 +12,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface RoomRepository extends JpaRepository<Room,UUID> {
+public interface RoomRepository extends JpaRepository<Room, UUID> {
 
   Optional<Room> findRoomByNumber(String number);
-
-  @Query(value = "select r.beds from rooms r where r.id = :roomId")
-  List<Bed> getAllBedsByRoomId(UUID roomId);
 
   @Query(nativeQuery = true, value = """
         WITH BedCounts AS (
@@ -51,5 +47,5 @@ public interface RoomRepository extends JpaRepository<Room,UUID> {
       @Param("bathroomType") String bathroomType,
       @Param("bedSizes") List<String> bedSizes,
       @Param("bedCount") Integer bedCount
-      );
+  );
 }
