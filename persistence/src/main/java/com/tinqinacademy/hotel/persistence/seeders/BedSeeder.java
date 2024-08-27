@@ -1,6 +1,5 @@
-package com.tinqinacademy.hotel.rest.seeders;
+package com.tinqinacademy.hotel.persistence.seeders;
 
-import com.tinqinacademy.hotel.api.enums.BedType;
 import com.tinqinacademy.hotel.persistence.entities.bed.Bed;
 import com.tinqinacademy.hotel.persistence.enums.BedSize;
 import com.tinqinacademy.hotel.persistence.repositories.BedRepository;
@@ -24,7 +23,7 @@ public class BedSeeder implements CommandLineRunner {
   public void run(String... args) {
     List<Bed> savedBeds = bedRepository.findAll();
 
-    Arrays.stream(BedType.values())
+    Arrays.stream(BedSize.values())
         .filter(bed -> savedBeds.stream()
             .noneMatch(sb -> sb.getBedSize().getCode().equals(bed.getCode()))
         ).forEach(b -> {
