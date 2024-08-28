@@ -81,18 +81,11 @@ public class SystemController extends BaseController {
       summary = "Registers a visitor as a room renter"
   )
   @ApiResponses(value = {
-      @ApiResponse(
-          description = "Successful visitor registration",
-          responseCode = "200"
-      ),
-      @ApiResponse(
-          description = "Incorrect input data",
-          responseCode = "400"
-      ),
-      @ApiResponse(
-          description = "You don't have permission",
-          responseCode = "403"
-      )
+      @ApiResponse(description = "Successful visitor registration", responseCode = "200"),
+      @ApiResponse(description = "Incorrect input data", responseCode = "400"),
+      @ApiResponse(description = "Validation error", responseCode = "422"),
+      @ApiResponse(description = "Booking not found", responseCode = "404"),
+      @ApiResponse(description = "Conflict", responseCode = "409")
   })
   @PostMapping(REGISTER_VISITORS)
   public ResponseEntity<Output> registerVisitors(
@@ -110,14 +103,7 @@ public class SystemController extends BaseController {
       summary = "A report which returns when a room was occupied and by who"
   )
   @ApiResponses(value = {
-      @ApiResponse(
-          description = "A list of all rooms and when they were visited",
-          responseCode = "200"
-      ),
-      @ApiResponse(
-          description = "You don't have permission",
-          responseCode = "403"
-      )
+      @ApiResponse(description = "A list of all rooms and when they were visited", responseCode = "200")
   })
   @GetMapping(SEARCH_VISITORS)
   public ResponseEntity<Output> searchVisitors(
@@ -160,18 +146,9 @@ public class SystemController extends BaseController {
       summary = "Creates a room"
   )
   @ApiResponses(value = {
-      @ApiResponse(
-          description = "The id of the newly created room",
-          responseCode = "201"
-      ),
-      @ApiResponse(
-          description = "You don't have permission",
-          responseCode = "403"
-      ),
-      @ApiResponse(
-          description = "Validation error",
-          responseCode = "400"
-      )
+      @ApiResponse(description = "The id of the newly created room", responseCode = "201"),
+      @ApiResponse(description = "RoomNo already taken", responseCode = "409"),
+      @ApiResponse(description = "Validation error", responseCode = "422")
   })
   @PostMapping(ADD_ROOM)
   public ResponseEntity<Output> addRoom(@RequestBody AddRoomInput input) {
@@ -185,22 +162,10 @@ public class SystemController extends BaseController {
       summary = "Updates room details"
   )
   @ApiResponses(value = {
-      @ApiResponse(
-          description = "Returns the id of the updated room",
-          responseCode = "200"
-      ),
-      @ApiResponse(
-          description = "You don't have permission",
-          responseCode = "403"
-      ),
-      @ApiResponse(
-          description = "Validation error",
-          responseCode = "400"
-      ),
-      @ApiResponse(
-          description = "Room with the provided id doesn't exist",
-          responseCode = "404"
-      )
+      @ApiResponse(description = "Returns the id of the updated room", responseCode = "200"),
+      @ApiResponse(description = "Validation error", responseCode = "422"),
+      @ApiResponse(description = "RoomNo already taken", responseCode = "409"),
+      @ApiResponse(description = "Room with the provided id doesn't exist", responseCode = "404")
   })
   @PutMapping(UPDATE_ROOM)
   public ResponseEntity<Output> updateRoom(
@@ -219,22 +184,10 @@ public class SystemController extends BaseController {
       summary = "Partially updates room details"
   )
   @ApiResponses(value = {
-      @ApiResponse(
-          description = "Returns the id of the updated room",
-          responseCode = "200"
-      ),
-      @ApiResponse(
-          description = "You don't have permission",
-          responseCode = "403"
-      ),
-      @ApiResponse(
-          description = "Validation error",
-          responseCode = "400"
-      ),
-      @ApiResponse(
-          description = "Room with the provided id doesn't exist",
-          responseCode = "404"
-      )
+      @ApiResponse(description = "Returns the id of the updated room", responseCode = "200"),
+      @ApiResponse(description = "Validation error", responseCode = "422"),
+      @ApiResponse(description = "RoomNo already taken", responseCode = "409"),
+      @ApiResponse(description = "Room with the provided id doesn't exist", responseCode = "404")
   })
   @PatchMapping(PARTIAL_UPDATE_ROOM)
   public ResponseEntity<Output> partialUpdateRoom(
@@ -252,14 +205,10 @@ public class SystemController extends BaseController {
       summary = "Deletes a room with provided id"
   )
   @ApiResponses(value = {
-      @ApiResponse(
-          description = "An empty response indicating that the deletion was successful",
-          responseCode = "200"
-      ),
-      @ApiResponse(
-          description = "Room with the provided id doesn't exist",
-          responseCode = "404"
-      )
+      @ApiResponse(description = "An empty response indicating that the deletion was successful", responseCode = "200"),
+      @ApiResponse(description = "Room with the provided id doesn't exist", responseCode = "404"),
+      @ApiResponse(description = "Room is in use", responseCode = "409"),
+      @ApiResponse(description = "Validation error", responseCode = "422")
   })
   @DeleteMapping(DELETE_ROOM)
   public ResponseEntity<Output> deleteRoom(@PathVariable("roomId") DeleteRoomInput input) {

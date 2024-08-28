@@ -12,7 +12,7 @@ build_project() {
     local service_path=$1
     echo "Building service in $service_path"
     cd "$service_path" || { echo "Failed to enter $service_path"; return 1; }
-    mvn clean package -U -DskipTests &
+    mvn clean package -U &
     wait
     if [ $? -eq 0 ]; then
         echo "Build successful for $service_path"

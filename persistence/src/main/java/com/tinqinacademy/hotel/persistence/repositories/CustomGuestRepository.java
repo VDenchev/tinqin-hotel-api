@@ -31,8 +31,8 @@ public class CustomGuestRepository {
   }
 
   public List<VisitorSearchResult> searchVisitors(
-      LocalDate startDate,
-      LocalDate endDate,
+      LocalDate date1,
+      LocalDate date2,
       String firstName,
       String lastName,
       LocalDate birthDate,
@@ -48,17 +48,23 @@ public class CustomGuestRepository {
     Join<Booking, Room> room = booking.join("room", JoinType.INNER);
     List<Predicate> predicates = new ArrayList<>();
 
-    if (startDate != null && endDate != null) {
+    if (date1 != null && date2 != null) {
+      LocalDate startDate = date1;
+      LocalDate endDate = date2;
+      if (date1.isAfter(date2)) {
+        startDate = date2;
+        endDate = date1;
+      }
       Predicate datePredicate = cb.and(
           cb.greaterThanOrEqualTo(booking.get("startDate"), startDate),
           cb.lessThanOrEqualTo(booking.get("endDate"), endDate)
       );
       predicates.add(datePredicate);
-    } else if (startDate != null) {
-      Predicate endDatePredicate = cb.and(cb.greaterThanOrEqualTo(booking.get("startDate"), startDate));
+    } else if (date1 != null) {
+      Predicate endDatePredicate = cb.and(cb.greaterThanOrEqualTo(booking.get("startDate"), date1));
       predicates.add(endDatePredicate);
-    } else if (endDate != null) {
-      Predicate endDatePredicate = cb.and(cb.lessThanOrEqualTo(booking.get("endDate"), endDate));
+    } else if (date2 != null) {
+      Predicate endDatePredicate = cb.and(cb.lessThanOrEqualTo(booking.get("endDate"), date2));
       predicates.add(endDatePredicate);
     }
 

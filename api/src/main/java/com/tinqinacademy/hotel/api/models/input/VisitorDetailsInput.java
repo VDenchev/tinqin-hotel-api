@@ -3,8 +3,8 @@ package com.tinqinacademy.hotel.api.models.input;
 import com.tinqinacademy.hotel.api.validators.annotations.DatesMatch;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -29,11 +29,11 @@ import java.time.LocalDate;
 )
 public class VisitorDetailsInput {
 
-  @FutureOrPresent(message = "Start date must be in the future")
+  @NotNull(message = "Start date cannot be null")
   @Schema(example = "2025-10-10")
   private LocalDate startDate;
 
-  @FutureOrPresent(message = "Start date must be in the future")
+  @NotNull(message = "End date cannot be null")
   @Schema(example = "2025-11-10")
   private LocalDate endDate;
 
@@ -47,25 +47,28 @@ public class VisitorDetailsInput {
   @Schema(example = "Doe")
   private String lastName;
 
-  @NotBlank(message = "Id card number must not be blank")
+  @NotBlank(message = "Id card number cannot be blank")
   @Size(min = 8, max = 15, message = "Id card number must be between 8 and 15 characters")
   @Schema(defaultValue = "12341222")
   private String idCardNo;
 
   @Past(message = "Birth date cannot be a future date")
+  @NotNull(message = "Birth date cannot be null")
   @Schema(example = "2004-10-10")
   private LocalDate birthDate;
 
-  @Future(message = "Card validity cannot be expired")
+  @Future(message = "Id card validity cannot be a past date")
+  @NotNull(message = "Id card validity cannot be null")
   @Schema(example = "2028-10-10")
   private LocalDate idCardValidity;
 
-  @NotBlank(message = "Card issuer cannot be blank")
-  @Size(min = 1, max = 30, message = "Card issuer must be between 1 and 30 characters")
+  @NotBlank(message = "Id card issue authority cannot be blank")
+  @Size(min = 1, max = 30, message = "Id card issue authority must be between 1 and 30 characters")
   @Schema(example = "MVR RAZGRAD")
   private String idCardIssueAuthority;
 
-  @Past(message = "Id card issued date must be valid")
+  @Past(message = "Id card issue date must be valid")
+  @NotNull(message = "Id card issue date cannot be null")
   @Schema(example = "2023-10-10")
   private LocalDate idCardIssueDate;
 }

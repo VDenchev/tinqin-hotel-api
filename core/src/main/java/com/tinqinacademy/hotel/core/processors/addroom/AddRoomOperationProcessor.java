@@ -81,7 +81,7 @@ public class AddRoomOperationProcessor extends BaseOperationProcessor implements
     Optional<Room> roomWithTheSameNumber = roomRepository.findRoomByNumber(roomNo);
     if (roomWithTheSameNumber.isPresent()) {
       throw new EntityAlreadyExistsException("Room with room number " +
-          roomNo + " already exists!"
+          roomNo + " already exists"
       );
     }
   }
