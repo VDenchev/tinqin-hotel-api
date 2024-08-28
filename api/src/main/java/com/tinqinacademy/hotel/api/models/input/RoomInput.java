@@ -28,17 +28,17 @@ import java.util.List;
 @ToString
 public class RoomInput {
 
-  @NotNull(message = "Bed size cannot be empty")
+  @NotNull(message = "BedSizes cannot be null")
   @Schema(example = "[\"single\", \"double\"]")
   private List<
       @ValidEnum(enumClass = BedType.class, groups = {NonMandatoryFieldsGroup.class, Default.class}, message = "Invalid bed size")
       @NotBlank(message = "Bed size cannot be blank", groups = {NonMandatoryFieldsGroup.class, Default.class})
           String> bedSizes;
 
-  @NotNull(message = "Room number must not be null")
+  @NotNull(message = "RoomNo cannot be null")
   @Size(
       groups = {NonMandatoryFieldsGroup.class, Default.class},
-      message = "Room number should be at most 10 characters long",
+      message = "RoomNo must be at most 10 characters long",
       min = 1, max = 10
   )
   @Schema(example = "101A")

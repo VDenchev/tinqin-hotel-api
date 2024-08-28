@@ -91,7 +91,7 @@ public class RegisterVisitorsOperationProcessor extends BaseOperationProcessor i
                 .toEither()
                 .mapLeft(t -> Match(t).of(
                     customStatusCase(t, VisitorDateMismatchException.class, HttpStatus.UNPROCESSABLE_ENTITY),
-                    customStatusCase(t, DuplicateInputException.class, HttpStatus.UNPROCESSABLE_ENTITY),
+                    customStatusCase(t, DuplicateInputException.class, HttpStatus.BAD_REQUEST),
                     customStatusCase(t, EntityNotFoundException.class, HttpStatus.NOT_FOUND),
                     customStatusCase(t, ExceedsRoomBedsCapacityException.class, HttpStatus.BAD_REQUEST),
                     customStatusCase(t, EntityAlreadyExistsException.class, HttpStatus.CONFLICT),
